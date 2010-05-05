@@ -1,0 +1,6 @@
+/* $Id$ */
+
+#offline-signup-page,
+#offline-signup-user-register-form {
+  display: none;
+}

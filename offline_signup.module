@@ -1,0 +1,70 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Stores user registrations locally to be synced back to the server at a
+ * later date.
+ *
+ * @author greenSkin
+ */
+
+/*******************************************************************************
+ * Hook Functions (Drupal)
+ ******************************************************************************/
+
+/**
+ * Implementation of hook_perm().
+ */
+function offline_signup_perm() {
+  return array('administer offline signup', 'access offline signup page');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function offline_signup_menu() {
+  $items['admin/settings/offline_signup'] = array(
+    'title' => 'Offline sign-up',
+    'description' => 'Configure settings for offline sign-up.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('offline_signup_admin_form'),
+    'access arguments' => array('administer offline signup'),
+    'file' => 'offline_signup.admin.inc'
+  );
+  $items['offline/signup'] = array(
+    'title' => 'Offline sign-up',
+    'page callback' => 'theme',
+    'page arguments' => array('offline_signup_page'),
+    'access arguments' => array('access offline signup page'),
+    'file' => 'offline_signup.pages.inc'
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function offline_signup_theme() {
+  return array(
+    'offline_signup_page' => array(
+      'arguments' => array()
+    ),
+    'offline_signup' => array(
+      'arguments' => array(),
+      'template' => 'offline-signup'
+    ),
+    'offline_signup_dependency_message' => array(
+      'arguments' => array('message' => NULL)
+    ),
+    'offline_signup_content' => array(
+      'arguments' => array()
+    ),
+    'offline_signup_content_signup' => array(
+      'arguments' => array()
+    ),
+    'offline_signup_menu_bar' => array(
+      'arguments' => array()
+    )
+  );
+}

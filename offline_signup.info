@@ -1,0 +1,6 @@
+; $Id$
+core = "6.x"
+name = "Offline signup"
+description = "Stores user registrations locally to be synced back to the server at a later date."
+dependencies[] = content_profile_registration
+dependencies[] = ctools
