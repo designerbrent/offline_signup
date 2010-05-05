@@ -81,7 +81,34 @@ function offline_signup_user_update_form() {
 }
 
 function offline_signup_settings_form() {
-  
+  $form['information'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Event information')
+  );
+  $form['information']['location'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Location'),
+    '#required' => TRUE
+  );
+  $form['drawing'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Drawing')
+  );
+  $form['drawing']['include_drawing'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Include a drawing')
+  );
+  $form['drawing']['number'] = array(
+    '#type' => 'select',
+    '#title' => t('Number of drawings'),
+    '#options' => range(0, 5)
+  );
+  $form['save'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#name' => 'save'
+  );
+  return $form;
 }
 
 function offline_signup_winners_page() {
@@ -89,7 +116,12 @@ function offline_signup_winners_page() {
 }
 
 function offline_signup_sync_form() {
-  
+  $form['sync'] = array(
+    '#type' => 'submit',
+    '#value' => t('Sync now'),
+    '#name' => 'sync'
+  );
+  return $form;
 }
 
 /*******************************************************************************
@@ -125,6 +157,8 @@ function theme_offline_signup_dependency_message($message) {
 function theme_offline_signup_content() {
   $output = '<div id="offline-signup-content">';
   $output .= theme('offline_signup_content_signup');
+  $output .= theme('offline_signup_content_settings');
+  $output .= theme('offline_signup_content_sync');
   $output .= '</div>';
   return $output;
 }
@@ -134,6 +168,20 @@ function theme_offline_signup_content_signup() {
   $output .= drupal_get_form('offline_signup_user_router_form');
   $output .= drupal_get_form('offline_signup_user_register_form');
   $output .= drupal_get_form('offline_signup_user_update_form');
+  $output .= '</div>';
+  return $output;
+}
+
+function theme_offline_signup_content_settings() {
+  $output = '<div id="offline-signup-content-settings">';
+  $output .= drupal_get_form('offline_signup_settings_form');
+  $output .= '</div>';
+  return $output;
+}
+
+function theme_offline_signup_content_sync() {
+  $output = '<div id="offline-signup-content-sync">';
+  $output .= drupal_get_form('offline_signup_sync_form');
   $output .= '</div>';
   return $output;
 }

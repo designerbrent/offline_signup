@@ -2,6 +2,7 @@
 
 #offline-signup-page,
 #offline-signup-user-register-form,
-#offline-signup-user-update-form {
+#offline-signup-user-update-form,
+#offline-signup-content-sync {
   display: none;
 }
