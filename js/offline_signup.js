@@ -5,6 +5,11 @@ Drupal.OfflineSignup.users = {};
 
 Drupal.behaviors.offlineSignup = function(context) {
   if ($('#offline-signup-page:not(.offline-signup-processed)').size()) {
+    if (window.localStorage == undefined) {
+      $('#offline-signup-page').before('<div class="messages error">' + Drupal.t('This browser does not support local storage.') + '</div>');
+      return;
+    }
+
     Drupal.OfflineSignup.users = Drupal.settings.offlineSignup.users;
 
     var $routerForm = $('#offline-signup-user-router-form');
