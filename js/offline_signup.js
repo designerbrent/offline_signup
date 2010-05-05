@@ -54,7 +54,12 @@ Drupal.behaviors.offlineSignup = function(context) {
     // Update form.
     $('input[name=mail]', $updateForm).focus(function() {
       $('input[name=back]', $updateForm).click();
-      $('input[name=mail]', $registerForm).focus();
+      $('input[name=mail]', $routerForm).focus();
+    });
+    $('input[name=back]', $updateForm).click(function() {
+      $updateForm.hide();
+      $routerForm.show();
+      return false;
     });
 
     // Reveal the page.
