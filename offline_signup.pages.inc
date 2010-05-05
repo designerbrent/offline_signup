@@ -144,7 +144,7 @@ function theme_offline_signup_page() {
   }
   drupal_add_js(array('offlineSignup' => array('users' => $users)), 'setting');
 
-  $output = theme('offline_signup_dependency_message', t('This page is dependent on JavaScript.'));
+  $output = theme('offline_signup_dependency_message', t('This page is dependent on JavaScript to function.'));
   $output .= '<div id="offline-signup-page">'. theme('offline_signup') .'</div>';
   return $output;
 }
