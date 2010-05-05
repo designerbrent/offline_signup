@@ -9,5 +9,5 @@
  * - $menu_bar: The menu bar.
  */
 ?>
-<?php print $content; ?>
 <?php print $menu_bar; ?>
+<?php print $content; ?>

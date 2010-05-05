@@ -12,11 +12,12 @@ Drupal.behaviors.offlineSignup = function(context) {
     var $updateForm = $('#offline-signup-user-update-form');
 
     // Router form.
-    $('input[name=mail]', $routerForm).blur(function() {
-      var mail = $(this).val();
+    $('.form-submit', $routerForm).click(function() {
+      var $mailInput = $('input[name=mail]', $routerForm);
+      var mail = $mailInput.val();
       if (Drupal.OfflineSignup.mailValid(mail)) {
-        if ($(this).hasClass('error')) {
-          $(this).removeClass('error');
+        if ($mailInput.hasClass('error')) {
+          $mailInput.removeClass('error');
         }
 
         if (Drupal.OfflineSignup.mailTaken(mail)) {
@@ -33,12 +34,9 @@ Drupal.behaviors.offlineSignup = function(context) {
       }
       // Invalid e-mail address.
       else {
-        $(this).addClass('error');
+        $mailInput.addClass('error');
         alert(Drupal.t('Invalid e-mail address. Please enter a valid e-mail address.'));
       }
-    });
-    $('.form-submit', $routerForm).click(function() {
-      $('input[name=mail]', $routerForm).blur();
       return false;
     });
 
