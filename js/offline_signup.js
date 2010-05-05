@@ -4,11 +4,14 @@ Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.OfflineSignup.users = {};
 
 Drupal.behaviors.offlineSignup = function(context) {
-  if ($('#offline-signup-page:not(.offline-signup-processed)', context).size()) {
+  if ($('#offline-signup-page:not(.offline-signup-processed)').size()) {
     Drupal.OfflineSignup.users = Drupal.settings.offlineSignup.users;
 
+    var $routerForm = $('#offline-signup-user-router-form');
+    var $registerForm = $('#offline-signup-user-register-form');
+    var $updateForm = $('#offline-signup-user-update-form');
+
     // Router form.
-    var $routerForm = $('#offline-signup-user-router-form', context);
     $('input[name=mail]', $routerForm).blur(function() {
       var mail = $(this).val();
       if (Drupal.OfflineSignup.mailValid(mail)) {
@@ -17,11 +20,15 @@ Drupal.behaviors.offlineSignup = function(context) {
         }
 
         if (Drupal.OfflineSignup.mailTaken(mail)) {
-          
+          $routerForm.hide();
+          $('input[name=mail]', $updateForm).val(mail);
+          $updateForm.show();
         }
         // E-mail address is available.
         else {
-          
+          $routerForm.hide();
+          $('input[name=mail]', $registerForm).val(mail);
+          $registerForm.show();
         }
       }
       // Invalid e-mail address.
@@ -31,12 +38,31 @@ Drupal.behaviors.offlineSignup = function(context) {
       }
     });
     $('.form-submit', $routerForm).click(function() {
+      $('input[name=mail]', $routerForm).blur();
       return false;
     });
 
-    $('#offline-signup-page', context).show();
+    // Register form.
+    $('input[name=mail]', $registerForm).focus(function() {
+      $('input[name=back]', $registerForm).click();
+      $('input[name=mail]', $routerForm).focus();
+    });
+    $('input[name=back]', $registerForm).click(function() {
+      $registerForm.hide();
+      $routerForm.show();
+      return false;
+    });
 
-    $('#offline-signup-page', context).addClass('offline-signup-processed');
+    // Update form.
+    $('input[name=mail]', $updateForm).focus(function() {
+      $('input[name=back]', $updateForm).click();
+      $('input[name=mail]', $registerForm).focus();
+    });
+
+    // Reveal the page.
+    $('#offline-signup-page').show();
+
+    $('#offline-signup-page').addClass('offline-signup-processed');
   }
 }
 

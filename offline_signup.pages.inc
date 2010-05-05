@@ -29,53 +29,66 @@ function offline_signup_user_register_form() {
     '#required' => TRUE
   );
 
-  // Wrapper around the user register form elements so they can be hidden
-  // until a JavaScript check is performed on the mail field to determine if
-  // the given email address is already taken..
-  $form['user_register'] = array();
-
   if (module_exists('profile')) {
-    $form['user_register'] += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
+    $form += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
   }
 
-  $form['user_register']['offline_signup_profiles'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Profiles'),
-    '#description' => t('Select which profiles to create.'),
-    '#collapsible' => FALSE,
-    '#weight' => 5
-  );
-  $types = content_profile_get_types();
-  foreach ($types as $type) {
-    $form['user_register']['offline_signup_profiles'][$type->type] = array(
-      '#type' => 'checkbox',
-      '#title' => check_plain($type->name),
-      '#description' => filter_xss_admin($type->description)
-    );
-  }
+  $form += offline_signup_profile_types_form();
 
-  $form['user_register']['buttons'] = array('#weight' => 10);
-  $form['user_register']['buttons']['back'] = array(
+  $form['buttons'] = array('#weight' => 10);
+  $form['buttons']['back'] = array(
     '#type' => 'button',
-    '#value' => t('Back')
+    '#value' => t('Back'),
+    '#name' => 'back'
   );
-  $form['user_register']['buttons']['submit'] = array(
+  $form['buttons']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Create new account')
+    '#value' => t('Create new account'),
+    '#name' => 'create'
   );
 
   return $form;
 }
 
-function offline_signup_admin_form() {
-  
+function offline_signup_user_update_form() {
+  $form['mail'] = array(
+    '#type' => 'textfield',
+    '#title' => t('E-mail address'),
+    '#maxlength' => EMAIL_MAX_LENGTH,
+    '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
+    '#required' => TRUE
+  );
+  $form['pass'] = array(
+    '#type' => 'password_confirm',
+    '#size' => 25
+  );
+
+  $form += offline_signup_profile_types_form();
+
+  $form['buttons'] = array('#weight' => 10);
+  $form['buttons']['back'] = array(
+    '#type' => 'button',
+    '#value' => t('Back'),
+    '#name' => 'back'
+  );
+  $form['buttons']['update'] = array(
+    '#type' => 'submit',
+    '#value' => t('Update account'),
+    '#name' => 'update'
+  );
+
+  return $form;
 }
 
-function offline_signup_sync_form() {
+function offline_signup_settings_form() {
   
 }
 
 function offline_signup_winners_page() {
+  
+}
+
+function offline_signup_sync_form() {
   
 }
 
@@ -120,6 +133,7 @@ function theme_offline_signup_content_signup() {
   $output = '<div id="offline-signup-content-signup">';
   $output .= drupal_get_form('offline_signup_user_router_form');
   $output .= drupal_get_form('offline_signup_user_register_form');
+  $output .= drupal_get_form('offline_signup_user_update_form');
   $output .= '</div>';
   return $output;
 }

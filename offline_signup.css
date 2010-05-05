@@ -1,6 +1,7 @@
 /* $Id$ */
 
 #offline-signup-page,
-#offline-signup-user-register-form {
+#offline-signup-user-register-form,
+#offline-signup-user-update-form {
   display: none;
 }
