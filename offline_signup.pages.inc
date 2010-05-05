@@ -207,5 +207,5 @@ function theme_offline_signup_menu_bar() {
       'class' => 'sync'
     )
   );
-  return theme('item_list', $items, NULL, 'ul', array('class' => 'offline-signup-menu-bar links'));
+  return theme('item_list', $items, NULL, 'ul', array('id' => 'offline-signup-menu-bar', 'class' => 'links'));
 }
