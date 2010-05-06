@@ -94,11 +94,7 @@ function offline_signup_settings_form() {
     '#type' => 'fieldset',
     '#title' => t('Drawing')
   );
-  $form['drawing']['include_drawing'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Include a drawing')
-  );
-  $form['drawing']['number'] = array(
+  $form['drawing']['drawings'] = array(
     '#type' => 'select',
     '#title' => t('Number of drawings'),
     '#options' => range(0, 5)
@@ -171,6 +167,8 @@ function theme_offline_signup_user_router_form($form) {
 }
 
 function theme_offline_signup_content_settings() {
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/settings.js');
+
   $output = '<div id="offline-signup-content-settings">';
   $output .= drupal_get_form('offline_signup_settings_form');
   $output .= '</div>';

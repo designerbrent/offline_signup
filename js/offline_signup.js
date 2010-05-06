@@ -110,7 +110,7 @@ Drupal.OfflineSignup.toJson = function(v) {
     case 'object':
       var output = new Array();
       for (var i in v) {
-        output.push(i + ":" + Drupal.OfflineSignup.toJson(v[i]));
+        output.push(i + ": " + Drupal.OfflineSignup.toJson(v[i]));
       }
       return '{ ' + output.join(', ') + ' }';
     default:
