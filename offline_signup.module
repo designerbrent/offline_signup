@@ -43,10 +43,22 @@ function offline_signup_menu() {
 }
 
 /**
+ * Implementation of hook_elements().
+ */
+function offline_signup_elements() {
+  $system_elements = system_elements();
+  $type['email'] = $system_elements['textfield'];
+  return $type;
+}
+
+/**
  * Implementation of hook_theme().
  */
 function offline_signup_theme() {
   return array(
+    'email' => array(
+      'arguments' => array('element' => NULL)
+    ),
     'offline_signup_page' => array(
       'arguments' => array()
     ),
@@ -63,20 +75,33 @@ function offline_signup_theme() {
     'offline_signup_content_signup' => array(
       'arguments' => array()
     ),
+    'offline_signup_user_router_form' => array(
+      'arguments' => array('form' => NULL)
+    ),
     'offline_signup_content_settings' => array(
       'arguments' => array()
     ),
     'offline_signup_content_sync' => array(
       'arguments' => array()
     ),
-    'offline_signup_user_router_form' => array(
-      'arguments' => array('form' => NULL)
-    ),
     'offline_signup_menu_bar' => array(
       'arguments' => array()
     )
   );
 }
+
+/**
+ * Implementation of form_type_element_value().
+ */
+function form_type_email_value($form, $edit = FALSE) {
+  return form_type_textfield_value($form, $edit);
+}
+
+/*******************************************************************************
+ * Callback Functions, Forms, and Tables
+ ******************************************************************************/
+
+
 
 /*******************************************************************************
  * Module and Helper Functions
@@ -105,6 +130,33 @@ function offline_signup_profile_types_form() {
 /*******************************************************************************
  * Theme Functions
  ******************************************************************************/
+
+function theme_email($element) {
+  $size = empty($element['#size']) ? '' : ' size="'. $element['#size'] .'"';
+  $maxlength = empty($element['#maxlength']) ? '' : ' maxlength="'. $element['#maxlength'] .'"';
+  $class = array('form-text');
+  $extra = '';
+  $output = '';
+
+  if ($element['#autocomplete_path'] && menu_valid_path(array('link_path' => $element['#autocomplete_path']))) {
+    drupal_add_js('misc/autocomplete.js');
+    $class[] = 'form-autocomplete';
+    $extra =  '<input class="autocomplete" type="hidden" id="'. $element['#id'] .'-autocomplete" value="'. check_url(url($element['#autocomplete_path'], array('absolute' => TRUE))) .'" disabled="disabled" />';
+  }
+  _form_set_class($element, $class);
+
+  if (isset($element['#field_prefix'])) {
+    $output .= '<span class="field-prefix">'. $element['#field_prefix'] .'</span> ';
+  }
+
+  $output .= '<input type="email"'. $maxlength .' name="'. $element['#name'] .'" id="'. $element['#id'] .'"'. $size .' value="'. check_plain($element['#value']) .'"'. drupal_attributes($element['#attributes']) .' />';
+
+  if (isset($element['#field_suffix'])) {
+    $output .= ' <span class="field-suffix">'. $element['#field_suffix'] .'</span>';
+  }
+
+  return theme('form_element', $element, $output) . $extra;
+}
 
 function template_preprocess_offline_signup(&$vars) {
   $vars['menu_bar'] = theme('offline_signup_menu_bar');
