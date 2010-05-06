@@ -166,6 +166,10 @@ function theme_offline_signup_content_signup() {
   return $output;
 }
 
+function theme_offline_signup_user_router_form($form) {
+  return drupal_render($form);
+}
+
 function theme_offline_signup_content_settings() {
   $output = '<div id="offline-signup-content-settings">';
   $output .= drupal_get_form('offline_signup_settings_form');
