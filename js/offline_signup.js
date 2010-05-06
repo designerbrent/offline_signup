@@ -95,3 +95,25 @@ Drupal.OfflineSignup.NewUser = function() {
 Drupal.OfflineSignup.UpdateUser = function() {
   
 }
+
+/**
+ *  Convert a variable to a json string.
+ */
+Drupal.OfflineSignup.toJson = function(v) {
+  switch (typeof v) {
+    case 'boolean':
+      return v == true ? 'true' : 'false';
+    case 'number':
+      return v;
+    case 'string':
+      return '"'+ v +'"';
+    case 'object':
+      var output = new Array();
+      for (var i in v) {
+        output.push(i + ":" + Drupal.OfflineSignup.toJson(v[i]));
+      }
+      return '{ ' + output.join(', ') + ' }';
+    default:
+      return 'null';
+  }
+};
