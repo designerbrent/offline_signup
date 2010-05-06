@@ -98,3 +98,12 @@ function offline_signup_profile_types_form() {
   }
   return $form;
 }
+
+/*******************************************************************************
+ * Theme Functions
+ ******************************************************************************/
+
+function template_preprocess_offline_signup(&$vars) {
+  $vars['menu_bar'] = theme('offline_signup_menu_bar');
+  $vars['content'] = theme('offline_signup_content');
+}

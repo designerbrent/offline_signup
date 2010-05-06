@@ -128,11 +128,6 @@ function offline_signup_sync_form() {
  * Theme Functions
  ******************************************************************************/
 
-function template_preprocess_offline_signup(&$vars) {
-  $vars['content'] = theme('offline_signup_content');
-  $vars['menu_bar'] = theme('offline_signup_menu_bar');
-}
-
 function theme_offline_signup_page() {
   drupal_add_css(drupal_get_path('module', 'offline_signup') .'/offline_signup.css');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
