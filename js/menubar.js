@@ -38,11 +38,11 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
     var prevType = self.determineType($('li.active', $(self.menuBar.menuElement)));
     if (prevType) {
       // Trigger the tab blur event for the previous tab.
-      self.menuBar.tabs[prevType].blur();
+      self.menuBar.tabs[prevType].blur(true);
     }
 
     // Trigger the tab focus event for the clicked tab.
-    self.focus();
+    self.focus(true);
   });
 
   (this.type == this.menuBar.defaultTab) ? this.focus() : this.blur();
@@ -57,12 +57,22 @@ Drupal.OfflineSignup.Tab.prototype.determineType = function(element) {
   }
 }
 
-Drupal.OfflineSignup.Tab.prototype.blur = function() {
-  $('#offline-signup-content-' + this.type).hide();
+Drupal.OfflineSignup.Tab.prototype.blur = function(animate) {
+  if (animate) {
+    $('#offline-signup-content-' + this.type).slideUp('fast');
+  }
+  else {
+    $('#offline-signup-content-' + this.type).hide();
+  }
   $(this.element).removeClass('active').parent().removeClass('active');
 }
 
-Drupal.OfflineSignup.Tab.prototype.focus = function() {
+Drupal.OfflineSignup.Tab.prototype.focus = function(animate) {
   $(this.element).addClass('active').parent().addClass('active');
-  $('#offline-signup-content-' + this.type).show();
+  if (animate) {
+    $('#offline-signup-content-' + this.type).slideDown('fast');
+  }
+  else {
+    $('#offline-signup-content-' + this.type).show();
+  }
 }
