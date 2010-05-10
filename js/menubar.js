@@ -12,7 +12,7 @@ Drupal.behaviors.offlineSignupMenuBar = function(context) {
 Drupal.OfflineSignup.MenuBar = function(element) {
   this.element = element;
   this.tabs = {};
-  this.defaultTab = 'signup';
+  this.defaultTab = 'settings';
 
   // Determine default active tab.
   var url = document.location.toString();
@@ -26,6 +26,24 @@ Drupal.OfflineSignup.MenuBar = function(element) {
   }
 }
 
+Drupal.OfflineSignup.MenuBar.prototype.enableTabs = function(exempt) {
+  for (var i in this.tabs) {
+    if (exempt && exempt == i) {
+      continue;
+    }
+    this.tabs[i].enable();
+  }
+}
+
+Drupal.OfflineSignup.MenuBar.prototype.disableTabs = function(exempt) {
+  for (var i in this.tabs) {
+    if (exempt && exempt == i) {
+      continue;
+    }
+    this.tabs[i].disable();
+  }
+}
+
 Drupal.OfflineSignup.Tab = function(type, menuBar) {
   this.type = type;
   this.menuBar = menuBar;
@@ -34,6 +52,10 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
   var self = this;
 
   $(this.element).click(function() {
+    if ($(this).hasClass('disabled') || $(this).hasClass('active')) {
+      return false;
+    }
+
     // Determine if there was a previously active tab.
     var prevType = self.determineType($('li.active', $(self.menuBar.menuElement)));
     if (prevType) {
@@ -75,4 +97,12 @@ Drupal.OfflineSignup.Tab.prototype.focus = function(animate) {
   else {
     $('#offline-signup-content-' + this.type).show();
   }
+}
+
+Drupal.OfflineSignup.Tab.prototype.enable = function() {
+  $(this.element).removeClass('disabled');
+}
+
+Drupal.OfflineSignup.Tab.prototype.disable = function() {
+  $(this.element).addClass('disabled');
 }
