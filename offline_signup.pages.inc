@@ -11,6 +11,7 @@ function offline_signup_user_router_form() {
     '#title' => t('E-mail address'),
     '#maxlength' => EMAIL_MAX_LENGTH,
     '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
+    '#attributes' => array('placeholder' => 'email@example.com'),
     '#required' => TRUE
   );
   $form['next'] = array(
