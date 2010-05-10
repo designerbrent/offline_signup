@@ -34,6 +34,10 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
   var self = this;
 
   $(this.element).click(function() {
+    if ($(this).hasClass('disabled')) {
+      return false;
+    }
+
     // Determine if there was a previously active tab.
     var prevType = self.determineType($('li.active', $(self.menuBar.menuElement)));
     if (prevType) {
