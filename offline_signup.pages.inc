@@ -154,6 +154,8 @@ function theme_offline_signup_content() {
 }
 
 function theme_offline_signup_content_signup() {
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/signup.js');
+
   $output = '<div id="offline-signup-content-signup">';
   $output .= drupal_get_form('offline_signup_user_router_form');
   $output .= drupal_get_form('offline_signup_user_register_form');
