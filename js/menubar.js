@@ -12,7 +12,7 @@ Drupal.behaviors.offlineSignupMenuBar = function(context) {
 Drupal.OfflineSignup.MenuBar = function(element) {
   this.element = element;
   this.tabs = {};
-  this.defaultTab = 'signup';
+  this.defaultTab = 'settings';
 
   // Determine default active tab.
   var url = document.location.toString();
