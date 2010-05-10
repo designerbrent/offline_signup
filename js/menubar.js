@@ -52,7 +52,7 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
   var self = this;
 
   $(this.element).click(function() {
-    if ($(this).hasClass('disabled')) {
+    if ($(this).hasClass('disabled') || $(this).hasClass('active')) {
       return false;
     }
 

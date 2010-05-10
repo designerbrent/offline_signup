@@ -23,7 +23,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
     }
 
     $('input[name=save]', $settingsForm).click(function() {
-      if (Drupal.OfflineSignup.settings.location) {
+      if ($('input[name=location]', $settingsForm).val()) {
         Drupal.OfflineSignup.settings.location = $('input[name=location]', $settingsForm).val();
         Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
         localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
