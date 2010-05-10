@@ -199,20 +199,20 @@ function theme_offline_signup_menu_bar() {
 
   $items = array(
     'signup' => array(
-      'data' => '<a href="#signup" class="active">'. t('Sign-up form') .'</a>',
-      'class' => 'signup active'
+      'data' => '<a href="#signup" class="active">'. t('Sign-up') .'</a>',
+      'class' => 'signup button active'
     ),
     'settings' => array(
       'data' => '<a href="#settings">'. t('Settings') .'</a>',
-      'class' => 'settings'
+      'class' => 'settings button'
     ),
     'winners' => array(
       'data' => '<a href="#winners">'. t('Winners') .'</a>',
-      'class' => 'winners'
+      'class' => 'winners button'
     ),
     'sync' => array(
       'data' => '<a href="#sync">'. t('Sync') .'</a>',
-      'class' => 'sync'
+      'class' => 'sync button'
     )
   );
   return theme('item_list', $items, NULL, 'ul', array('id' => 'offline-signup-menu-bar', 'class' => 'links'));
