@@ -15,10 +15,27 @@ Drupal.behaviors.offlineSignupSettings = function() {
       $.extend(Drupal.OfflineSignup.settings, settings);
     }
 
+    // Disable tabs if a location has not been set.
+    if (!Drupal.OfflineSignup.settings.location) {
+      if (Drupal.OfflineSignup.menuBar) {
+        Drupal.OfflineSignup.menuBar.disableTabs('settings');
+      }
+    }
+
     $('input[name=save]', $settingsForm).click(function() {
-      Drupal.OfflineSignup.settings.location = $('input[name=location]', $settingsForm).val();
-      Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
-      localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
+      if (Drupal.OfflineSignup.settings.location) {
+        Drupal.OfflineSignup.settings.location = $('input[name=location]', $settingsForm).val();
+        Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
+        localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
+
+        // Enable tabs.
+        if (Drupal.OfflineSignup.menuBar) {
+          Drupal.OfflineSignup.menuBar.enableTabs('settings');
+        }
+      }
+      else {
+        alert(Drupal.t('Please enter a location.'));
+      }
       return false;
     });
 

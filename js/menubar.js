@@ -26,6 +26,24 @@ Drupal.OfflineSignup.MenuBar = function(element) {
   }
 }
 
+Drupal.OfflineSignup.MenuBar.prototype.enableTabs = function(exempt) {
+  for (var i in this.tabs) {
+    if (exempt && exempt == i) {
+      continue;
+    }
+    this.tabs[i].enable();
+  }
+}
+
+Drupal.OfflineSignup.MenuBar.prototype.disableTabs = function(exempt) {
+  for (var i in this.tabs) {
+    if (exempt && exempt == i) {
+      continue;
+    }
+    this.tabs[i].disable();
+  }
+}
+
 Drupal.OfflineSignup.Tab = function(type, menuBar) {
   this.type = type;
   this.menuBar = menuBar;
@@ -79,4 +97,12 @@ Drupal.OfflineSignup.Tab.prototype.focus = function(animate) {
   else {
     $('#offline-signup-content-' + this.type).show();
   }
+}
+
+Drupal.OfflineSignup.Tab.prototype.enable = function() {
+  $(this.element).removeClass('disabled');
+}
+
+Drupal.OfflineSignup.Tab.prototype.disable = function() {
+  $(this.element).addClass('disabled');
 }
