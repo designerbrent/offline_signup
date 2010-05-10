@@ -169,6 +169,14 @@ function theme_offline_signup_user_router_form($form) {
   return drupal_render($form);
 }
 
+function theme_offline_signup_user_register_form($form) {
+  return drupal_render($form);
+}
+
+function theme_offline_signup_user_update_form($form) {
+  return drupal_render($form);
+}
+
 function theme_offline_signup_content_settings() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/settings.js');
 
