@@ -129,11 +129,11 @@ function theme_offline_signup_page() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
 
   $result = db_query("SELECT uid, mail FROM {users} WHERE uid > 0");
-  $users = array();
+  $emails = array();
   while ($data = db_fetch_object($result)) {
-    $users[$data->uid] = $data->mail;
+    $emails[] = $data->mail;
   }
-  drupal_add_js(array('offlineSignup' => array('users' => $users)), 'setting');
+  drupal_add_js(array('offlineSignup' => array('emails' => $emails)), 'setting');
 
   $output = theme('offline_signup_dependency_message', t('This page is dependent on JavaScript to function.'));
   $output .= '<div id="offline-signup-page">'. theme('offline_signup') .'</div>';
