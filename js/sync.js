@@ -12,26 +12,49 @@ Drupal.behaviors.offlineSignupSync = function() {
 
     // Apply click events to table headers.
     $('#offline-signup-content-sync table.sticky-enabled thead th').each(function() {
-      $(this).click(function() {
+      var $header = $(this);
+      $('a', $(this)).click(function() {
         var sort = 'asc';
-        if ($('img', $(this)).size()) {
+        var index = $('#offline-signup-content-sync table.sticky-enabled th').index($header);
+        if ($('img', $header).size()) {
           // Determine the sort direction.
           sort = (Drupal.OfflineSignup.activeHeader.data('sort') != 'asc') ? 'asc' : 'desc';
           var img = (sort == 'asc') ? Drupal.OfflineSignup.imgASC : Drupal.OfflineSignup.imgDESC;
-          $('img', $(this)).replaceWith(img);
+          $('img', $header).replaceWith(img);
         }
         else {
           // Since no img yet exists, we default sort to ASC and remove the img
           // from the activeHeader.
           $('img', Drupal.OfflineSignup.activeHeader).remove();
-          $(this).append(Drupal.OfflineSignup.imgASC);
+          $header.append(Drupal.OfflineSignup.imgASC);
         }
         // Set this header to activeHeader.
-        Drupal.OfflineSignup.activeHeader = $(this).data('sort', sort);
+        Drupal.OfflineSignup.activeHeader = $header.data('sort', sort);
+        Drupal.OfflineSignup.sortTable(index, sort);
         return false;
       });
     });
 
     $('#offline-signup-content-sync').addClass('offline-signup-sync-processed');
   }
+}
+
+Drupal.OfflineSignup.sortTable = function(column, sort) {
+  var $table = $('#offline-signup-content-sync table.sticky-enabled');
+  var rows = $table.find('tbody > tr').get();
+  rows.sort(function(a, b) {
+    var keyA = $(a).children('td').eq(column).text().toUpperCase();
+    var keyB = $(b).children('td').eq(column).text().toUpperCase();
+
+    if (keyA < keyB) return (sort == 'asc') ? -1 : 1;
+    if (keyA > keyB) return (sort == 'asc') ? 1 : -1;
+    return 0;
+  });
+
+  $.each(rows, function(index, row) {
+    $table.children('tbody').append(row);
+  });
+
+  $('tbody tr:odd', $table).removeClass('even').addClass('odd');
+  $('tbody tr:even', $table).removeClass('odd').addClass('even');
 }
