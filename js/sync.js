@@ -4,10 +4,12 @@ Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 
 Drupal.behaviors.offlineSignupSync = function() {
   if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
-    $('#offline-signup-content-sync table.sticky-enabled thead th:first').addClass('active').children('a').addClass('active');
+    // Store the ASC and DESC images and remove the DESC from displaying by default.
     Drupal.OfflineSignup.imgASC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:first');
     Drupal.OfflineSignup.imgDESC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:last').remove();
 
+    // Set the default activeHeader.
+    $('#offline-signup-content-sync table.sticky-enabled thead th:first').addClass('active').children('a').addClass('active');
     Drupal.OfflineSignup.activeHeader = $('#offline-signup-content-sync table.sticky-enabled thead th:first a').data('sort', 'asc');
 
     // Apply click events to table headers.
