@@ -2,7 +2,7 @@
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.OfflineSignup.settings = {
-  location: '',
+  event: '',
   drawings: 0
 };
 
@@ -15,16 +15,16 @@ Drupal.behaviors.offlineSignupSettings = function() {
       $.extend(Drupal.OfflineSignup.settings, settings);
     }
 
-    // Disable tabs if a location has not been set.
-    if (!Drupal.OfflineSignup.settings.location) {
+    // Disable tabs if an event has not been set.
+    if (!Drupal.OfflineSignup.settings.event) {
       if (Drupal.OfflineSignup.menuBar) {
         Drupal.OfflineSignup.menuBar.disableTabs('settings');
       }
     }
 
     $('input[name=save]', $settingsForm).click(function() {
-      if ($('input[name=location]', $settingsForm).val()) {
-        Drupal.OfflineSignup.settings.location = $('input[name=location]', $settingsForm).val();
+      if ($('input[name=event]', $settingsForm).val()) {
+        Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
         Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
         localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
 
@@ -34,12 +34,12 @@ Drupal.behaviors.offlineSignupSettings = function() {
         }
       }
       else {
-        alert(Drupal.t('Please enter a location.'));
+        alert(Drupal.t('Please enter an event.'));
       }
       return false;
     });
 
-    $('input[name=location]', $settingsForm).val(Drupal.OfflineSignup.settings.location);
+    $('input[name=event]', $settingsForm).val(Drupal.OfflineSignup.settings.event);
     $('select[name=drawings]', $settingsForm).val(Drupal.OfflineSignup.settings.drawings);
 
     $('#offline-signup-settings-form').addClass('offline-signup-settings-processed');

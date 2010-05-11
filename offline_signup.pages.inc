@@ -85,9 +85,9 @@ function offline_signup_settings_form() {
     '#type' => 'fieldset',
     '#title' => t('Event information')
   );
-  $form['information']['location'] = array(
+  $form['information']['event'] = array(
     '#type' => 'textfield',
-    '#title' => t('Location'),
+    '#title' => t('Event'),
     '#required' => TRUE
   );
   $form['drawing'] = array(
