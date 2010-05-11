@@ -178,8 +178,26 @@ function theme_offline_signup_content_settings() {
 }
 
 function theme_offline_signup_content_sync() {
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/sync.js');
+
+  // Because our page is able to be viewed while offline, we need to ensure
+  // both the ASC and DESC images are loaded.
+  $image = theme('tablesort_indicator', 'asc') . theme('tablesort_indicator', 'desc');
+
+  // We generate link so we can control the sort via JavaScript and so the href
+  // is simply '#sync'.
+  $headers = array(
+    '<a href="#sync">'. t('Name') . $image .'</a>',
+    '<a href="#sync">'. t('E-mail') .'</a>',
+    '<a href="#sync">'. t('Profile(s)') .'</a>',
+    '<a href="#sync">'. t('Status') .'</a>'
+  );
+  // Add empty row.
+  $rows = array(array('data' => array(array('data' => t('No users added to this event.'), 'class' => 'active', 'colspan' => 4)), 'class' => 'empty'));
+
   $output = '<div id="offline-signup-content-sync">';
   $output .= drupal_get_form('offline_signup_sync_form');
+  $output .= theme('table', $headers, $rows);
   $output .= '</div>';
   return $output;
 }
