@@ -1,7 +1,7 @@
 // $Id$
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
-Drupal.OfflineSignup.emails = new Array();
+Drupal.OfflineSignup.emails = {};
 
 Drupal.behaviors.offlineSignup = function(context) {
   if ($('#offline-signup-page:not(.offline-signup-processed)').size()) {
@@ -24,6 +24,25 @@ Drupal.OfflineSignup.mailTaken = function(mail) {
     if (Drupal.OfflineSignup.emails[i] == mail) {
       return true;
     }
+  }
+  return false;
+}
+
+Drupal.OfflineSignup.genName = function(mail) {
+  var index = mail.indexOf("@");
+  var origName = mail.slice(0, index);
+  var name = origName;
+  var num = 0;
+  while (!Drupal.OfflineSignup.nameAvailable(name)) {
+    num++;
+    name = origName + num;
+  }
+  return name;
+}
+
+Drupal.OfflineSignup.nameAvailable = function(name) {
+  if (Drupal.OfflineSignup.emails[name] == undefined) {
+    return true;
   }
   return false;
 }

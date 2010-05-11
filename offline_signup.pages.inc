@@ -128,10 +128,10 @@ function theme_offline_signup_page() {
   drupal_add_css(drupal_get_path('module', 'offline_signup') .'/offline_signup.css');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
 
-  $result = db_query("SELECT uid, mail FROM {users} WHERE uid > 0");
+  $result = db_query("SELECT name, mail FROM {users} WHERE uid > 0");
   $emails = array();
   while ($data = db_fetch_object($result)) {
-    $emails[] = $data->mail;
+    $emails[$data->name] = $data->mail;
   }
   drupal_add_js(array('offlineSignup' => array('emails' => $emails)), 'setting');
 
