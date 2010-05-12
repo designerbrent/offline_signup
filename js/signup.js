@@ -48,6 +48,7 @@ Drupal.behaviors.offlineSignupContent = function() {
     $('input[name=create]', $registerForm).click(function() {
       var $inputs = $('input, textarea, select', $(this).parents('form'));
       var user = {};
+      var errors = new Array();
       $inputs.each(function(i, el) {
         if (el.type == 'checkbox') {
           user[el.name] = $(el).is(':checked') * 1;
@@ -61,23 +62,35 @@ Drupal.behaviors.offlineSignupContent = function() {
             case 'form_token':
               break;
             default:
+              if ($(el).hasClass('required') && !$(el).val()) {
+                var label = $(el).siblings('label').text();
+                label = label.substr(0, label.indexOf(':'));
+                errors.push(Drupal.t('@label field is required.', { '@label': label }));
+                $(el).addClass('error');
+              }
               user[el.name] = $(el).val();
               break;
           }
         }
       });
 
+      if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return false;
+      }
+
       // Mark user status as new.
       user.status = 'new';
 
       // Save new user locally.
       Drupal.OfflineSignup.users['"' + user.mail + '"'] = user;
-      // localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
+      localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
 
       // Reset forms and navigate back to the router form.
       $routerForm[0].reset();
       $registerForm.hide();
       alert('Account information saved.');
+      $inputs.removeClass('error');
       $routerForm.show();
       $registerForm[0].reset();
       $updateForm[0].reset();
