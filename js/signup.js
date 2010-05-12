@@ -45,6 +45,44 @@ Drupal.behaviors.offlineSignupContent = function() {
       $routerForm.show();
       return false;
     });
+    $('input[name=create]', $registerForm).click(function() {
+      var $inputs = $('input, textarea, select', $(this).parents('form'));
+      var user = {};
+      $inputs.each(function(i, el) {
+        if (el.type == 'checkbox') {
+          user[el.name] = $(el).is(':checked') * 1;
+        }
+        else {
+          switch (el.name) {
+            case 'back':
+            case 'create':
+            case 'form_build_id':
+            case 'form_id':
+            case 'form_token':
+              break;
+            default:
+              user[el.name] = $(el).val();
+              break;
+          }
+        }
+      });
+
+      // Mark user status as new.
+      user.status = 'new';
+
+      // Save new user locally.
+      Drupal.OfflineSignup.users['"' + user.mail + '"'] = user;
+      // localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
+
+      // Reset forms and navigate back to the router form.
+      $routerForm[0].reset();
+      $registerForm.hide();
+      alert('Account information saved.');
+      $routerForm.show();
+      $registerForm[0].reset();
+      $updateForm[0].reset();
+      return false;
+    });
 
     // Update form.
     $('input[name=mail]', $updateForm).focus(function() {
