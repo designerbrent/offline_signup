@@ -34,6 +34,8 @@ function offline_signup_user_register_form() {
   }
 
   if (module_exists('content_profile_registration')) {
+    module_load_include('inc', 'offline_signup', 'offline_signup.profile');
+
     $form += offline_signup_profile_types_form();
   }
 
@@ -66,6 +68,8 @@ function offline_signup_user_update_form() {
   );
 
   if (module_exists('content_profile')) {
+    module_load_include('inc', 'offline_signup', 'offline_signup.profile');
+
     $form += offline_signup_profile_types_form();
   }
 
