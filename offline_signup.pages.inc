@@ -11,6 +11,7 @@ function offline_signup_user_router_form() {
     '#title' => t('E-mail address'),
     '#maxlength' => EMAIL_MAX_LENGTH,
     '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
+    '#attributes' => array('placeholder' => 'email@example.com'),
     '#required' => TRUE
   );
   $form['next'] = array(
@@ -176,6 +177,14 @@ function theme_offline_signup_user_router_form($form) {
   return drupal_render($form);
 }
 
+function theme_offline_signup_user_register_form($form) {
+  return drupal_render($form);
+}
+
+function theme_offline_signup_user_update_form($form) {
+  return drupal_render($form);
+}
+
 function theme_offline_signup_content_settings() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/settings.js');
 
@@ -216,20 +225,20 @@ function theme_offline_signup_menu_bar() {
 
   $items = array(
     'signup' => array(
-      'data' => '<a href="#signup" class="active">'. t('Sign-up form') .'</a>',
-      'class' => 'signup active'
+      'data' => '<a href="#signup" class="active">'. t('Sign-up') .'</a>',
+      'class' => 'signup button active'
     ),
     'settings' => array(
       'data' => '<a href="#settings">'. t('Settings') .'</a>',
-      'class' => 'settings'
+      'class' => 'settings button'
     ),
     'winners' => array(
       'data' => '<a href="#winners">'. t('Winners') .'</a>',
-      'class' => 'winners'
+      'class' => 'winners button'
     ),
     'sync' => array(
       'data' => '<a href="#sync">'. t('Sync') .'</a>',
-      'class' => 'sync'
+      'class' => 'sync button'
     )
   );
   return theme('item_list', $items, NULL, 'ul', array('id' => 'offline-signup-menu-bar', 'class' => 'links'));

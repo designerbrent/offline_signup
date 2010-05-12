@@ -78,6 +78,12 @@ function offline_signup_theme() {
     'offline_signup_user_router_form' => array(
       'arguments' => array('form' => NULL)
     ),
+    'offline_signup_user_register_form' => array(
+      'arguments' => array('form' => NULL)
+    ),
+    'offline_signup_user_update_form' => array(
+      'arguments' => array('form' => NULL)
+    ),
     'offline_signup_content_settings' => array(
       'arguments' => array()
     ),
