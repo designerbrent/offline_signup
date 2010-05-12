@@ -33,7 +33,9 @@ function offline_signup_user_register_form() {
     $form += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
   }
 
-  $form += offline_signup_profile_types_form();
+  if (module_exists('content_profile_registration')) {
+    $form += offline_signup_profile_types_form();
+  }
 
   $form['buttons'] = array('#weight' => 10);
   $form['buttons']['back'] = array(
@@ -63,7 +65,9 @@ function offline_signup_user_update_form() {
     '#size' => 25
   );
 
-  $form += offline_signup_profile_types_form();
+  if (module_exists('content_profile')) {
+    $form += offline_signup_profile_types_form();
+  }
 
   $form['buttons'] = array('#weight' => 10);
   $form['buttons']['back'] = array(
