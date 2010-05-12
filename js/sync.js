@@ -47,16 +47,19 @@ Drupal.behaviors.offlineSignupSync = function() {
       if (length > 0) {
         // Users exist locally clear and populate table.
         $table = $('#offline-signup-content-sync table.sticky-enabled');
-        $('tbody tr', $table).remove();
+        var tbody = $('<tbody>');
         for (var i in Drupal.OfflineSignup.users) {
           var user = Drupal.OfflineSignup.users[i];
           var row = $('<tr>');
-          $(row).append('<td>' + Drupal.checkPlain(user.name) + '</td>');
-          $(row).append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
-          $(row).append('<td>TODO</td>');
-          $(row).append('<td>' + Drupal.checkPlain(user.status) + '</td>');
-          $('tbody', $table).append($(row));
+          row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
+          row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
+          row.append('<td>TODO</td>');
+          row.append('<td>' + Drupal.checkPlain(user.status) + '</td>');
+          tbody.append(row);
         }
+
+        $('tbody', $table).replaceWith(tbody);
+
         $header = Drupal.OfflineSignup.activeHeader;
         Drupal.OfflineSignup.sortTable($('#offline-signup-content-sync table.sticky-enabled th').index($header), $header.data('sort'));
       }
@@ -90,6 +93,6 @@ Drupal.OfflineSignup.sortTable = function(column, sort) {
     $table.children('tbody').append(row);
   });
 
-  $('tbody tr:odd', $table).removeClass('even').addClass('odd');
-  $('tbody tr:even', $table).removeClass('odd').addClass('even');
+  $('tbody tr:even', $table).removeClass('even').addClass('odd');
+  $('tbody tr:odd', $table).removeClass('odd').addClass('even');
 }
