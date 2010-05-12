@@ -37,6 +37,39 @@ Drupal.behaviors.offlineSignupSync = function() {
       });
     });
 
+    // When tab is active, we need to (re)populate the table rows for all local
+    // users. Override the default focus method with our own.
+    Drupal.OfflineSignup.menuBar.tabs['sync'].focus = function(animate) {
+      // Before we reveal the sync page, we first (re)populate the table with
+      // users if there are any.
+      var length = 0;
+      for (var i in Drupal.OfflineSignup.users) length++;
+      if (length > 0) {
+        // Users exist locally clear and populate table.
+        $table = $('#offline-signup-content-sync table.sticky-enabled');
+        $('tbody tr', $table).remove();
+        for (var i in Drupal.OfflineSignup.users) {
+          var user = Drupal.OfflineSignup.users[i];
+          var row = $('<tr>');
+          $(row).append('<td>' + Drupal.checkPlain(user.name) + '</td>');
+          $(row).append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
+          $(row).append('<td>TODO</td>');
+          $(row).append('<td>' + Drupal.checkPlain(user.status) + '</td>');
+          $('tbody', $table).append($(row));
+        }
+        $header = Drupal.OfflineSignup.activeHeader;
+        Drupal.OfflineSignup.sortTable($('#offline-signup-content-sync table.sticky-enabled th').index($header), $header.data('sort'));
+      }
+
+      $(this.element).addClass('active').parent().addClass('active');
+      if (animate) {
+        $('#offline-signup-content-' + this.type).slideDown('fast');
+      }
+      else {
+        $('#offline-signup-content-' + this.type).show();
+      }
+    }
+
     $('#offline-signup-content-sync').addClass('offline-signup-sync-processed');
   }
 }
