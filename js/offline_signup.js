@@ -2,6 +2,7 @@
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.OfflineSignup.emails = {};
+Drupal.OfflineSignup.users = {};
 
 Drupal.behaviors.offlineSignup = function(context) {
   if ($('#offline-signup-page:not(.offline-signup-processed)').size()) {
@@ -11,6 +12,17 @@ Drupal.behaviors.offlineSignup = function(context) {
     }
 
     Drupal.OfflineSignup.emails = Drupal.settings.offlineSignup.emails;
+
+    if (users = localStorage.getItem('offlineSignupUsers')) {
+      users = Drupal.parseJson(users);
+      Drupal.OfflineSignup.users = users;
+    }
+
+    // Add emails to list of taken emails.
+    for (var i in Drupal.OfflineSignup.users) {
+      var user = Drupal.OfflineSignup.users[i];
+      Drupal.OfflineSignup.emails[user.name] = user.mail;
+    }
 
     // Reveal the page.
     $('#offline-signup-page').show();
