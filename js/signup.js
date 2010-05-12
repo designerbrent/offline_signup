@@ -79,6 +79,9 @@ Drupal.behaviors.offlineSignupContent = function() {
         return false;
       }
 
+      // Generate name from mail.
+      user.name = Drupal.OfflineSignup.genName(user.mail);
+
       // Mark user status as new.
       user.status = 'new';
 
