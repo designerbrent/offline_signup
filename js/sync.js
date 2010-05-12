@@ -61,7 +61,8 @@ Drupal.behaviors.offlineSignupSync = function() {
         $('tbody', $table).replaceWith(tbody);
 
         $header = Drupal.OfflineSignup.activeHeader;
-        Drupal.OfflineSignup.sortTable($('#offline-signup-content-sync table.sticky-enabled th').index($header), $header.data('sort'));
+        var index = $('#offline-signup-content-sync table.sticky-enabled th').index($header.parents('th'));
+        Drupal.OfflineSignup.sortTable(index, $header.data('sort'));
       }
 
       $(this.element).addClass('active').parent().addClass('active');
@@ -90,6 +91,8 @@ Drupal.OfflineSignup.sortTable = function(column, sort) {
   });
 
   $.each(rows, function(index, row) {
+    $('td', $(row)).removeClass('active');
+    $(row).children('td').eq(column).addClass('active');
     $table.children('tbody').append(row);
   });
 
