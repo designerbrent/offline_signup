@@ -207,10 +207,11 @@ function theme_offline_signup_content_sync() {
     '<a href="#sync">'. t('Name') . $image .'</a>',
     '<a href="#sync">'. t('E-mail') .'</a>',
     '<a href="#sync">'. t('Profile(s)') .'</a>',
-    '<a href="#sync">'. t('Status') .'</a>'
+    '<a href="#sync">'. t('Status') .'</a>',
+    t('Actions')
   );
   // Add empty row.
-  $rows = array(array('data' => array(array('data' => t('No users added to this event.'), 'class' => 'active', 'colspan' => 4)), 'class' => 'empty'));
+  $rows = array(array('data' => array(array('data' => t('No users added to this event.'), 'class' => 'active', 'colspan' => 5)), 'class' => 'empty'));
 
   $output = '<div id="offline-signup-content-sync">';
   $output .= drupal_get_form('offline_signup_sync_form');
