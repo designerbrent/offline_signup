@@ -122,7 +122,41 @@ Drupal.OfflineSignup.stripeTable = function($table) {
 }
 
 Drupal.OfflineSignup.editUser = function(row) {
-  
+  var mail = $('td:nth(1)', row).text();
+  var user = Drupal.OfflineSignup.users[mail];
+
+  switch (user.status) {
+    case 'new':
+      $registerForm = $('#offline-signup-user-register-form');
+
+      // Populate the register form.
+      var $inputs = $('input, textarea, select', $registerForm);
+      $inputs.each(function(i, el) {
+        if (user[el.name] != undefined) {
+          if (el.type == 'checkbox') {
+            $(el).attr('checked', ((user[el.name]) ? 'checked' : ''));
+          }
+          else {
+            $(el).val(user[el.name]);
+          }
+        }
+      });
+
+      // Ensure router form is hidden.
+      $('#offline-signup-user-router-form').hide();
+
+      // Make register form show.
+      $registerForm.show();
+
+      // We want to redirect back to this tab.
+      Drupal.OfflineSignup.redirect = 'sync';
+
+      $(Drupal.OfflineSignup.menuBar.tabs['signup'].element).click();
+      break;
+    case 'update':
+      
+      break;
+  }
 }
 
 Drupal.OfflineSignup.removeUser = function(row) {
@@ -130,6 +164,12 @@ Drupal.OfflineSignup.removeUser = function(row) {
   var mail = $('td:nth(1)', row).text();
   delete(Drupal.OfflineSignup.users[mail]);
   localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
+  for (var i in Drupal.OfflineSignup.emails) {
+    if (Drupal.OfflineSignup.emails[i] == mail) {
+      delete(Drupal.OfflineSignup.emails[i]);
+      break;
+    }
+  }
   $(row).remove();
   if (!$('tbody', $table).html()) {
     $('tbody', $table).append('<tr><td class="active" colspan="5">' + Drupal.t('No users added to this event.') + '</td></tr>');

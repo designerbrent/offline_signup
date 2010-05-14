@@ -79,14 +79,19 @@ Drupal.behaviors.offlineSignupContent = function() {
         return false;
       }
 
-      // Generate name from mail.
-      user.name = Drupal.OfflineSignup.genName(user.mail);
+      if (Drupal.OfflineSignup.users[user.mail] == undefined) {
+        // Generate name from mail.
+        user.name = Drupal.OfflineSignup.genName(user.mail);
+      }
+      else {
+        user.name = Drupal.OfflineSignup.users[user.mail].name;
+      }
 
       // Mark user status as new.
       user.status = 'new';
 
       // Save new user locally.
-      Drupal.OfflineSignup.users['"' + user.mail + '"'] = user;
+      Drupal.OfflineSignup.users[user.mail] = user;
       localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
 
       // Reset forms and navigate back to the router form.
