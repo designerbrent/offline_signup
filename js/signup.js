@@ -97,6 +97,13 @@ Drupal.behaviors.offlineSignupContent = function() {
       $routerForm.show();
       $registerForm[0].reset();
       $updateForm[0].reset();
+
+      // Redirect if needed.
+      if (Drupal.OfflineSignup.redirect != undefined) {
+        $(Drupal.OfflineSignup.menuBar.tabs[Drupal.OfflineSignup.redirect].element).click();
+        delete(Drupal.OfflineSignup.redirect);
+      }
+
       return false;
     });
 
