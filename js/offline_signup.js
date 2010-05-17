@@ -31,6 +31,13 @@ Drupal.behaviors.offlineSignup = function(context) {
   }
 }
 
+Drupal.OfflineSignup.getUser = function(mail) {
+  if (Drupal.OfflineSignup.users[mail]) {
+    return Drupal.OfflineSignup.users[mail];
+  }
+  return FALSE;
+}
+
 Drupal.OfflineSignup.mailTaken = function(mail) {
   for (var i in Drupal.OfflineSignup.emails) {
     if (Drupal.OfflineSignup.emails[i] == mail) {
