@@ -35,7 +35,7 @@ Drupal.OfflineSignup.getUser = function(mail) {
   if (Drupal.OfflineSignup.users[mail]) {
     return Drupal.OfflineSignup.users[mail];
   }
-  return FALSE;
+  return false;
 }
 
 Drupal.OfflineSignup.User = function(mail) {
