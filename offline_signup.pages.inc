@@ -90,6 +90,8 @@ function offline_signup_user_update_form() {
 }
 
 function offline_signup_settings_form() {
+  $form['#action'] = url('offline_signup/ajax/settings');
+  $form['#cache'] = TRUE;
   $form['information'] = array(
     '#type' => 'fieldset',
     '#title' => t('Event information')
@@ -116,6 +118,14 @@ function offline_signup_settings_form() {
   return $form;
 }
 
+function offline_signup_settings_form_validate($form, &$form_state) {
+  
+}
+
+function offline_signup_settings_form_submit($form, &$form_state) {
+  
+}
+
 function offline_signup_winners_page() {
   
 }
@@ -136,6 +146,8 @@ function offline_signup_sync_form() {
 function theme_offline_signup_page() {
   drupal_add_css(drupal_get_path('module', 'offline_signup') .'/offline_signup.css');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
+
+  drupal_add_js('misc/jquery.form.js', 'core');
 
   $result = db_query("SELECT name, mail FROM {users} WHERE uid > 0");
   $emails = array();

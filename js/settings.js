@@ -24,14 +24,28 @@ Drupal.behaviors.offlineSignupSettings = function() {
 
     $('input[name=save]', $settingsForm).click(function() {
       if ($('input[name=event]', $settingsForm).val()) {
-        Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
-        Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
-        localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
+        $settingsForm.ajaxSubmit({
+          success: function(responseText, status) {
+            if (responseText.status == true) {
+              /*Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
+              Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
+              localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
 
-        // Enable tabs.
-        if (Drupal.OfflineSignup.menuBar) {
-          Drupal.OfflineSignup.menuBar.enableTabs('settings');
-        }
+              // Enable tabs.
+              if (Drupal.OfflineSignup.menuBar) {
+                Drupal.OfflineSignup.menuBar.enableTabs('settings');
+              }*/
+            }
+            alert(responseText.message);
+          },
+          complete: function(response, status) {
+            if (status != 'success' && Drupal.OfflineSignup.settings.event == '') {
+              alert(Drupal.t('There was a problem connecting to the server. Settings were not saved.'));
+            }
+          },
+          dataType: 'json',
+          type: 'POST'
+        });
       }
       else {
         alert(Drupal.t('Please enter an event.'));
