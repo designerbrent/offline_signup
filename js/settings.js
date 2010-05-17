@@ -37,6 +37,12 @@ Drupal.behaviors.offlineSignupSettings = function() {
               }*/
             }
             alert(responseText.message);
+            // We want to redirect to the signup form.
+            window.location = Drupal.settings.basePath + 'offline/signup#signup';
+            // Due to the page doesn't actually reload because we supplied a
+            // fragment, we force a reload. This will effectively load all
+            // pre-existing user's data that were created via the set event.
+            window.location.reload();
           },
           complete: function(response, status) {
             if (status != 'success' && Drupal.OfflineSignup.settings.event == '') {

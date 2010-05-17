@@ -118,12 +118,8 @@ function offline_signup_settings_form() {
   return $form;
 }
 
-function offline_signup_settings_form_validate($form, &$form_state) {
-  
-}
-
 function offline_signup_settings_form_submit($form, &$form_state) {
-  
+  variable_set('offline_signup_event', $form_state['values']['event']);
 }
 
 function offline_signup_winners_page() {
