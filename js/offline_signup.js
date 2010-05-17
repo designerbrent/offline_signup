@@ -38,6 +38,13 @@ Drupal.OfflineSignup.getUser = function(mail) {
   return FALSE;
 }
 
+Drupal.OfflineSignup.User = function(mail) {
+  this.mail = mail;
+  this.name = '';
+  this.status = 'new';
+  this.source = 'local';
+}
+
 Drupal.OfflineSignup.mailTaken = function(mail) {
   for (var i in Drupal.OfflineSignup.emails) {
     if (Drupal.OfflineSignup.emails[i] == mail) {
@@ -88,6 +95,12 @@ Drupal.OfflineSignup.toJson = function(v) {
         output.push('"' + i + '"' + ": " + Drupal.OfflineSignup.toJson(v[i]));
       }
       return '{ ' + output.join(', ') + ' }';
+    case 'array':
+      var output = new Array();
+      for (var i in v) {
+        output.push(Drupal.OfflineSignup.toJson(v[i]));
+      }
+      return '[ ' + output.join(', ') + ' ]';
     default:
       return 'null';
   }
