@@ -38,13 +38,6 @@ Drupal.OfflineSignup.getUser = function(mail) {
   return false;
 }
 
-Drupal.OfflineSignup.User = function(mail) {
-  this.mail = mail;
-  this.name = '';
-  this.status = 'new';
-  this.source = 'local';
-}
-
 Drupal.OfflineSignup.mailTaken = function(mail) {
   for (var i in Drupal.OfflineSignup.emails) {
     if (Drupal.OfflineSignup.emails[i] == mail) {
