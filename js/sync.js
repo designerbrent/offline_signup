@@ -127,7 +127,7 @@ Drupal.OfflineSignup.editUser = function(row) {
 
   switch (user.status) {
     case 'new':
-      $registerForm = $('#offline-signup-user-register-form');
+      var $registerForm = $('#offline-signup-user-register-form');
 
       // Populate the register form.
       var $inputs = $('input, textarea, select', $registerForm);
@@ -154,7 +154,31 @@ Drupal.OfflineSignup.editUser = function(row) {
       $(Drupal.OfflineSignup.menuBar.tabs['signup'].element).click();
       break;
     case 'update':
-      
+      var $updateForm = $('#offline-signup-user-update-form');
+
+      // Populate the update form.
+      var $inputs = $('input, textarea, select', $updateForm);
+      $inputs.each(function(i, el) {
+        if (user[el.name] != undefined) {
+          if (el.type == 'checkbox') {
+            $(el).attr('checked', ((user[el.name]) ? 'checked' : ''));
+          }
+          else {
+            $(el).val(user[el.name]);
+          }
+        }
+      });
+
+      // Ensure router form is hidden.
+      $('#offline-signup-user-router-form').hide();
+
+      // Make update form show.
+      $updateForm.show();
+
+      // We want to redirect back to this tab.
+      Drupal.OfflineSignup.redirect = 'sync';
+
+      $(Drupal.OfflineSignup.menuBar.tabs['signup'].element).click();
       break;
   }
 }
