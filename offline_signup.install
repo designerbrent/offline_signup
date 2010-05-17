@@ -1,0 +1,9 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function offline_signup_uninstall() {
+  variable_del('offline_signup_event');
+}
