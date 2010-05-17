@@ -39,6 +39,13 @@ function offline_signup_menu() {
     'access arguments' => array('access offline signup page'),
     'file' => 'offline_signup.pages.inc'
   );
+
+  $items['offline_signup/ajax/settings'] = array(
+    'page callback' => 'offline_signup_ajax_settings',
+    'access arguments' => array('administer offline signup'),
+    'file' => 'offline_signup.ajax.inc',
+    'type' => MENU_CALLBACK
+  );
   return $items;
 }
 
