@@ -5,11 +5,26 @@ Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.behaviors.offlineSignupSync = function() {
   if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
     // Add our sub-tabs of 'Event' and 'Local'.
-    var ul = $('<ul class="links">');
+    var ul = $('<ul id="offline-signup-sync-sub-tabs" class="links">');
     ul.append('<li><a href="#sync">' + Drupal.t('Event') + '</a></li>');
     ul.append('<li class="active"><a class="active" href="#sync">' + Drupal.t('Local') + '</a></li>');
     $('#offline-signup-sync-form').after(ul);
     Drupal.OfflineSignup.tableType = 'local';
+    // Add click events to sub-tabs.
+    $('#offline-signup-sync-sub-tabs li:first a').click(function() {
+      delete(Drupal.OfflineSignup.tableType);
+      $('#offline-signup-sync-sub-tabs li:last').removeClass('active').children('a').removeClass('active');
+      $(this).addClass('active').parents('li').addClass('active');
+      Drupal.OfflineSignup.updateTable();
+      return false;
+    });
+    $('#offline-signup-sync-sub-tabs li:last a').click(function() {
+      Drupal.OfflineSignup.tableType = 'local';
+      $('#offline-signup-sync-sub-tabs li:first').removeClass('active').children('a').removeClass('active');
+      $(this).addClass('active').parents('li').addClass('active');
+      Drupal.OfflineSignup.updateTable();
+      return false;
+    });
 
     // Store the ASC and DESC images and remove the DESC from displaying by default.
     Drupal.OfflineSignup.imgASC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:first');

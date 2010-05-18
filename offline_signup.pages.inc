@@ -160,7 +160,8 @@ function theme_offline_signup_page() {
       $users[$data->mail] = array(
         'mail' => $data->mail,
         'name' => $data->name,
-        'source' => 'server'
+        'source' => 'server',
+        'status' => ''
       );
     }
     drupal_add_js(array('offlineSignup' => array('users' => $users)), 'setting');
