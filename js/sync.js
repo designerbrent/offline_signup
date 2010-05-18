@@ -4,6 +4,13 @@ Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 
 Drupal.behaviors.offlineSignupSync = function() {
   if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
+    // Add our sub-tabs of 'Event' and 'Local'.
+    var ul = $('<ul class="links">');
+    ul.append('<li><a href="#sync">' + Drupal.t('Event') + '</a></li>');
+    ul.append('<li class="active"><a class="active" href="#sync">' + Drupal.t('Local') + '</a></li>');
+    $('#offline-signup-sync-form').after(ul);
+    Drupal.OfflineSignup.tableType = 'local';
+
     // Store the ASC and DESC images and remove the DESC from displaying by default.
     Drupal.OfflineSignup.imgASC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:first');
     Drupal.OfflineSignup.imgDESC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:last').remove();
@@ -78,10 +85,16 @@ Drupal.OfflineSignup.updateTable = function() {
     var tbody = $('<tbody>');
     for (var i in Drupal.OfflineSignup.users) {
       var user = Drupal.OfflineSignup.users[i];
+
+      if (Drupal.OfflineSignup.tableType == 'local' && user.source != 'local') {
+        continue;
+      }
+
       var row = $('<tr>');
       row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
       row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
       row.append('<td>TODO</td>');
+      row.append('<td>' + Drupal.checkPlain(user.source) + '</td>');
       row.append('<td>' + Drupal.checkPlain(user.status) + '</td>');
       row.append($('<td>').append(Drupal.OfflineSignup.actionLinks()));
       tbody.append(row);
