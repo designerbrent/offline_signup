@@ -27,14 +27,12 @@ Drupal.behaviors.offlineSignupSettings = function() {
         $settingsForm.ajaxSubmit({
           success: function(responseText, status) {
             if (responseText.status == true) {
-              /*Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
-              Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
-              localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
+              Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
 
               // Enable tabs.
               if (Drupal.OfflineSignup.menuBar) {
                 Drupal.OfflineSignup.menuBar.enableTabs('settings');
-              }*/
+              }
             }
             alert(responseText.message);
             // We want to redirect to the signup form.
@@ -52,6 +50,11 @@ Drupal.behaviors.offlineSignupSettings = function() {
           dataType: 'json',
           type: 'POST'
         });
+
+        // Save changes to the number of drawings.
+        // Save settings.
+        Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
+        localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
       }
       else {
         alert(Drupal.t('Please enter an event.'));
