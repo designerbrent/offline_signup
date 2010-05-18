@@ -122,11 +122,11 @@ function offline_signup_settings_form_submit($form, &$form_state) {
   variable_set('offline_signup_event', $form_state['values']['event']);
 }
 
-function offline_signup_winners_form() {
+function offline_signup_drawings_form() {
   $form['fieldset'] = array(
     '#type' => 'fieldset',
     '#title' => t('Drawing 1'),
-    '#theme' => 'offline_signup_winners_form_fieldset'
+    '#theme' => 'offline_signup_drawings_form_fieldset'
   );
   $form['fieldset']['select'] = array(
     '#type' => 'button',
@@ -216,7 +216,7 @@ function theme_offline_signup_content() {
   $output = '<div id="offline-signup-content">';
   $output .= theme('offline_signup_content_signup');
   $output .= theme('offline_signup_content_settings');
-  $output .= theme('offline_signup_content_winners');
+  $output .= theme('offline_signup_content_drawings');
   $output .= theme('offline_signup_content_sync');
   $output .= '</div>';
   return $output;
@@ -254,16 +254,16 @@ function theme_offline_signup_content_settings() {
   return $output;
 }
 
-function theme_offline_signup_content_winners() {
-  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/winners.js');
+function theme_offline_signup_content_drawings() {
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/drawings.js');
 
-  $output = '<div id="offline-signup-content-winners">';
-  $output .= drupal_get_form('offline_signup_winners_form');
+  $output = '<div id="offline-signup-content-drawings">';
+  $output .= drupal_get_form('offline_signup_drawings_form');
   $output .= '</div>';
   return $output;
 }
 
-function theme_offline_signup_winners_form_fieldset($form) {
+function theme_offline_signup_drawings_form_fieldset($form) {
   $output = '<div class="drawing-stage-1">'. drupal_render($form['select']) .'</div>';
   $output .= '<div class="drawing-stage-2 drawing-stage-3">';
   $output .= drupal_render($form['name']) . drupal_render($form['mail']) . drupal_render($form['date']);
@@ -303,7 +303,7 @@ function theme_offline_signup_content_sync() {
 
 function theme_offline_signup_menu_bar() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/menubar.js');
-  drupal_add_js(array('offlineSignup' => array('menuTabs' => array('signup', 'settings', 'winners', 'sync'))), 'setting');
+  drupal_add_js(array('offlineSignup' => array('menuTabs' => array('signup', 'settings', 'drawings', 'sync'))), 'setting');
 
   $items = array(
     'signup' => array(
@@ -314,9 +314,9 @@ function theme_offline_signup_menu_bar() {
       'data' => '<a href="#settings">'. t('Settings') .'</a>',
       'class' => 'settings button'
     ),
-    'winners' => array(
-      'data' => '<a href="#winners">'. t('Winners') .'</a>',
-      'class' => 'winners button'
+    'drawings' => array(
+      'data' => '<a href="#drawings">'. t('Drawings') .'</a>',
+      'class' => 'drawings button'
     ),
     'sync' => array(
       'data' => '<a href="#sync">'. t('Sync') .'</a>',
