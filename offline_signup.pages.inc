@@ -152,6 +152,20 @@ function theme_offline_signup_page() {
   }
   drupal_add_js(array('offlineSignup' => array('emails' => $emails)), 'setting');
 
+  if ($event = variable_get('offline_signup_event', '')) {
+    // Grab information for existing users based on the active event.
+    $users = array();
+    $result = db_query("SELECT mail, name FROM {users} AS u INNER JOIN {offline_signup_event_users} AS eu ON u.uid = eu.uid AND eu.event = '%s'", $event);
+    while ($data = db_fetch_object($result)) {
+      $users[$data->mail] = array(
+        'mail' => $data->mail,
+        'name' => $data->name,
+        'source' => 'server'
+      );
+    }
+    drupal_add_js(array('offlineSignup' => array('users' => $users)), 'setting');
+  }
+
   $output = theme('offline_signup_dependency_message', t('This page is dependent on JavaScript to function.'));
   $output .= '<div id="offline-signup-page">'. theme('offline_signup') .'</div>';
   return $output;

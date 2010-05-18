@@ -13,9 +13,13 @@ Drupal.behaviors.offlineSignup = function(context) {
 
     Drupal.OfflineSignup.emails = Drupal.settings.offlineSignup.emails;
 
+    if (Drupal.settings.offlineSignup.users) {
+      Drupal.OfflineSignup.users = Drupal.settings.offlineSignup.users;
+    }
+
     if (users = localStorage.getItem('offlineSignupUsers')) {
       users = Drupal.parseJson(users);
-      Drupal.OfflineSignup.users = users;
+      $.extend(Drupal.OfflineSignup.users, users);
     }
 
     // Add emails to list of taken emails.

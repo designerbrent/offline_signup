@@ -2,8 +2,43 @@
 // $Id$
 
 /**
+ * Implementation of hook_schema().
+ */
+function offline_signup_schema() {
+  $schema['offline_signup_event_users'] = array(
+    'description' => 'Stores what users were created via what event.',
+    'fields' => array(
+      'uid' => array(
+        'description' => "User's {users}.uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'event' => array(
+        'description' => 'An event.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      )
+    ),
+    'unique keys' => array('uid_event' => array('uid', 'event'))
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function offline_signup_install() {
+  drupal_install_schema('offline_signup');
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function offline_signup_uninstall() {
+  drupal_uninstall_schema('offline_signup');
   variable_del('offline_signup_event');
 }
