@@ -65,7 +65,41 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
 
   $('#offline-signup-content-drawings').append(drawing.form);
 
+  // Set click events.
+  $('input[name=select_winner]', drawing.form).click(function() {
+    drawing.selectWinner();
+    return false;
+  });
+  $('input[name=select_another]', drawing.form).click(function() {
+    drawing.selectWinner();
+    return false;
+  });
+  $('input[name=keep_winner]', drawing.form).click(function() {
+    drawing.keepWinner();
+    return false;
+  });
+  $('input[name=cancel]', drawing.form).click(function() {
+    drawing.cancelWinner();
+    return false;
+  });
+
   return this.drawings.push(drawing);
+}
+
+Drupal.OfflineSignup.Drawings.prototype.save = function() {
+  var drawings = new Array();
+  for (var i in drawings) {
+    if (drawings[i].state > 1) {
+      drawings.push({ mail: drawings[i].user.mail, state: drawings[i].state });
+    }
+  }
+
+  localStorage.setItem('offlineSignupDrawings', Drupal.OfflineSignup.toJson(drawings));
+}
+
+Drupal.OfflineSignup.Drawings.prototype.nextDrawing = function(id) {
+  // The id is not 0-indexed so we effectively grab the next drawing.
+  return this.drawings[id];
 }
 
 Drupal.OfflineSignup.Drawing = function() {
@@ -75,7 +109,13 @@ Drupal.OfflineSignup.Drawing = function() {
 }
 
 Drupal.OfflineSignup.Drawing.prototype.enableState = function(state) {
-  var state = (state != undefined) ? state : this.state;
+  if (state == undefined) {
+    state = this.state;
+  }
+  else {
+    this.state = state;
+    Drupal.OfflineSignup.drawings.save();
+  }
 
   switch (state) {
     case 0:
@@ -84,6 +124,8 @@ Drupal.OfflineSignup.Drawing.prototype.enableState = function(state) {
       break;
     case 1:
       $('.drawing-state-2, .drawing-state-3', this.form).hide();
+      $('.drawing-state-1', this.form).show();
+      $('input[name=select_winner]', this.form).attr('disabled', false);
       break;
     case 2:
       $('.drawing-state-1, .drawing-state-3', this.form).hide();
@@ -94,4 +136,61 @@ Drupal.OfflineSignup.Drawing.prototype.enableState = function(state) {
       $('.drawing-state-3', this.form).show();
       break;
   }
+}
+
+Drupal.OfflineSignup.Drawing.prototype.selectWinner = function() {
+  var emails = new Array();
+  for (var i in Drupal.OfflineSignup.users) {
+    emails.push(Drupal.OfflineSignup.users[i].mail);
+  }
+
+  // Randomly select a user.
+  var randomMail = emails[Math.floor(Math.random()*emails.length)];
+  if (user = Drupal.OfflineSignup.users[randomMail]) {
+    this.user = user;
+    this.date = new Date();
+
+    this.setInfo('Name', user.name);
+    this.setInfo('E-mail', user.mail);
+
+    // Format date and time selected.
+    var hours = this.date.getHours();
+    var minutes = this.date.getMinutes();
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    var date = this.date.getMonth() + '/' + this.date.getDate() + '/' + this.date.getFullYear() + ' - ' + hours + ':' + minutes;
+    this.setInfo('Selected', date);
+
+    // Enabling the state this way saves locally the changes made.
+    this.enableState(2);
+  }
+  else {
+    alert(Drupal.t('There was a problem selecting a winner.'));
+  }
+}
+
+Drupal.OfflineSignup.Drawing.prototype.setInfo = function(label, text) {
+  var $info = $('label:contains(' + label + ')', this.form);
+  var $parent = $info.parent();
+
+  $parent.empty().append($info).append(Drupal.t(text));
+}
+
+Drupal.OfflineSignup.Drawing.prototype.keepWinner = function() {
+  this.enableState(3);
+  if (nextDrawing = Drupal.OfflineSignup.drawings.nextDrawing(this.id)) {
+    nextDrawing.enableState(1);
+  }
+}
+
+Drupal.OfflineSignup.Drawing.prototype.cancelWinner = function() {
+  if (this.state < 3) {
+    delete(this.user);
+    delete(this.date);
+
+    // Enabling the state this way saves locally the changes made.
+    this.enableState(1);
+  }
+  return false;
 }
