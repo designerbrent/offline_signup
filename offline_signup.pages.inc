@@ -128,9 +128,10 @@ function offline_signup_drawings_form() {
     '#title' => t('Drawing 1'),
     '#theme' => 'offline_signup_drawings_form_fieldset'
   );
-  $form['fieldset']['select'] = array(
+  $form['fieldset']['select_winner'] = array(
     '#type' => 'button',
-    '#value' => t('Select a Winner Now')
+    '#value' => t('Select a Winner Now'),
+    '#name' => 'select_winner'
   );
   $form['fieldset']['name'] = array(
     '#type' => 'item',
@@ -149,15 +150,18 @@ function offline_signup_drawings_form() {
   );
   $form['fieldset']['select_another'] = array(
     '#type' => 'button',
-    '#value' => t('Select another')
+    '#value' => t('Select another'),
+    '#name' => 'select_another'
   );
   $form['fieldset']['keep_winner'] = array(
     '#type' => 'submit',
-    '#value' => t('Keep this one')
+    '#value' => t('Keep this one'),
+    '#name' => 'keep_winner'
   );
   $form['fieldset']['cancel'] = array(
     '#type' => 'button',
-    '#value' => t('Cancel')
+    '#value' => t('Cancel'),
+    '#name' => 'cancel'
   );
   return $form;
 }
@@ -264,11 +268,11 @@ function theme_offline_signup_content_drawings() {
 }
 
 function theme_offline_signup_drawings_form_fieldset($form) {
-  $output = '<div class="drawing-stage-1">'. drupal_render($form['select']) .'</div>';
-  $output .= '<div class="drawing-stage-2 drawing-stage-3">';
+  $output = '<div class="drawing-state-1">'. drupal_render($form['select_winner']) .'</div>';
+  $output .= '<div class="drawing-state-2 drawing-state-3">';
   $output .= drupal_render($form['name']) . drupal_render($form['mail']) . drupal_render($form['date']);
   $output .= '</div>';
-  $output .= '<div class="drawing-stage-2">';
+  $output .= '<div class="drawing-state-2">';
   $output .= drupal_render($form['select_another']) . drupal_render($form['keep_winner']) . drupal_render($form['cancel']);
   $output .= '</div>';
   return $output;
