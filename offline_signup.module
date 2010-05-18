@@ -94,6 +94,12 @@ function offline_signup_theme() {
     'offline_signup_content_settings' => array(
       'arguments' => array()
     ),
+    'offline_signup_content_winners' => array(
+      'arguments' => array()
+    ),
+    'offline_signup_winners_form_fieldset' => array(
+      'arguments' => array('form' => NULL)
+    ),
     'offline_signup_content_sync' => array(
       'arguments' => array()
     ),

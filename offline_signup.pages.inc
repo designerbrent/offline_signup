@@ -122,8 +122,44 @@ function offline_signup_settings_form_submit($form, &$form_state) {
   variable_set('offline_signup_event', $form_state['values']['event']);
 }
 
-function offline_signup_winners_page() {
-  
+function offline_signup_winners_form() {
+  $form['fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Drawing 1'),
+    '#theme' => 'offline_signup_winners_form_fieldset'
+  );
+  $form['fieldset']['select'] = array(
+    '#type' => 'button',
+    '#value' => t('Select a Winner Now')
+  );
+  $form['fieldset']['name'] = array(
+    '#type' => 'item',
+    '#title' => t('Name'),
+    '#value' => ''
+  );
+  $form['fieldset']['mail'] = array(
+    '#type' => 'item',
+    '#title' => t('E-mail'),
+    '#value' => ''
+  );
+  $form['fieldset']['date'] = array(
+    '#type' => 'item',
+    '#title' => t('Selected'),
+    '#value' => ''
+  );
+  $form['fieldset']['select_another'] = array(
+    '#type' => 'button',
+    '#value' => t('Select another')
+  );
+  $form['fieldset']['keep_winner'] = array(
+    '#type' => 'submit',
+    '#value' => t('Keep this one')
+  );
+  $form['fieldset']['cancel'] = array(
+    '#type' => 'button',
+    '#value' => t('Cancel')
+  );
+  return $form;
 }
 
 function offline_signup_sync_form() {
@@ -180,6 +216,7 @@ function theme_offline_signup_content() {
   $output = '<div id="offline-signup-content">';
   $output .= theme('offline_signup_content_signup');
   $output .= theme('offline_signup_content_settings');
+  $output .= theme('offline_signup_content_winners');
   $output .= theme('offline_signup_content_sync');
   $output .= '</div>';
   return $output;
@@ -213,6 +250,26 @@ function theme_offline_signup_content_settings() {
 
   $output = '<div id="offline-signup-content-settings">';
   $output .= drupal_get_form('offline_signup_settings_form');
+  $output .= '</div>';
+  return $output;
+}
+
+function theme_offline_signup_content_winners() {
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/winners.js');
+
+  $output = '<div id="offline-signup-content-winners">';
+  $output .= drupal_get_form('offline_signup_winners_form');
+  $output .= '</div>';
+  return $output;
+}
+
+function theme_offline_signup_winners_form_fieldset($form) {
+  $output = '<div class="drawing-stage-1">'. drupal_render($form['select']) .'</div>';
+  $output .= '<div class="drawing-stage-2 drawing-stage-3">';
+  $output .= drupal_render($form['name']) . drupal_render($form['mail']) . drupal_render($form['date']);
+  $output .= '</div>';
+  $output .= '<div class="drawing-stage-2">';
+  $output .= drupal_render($form['select_another']) . drupal_render($form['keep_winner']) . drupal_render($form['cancel']);
   $output .= '</div>';
   return $output;
 }

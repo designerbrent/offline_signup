@@ -3,6 +3,9 @@
 #offline-signup-page,
 #offline-signup-user-register-form,
 #offline-signup-user-update-form,
+#offline-signup-content-winners,
+#offline-signup-content-winners .drawing-stage-2,
+#offline-signup-content-winners .drawing-stage-3,
 #offline-signup-content-sync {
   display: none;
 }
