@@ -179,15 +179,16 @@ Drupal.OfflineSignup.Drawing.prototype.selectWinner = function() {
 Drupal.OfflineSignup.Drawing.prototype.setInfos = function() {
   this.setInfo('Name', this.user.name);
   this.setInfo('E-mail', this.user.mail);
+  this.setInfo('Selected', this.formatDate());
+}
 
-  // Format date and time selected.
+Drupal.OfflineSignup.Drawing.prototype.formatDate = function() {
   var hours = this.date.getHours();
   var minutes = this.date.getMinutes();
   if (minutes < 10) {
     minutes = "0" + minutes;
   }
-  var date = this.date.getMonth() + '/' + this.date.getDate() + '/' + this.date.getFullYear() + ' - ' + hours + ':' + minutes;
-  this.setInfo('Selected', date);
+  return this.date.getMonth() + '/' + this.date.getDate() + '/' + this.date.getFullYear() + ' - ' + hours + ':' + minutes;
 }
 
 Drupal.OfflineSignup.Drawing.prototype.setInfo = function(label, text) {

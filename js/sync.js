@@ -54,10 +54,39 @@ Drupal.behaviors.offlineSignupSync = function() {
       this.sort(index, $column.data('sort'));
     }
 
-    // Update table on load.
+    // Update users table on load.
     Drupal.OfflineSignup.Sync.userTable.update();
 
     $('#offline-signup-sync-users-table').addClass('offline-signup-sync-processed');
+  }
+
+  if ($('#offline-signup-sync-drawings-table:not(.offline-signup-sync-processed)').size()) {
+    Drupal.OfflineSignup.Sync.drawingsTable = new Drupal.OfflineSignup.Table($('#offline-signup-sync-drawings-table').get());
+
+    Drupal.OfflineSignup.Sync.drawingsTable.update = function() {
+      var tbody = $('<tbody>');
+      for (var i in Drupal.OfflineSignup.drawings.drawings) {
+        var drawing = Drupal.OfflineSignup.drawings.drawings[i];
+
+        if (drawing.state == 3) {
+          var row = $('<tr>');
+          row.append('<td>' + Drupal.checkPlain(drawing.user.name) + '</td>');
+          row.append('<td>' + Drupal.checkPlain(drawing.user.mail) + '</td>');
+          row.append('<td>' + Drupal.checkPlain(drawing.formatDate()) + '</td>');
+          tbody.append(row);
+        }
+      }
+
+      $('tbody', $(this.element)).replaceWith(tbody);
+      $column = this.activeColumn;
+      var index = $('th', $(this.element)).index($column.parents('th'));
+      this.sort(index, $column.data('sort'));
+    }
+
+    // Update drawings table on load.
+    Drupal.OfflineSignup.Sync.drawingsTable.update();
+
+    $('#offline-signup-sync-drawings-table').addClass('offline-signup-sync-processed');
   }
 
   if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
