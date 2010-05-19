@@ -70,6 +70,7 @@ Drupal.behaviors.offlineSignupSync = function() {
 
         if (drawing.state == 3) {
           var row = $('<tr>');
+          row.append('<td>' + Drupal.checkPlain(drawing.id) + '</td>');
           row.append('<td>' + Drupal.checkPlain(drawing.user.name) + '</td>');
           row.append('<td>' + Drupal.checkPlain(drawing.user.mail) + '</td>');
           row.append('<td>' + Drupal.checkPlain(drawing.formatDate()) + '</td>');
