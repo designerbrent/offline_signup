@@ -103,6 +103,12 @@ function offline_signup_theme() {
     'offline_signup_content_sync' => array(
       'arguments' => array()
     ),
+    'offline_signup_sync_users_table' => array(
+      'arguments' => array()
+    ),
+    'offline_signup_sync_drawings_table' => array(
+      'arguments' => array()
+    ),
     'offline_signup_menu_bar' => array(
       'arguments' => array()
     )
