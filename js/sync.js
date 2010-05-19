@@ -1,72 +1,71 @@
 // $Id$
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
+Drupal.OfflineSignup.Sync = {};
 
 Drupal.behaviors.offlineSignupSync = function() {
-  if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
+  if ($('#offline-signup-sync-users-table:not(.offline-signup-sync-processed)').size()) {
+    Drupal.OfflineSignup.Sync.userTable = new Drupal.OfflineSignup.Table($('#offline-signup-sync-users-table').get());
+
     // Add our sub-tabs of 'Event' and 'Local'.
     var ul = $('<ul id="offline-signup-sync-sub-tabs" class="links">');
     ul.append('<li><a href="#sync">' + Drupal.t('Event') + '</a></li>');
     ul.append('<li class="active"><a class="active" href="#sync">' + Drupal.t('Local') + '</a></li>');
-    $('#offline-signup-sync-form').after(ul);
-    Drupal.OfflineSignup.tableType = 'local';
-    // Add click events to sub-tabs.
+    $(Drupal.OfflineSignup.Sync.userTable.element).before(ul);
+    Drupal.OfflineSignup.Sync.userTable.data = 'local';
+    // Add click events to the sub-tabs.
     $('#offline-signup-sync-sub-tabs li:first a').click(function() {
-      delete(Drupal.OfflineSignup.tableType);
+      delete(Drupal.OfflineSignup.Sync.userTable.data);
       $('#offline-signup-sync-sub-tabs li:last').removeClass('active').children('a').removeClass('active');
       $(this).addClass('active').parents('li').addClass('active');
-      Drupal.OfflineSignup.updateTable();
+      Drupal.OfflineSignup.Sync.userTable.update();
       return false;
     });
     $('#offline-signup-sync-sub-tabs li:last a').click(function() {
-      Drupal.OfflineSignup.tableType = 'local';
+      Drupal.OfflineSignup.Sync.userTable.data = 'local';
       $('#offline-signup-sync-sub-tabs li:first').removeClass('active').children('a').removeClass('active');
       $(this).addClass('active').parents('li').addClass('active');
-      Drupal.OfflineSignup.updateTable();
+      Drupal.OfflineSignup.Sync.userTable.update();
       return false;
     });
 
-    // Store the ASC and DESC images and remove the DESC from displaying by default.
-    Drupal.OfflineSignup.imgASC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:first');
-    Drupal.OfflineSignup.imgDESC = $('#offline-signup-content-sync table.sticky-enabled thead th a img:last').remove();
+    Drupal.OfflineSignup.Sync.userTable.update = function() {
+      var tbody = $('<tbody>');
+      for (var i in Drupal.OfflineSignup.users) {
+        var user = Drupal.OfflineSignup.users[i];
 
-    // Set the default activeHeader.
-    $('#offline-signup-content-sync table.sticky-enabled thead th:first').addClass('active').children('a').addClass('active');
-    Drupal.OfflineSignup.activeHeader = $('#offline-signup-content-sync table.sticky-enabled thead th:first a').data('sort', 'asc');
+        if (this.data == 'local' && user.source != 'local') {
+          continue;
+        }
 
-    // Apply click events to table headers.
-    $('#offline-signup-content-sync table.sticky-enabled thead th').each(function() {
-      if ($('a', $(this)).size()) {
-        var $header = $(this);
-        $('a', $(this)).click(function() {
-          var sort = 'asc';
-          var index = $('#offline-signup-content-sync table.sticky-enabled th').index($header);
-          if ($('img', $header).size()) {
-            // Determine the sort direction.
-            sort = (Drupal.OfflineSignup.activeHeader.data('sort') != 'asc') ? 'asc' : 'desc';
-            var img = (sort == 'asc') ? Drupal.OfflineSignup.imgASC : Drupal.OfflineSignup.imgDESC;
-            $('img', $header).replaceWith(img);
-          }
-          else {
-            // Since no img yet exists, we default sort to ASC and remove the img
-            // from the activeHeader.
-            $('img', Drupal.OfflineSignup.activeHeader).remove();
-            $header.append(Drupal.OfflineSignup.imgASC);
-          }
-          // Set this header to activeHeader.
-          Drupal.OfflineSignup.activeHeader = $header.data('sort', sort);
-          Drupal.OfflineSignup.sortTable(index, sort);
-          return false;
-        });
+        var row = $('<tr>');
+        row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
+        row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
+        row.append('<td>TODO</td>');
+        row.append('<td>' + Drupal.checkPlain(user.source) + '</td>');
+        row.append('<td>' + Drupal.checkPlain(user.status) + '</td>');
+        row.append($('<td>').append(Drupal.OfflineSignup.actionLinks()));
+        tbody.append(row);
       }
-    });
 
+      $('tbody', $(this.element)).replaceWith(tbody);
+      $column = this.activeColumn;
+      var index = $('th', $(this.element)).index($column.parents('th'));
+      this.sort(index, $column.data('sort'));
+    }
+
+    // Update table on load.
+    Drupal.OfflineSignup.Sync.userTable.update();
+
+    $('#offline-signup-sync-users-table').addClass('offline-signup-sync-processed');
+  }
+
+  if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
     // When tab is active, we need to (re)populate the table rows for all local
     // users. Override the default focus method with our own.
     Drupal.OfflineSignup.menuBar.tabs['sync'].focus = function(animate) {
-      // Before we reveal the sync page, we first (re)populate the table with
-      // users if there are any.
-      Drupal.OfflineSignup.updateTable();
+      // Before we reveal the sync page, we first (re)populate the user table.
+      Drupal.OfflineSignup.Sync.userTable.update();
 
       $(this.element).addClass('active').parent().addClass('active');
       if (animate) {
@@ -77,55 +76,56 @@ Drupal.behaviors.offlineSignupSync = function() {
       }
     }
 
-    // Update table on load.
-    Drupal.OfflineSignup.updateTable();
-
     $('#offline-signup-content-sync').addClass('offline-signup-sync-processed');
   }
 }
 
-Drupal.OfflineSignup.actionLinks = function() {
-  var ul = $('<ul class="links">');
-  ul.append('<li class="0 first"><a href="#sync" onclick="Drupal.OfflineSignup.editUser($(this).parents(\'tr\'))">' + Drupal.t('Edit') + '</a></li>');
-  ul.append('<li class="1 last"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
-  return ul;
-}
+Drupal.OfflineSignup.Table = function(element) {
+  var self = this;
 
-Drupal.OfflineSignup.updateTable = function() {
-  var length = 0;
-  for (var i in Drupal.OfflineSignup.users) length++;
-  if (length > 0) {
-    // Users exist locally clear and populate table.
-    $table = $('#offline-signup-content-sync table.sticky-enabled');
-    var tbody = $('<tbody>');
-    for (var i in Drupal.OfflineSignup.users) {
-      var user = Drupal.OfflineSignup.users[i];
+  this.element = element;
 
-      if (Drupal.OfflineSignup.tableType == 'local' && user.source != 'local') {
-        continue;
-      }
-
-      var row = $('<tr>');
-      row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
-      row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
-      row.append('<td>TODO</td>');
-      row.append('<td>' + Drupal.checkPlain(user.source) + '</td>');
-      row.append('<td>' + Drupal.checkPlain(user.status) + '</td>');
-      row.append($('<td>').append(Drupal.OfflineSignup.actionLinks()));
-      tbody.append(row);
-    }
-
-    $('tbody', $table).replaceWith(tbody);
-
-    $header = Drupal.OfflineSignup.activeHeader;
-    var index = $('#offline-signup-content-sync table.sticky-enabled th').index($header.parents('th'));
-    Drupal.OfflineSignup.sortTable(index, $header.data('sort'));
+  // Store the ASC and DESC images and remove the DESC from displaying by default.
+  this.images = {
+    asc: $('thead th a img:first', $(this.element)),
+    desc: $('thead th a img:last', $(this.element)).remove()
   }
+
+  // Set the default activeColumn.
+  $('thead th:first', $(this.element)).addClass('active').children('a').addClass('active');
+  this.activeColumn = $('thead th.active a.active', $(this.element)).data('sort', 'asc');
+
+  // Apply click events to table headers.
+  $('thead th a', $(this.element)).each(function() {
+    var $header = $(this).parents('th');
+    $(this).click(function() {
+      var sort = 'asc';
+      var index = $('th', $(self.element)).index($header);
+      if ($('img', $header).size()) {
+        // Determine the sort direction.
+        sort = (self.activeColumn.data('sort') != 'asc') ? 'asc' : 'desc';
+        $('img', $header).replaceWith(self.images[sort]);
+      }
+      else {
+        // Since no img yet exists, we default sort to ASC.
+        $('img', self.activeColumn).remove();
+        $header.append(self.images.asc);
+      }
+      // Set this header to activeColumn.
+      self.activeColumn = $(this).data('sort', sort);
+      self.sort(index, sort);
+      return false;
+    });
+  });
 }
 
-Drupal.OfflineSignup.sortTable = function(column, sort) {
-  var $table = $('#offline-signup-content-sync table.sticky-enabled');
-  var rows = $table.find('tbody > tr').get();
+Drupal.OfflineSignup.Table.prototype.update = function() {
+  
+}
+
+Drupal.OfflineSignup.Table.prototype.sort = function(column, sort) {
+  var self = this;
+  var rows = $(self.element).find('tbody > tr').get();
   rows.sort(function(a, b) {
     var keyA = $(a).children('td').eq(column).text().toUpperCase();
     var keyB = $(b).children('td').eq(column).text().toUpperCase();
@@ -138,15 +138,22 @@ Drupal.OfflineSignup.sortTable = function(column, sort) {
   $.each(rows, function(index, row) {
     $('td', $(row)).removeClass('active');
     $(row).children('td').eq(column).addClass('active');
-    $table.children('tbody').append(row);
+    $('tbody', $(self.element)).append(row);
   });
 
-  Drupal.OfflineSignup.stripeTable($table);
+  self.stripe();
 }
 
-Drupal.OfflineSignup.stripeTable = function($table) {
-  $('tbody tr:even', $table).removeClass('even').addClass('odd');
-  $('tbody tr:odd', $table).removeClass('odd').addClass('even');
+Drupal.OfflineSignup.Table.prototype.stripe = function() {
+  $('tbody tr:even', $(this.element)).removeClass('even').addClass('odd');
+  $('tbody tr:odd', $(this.element)).removeClass('odd').addClass('even');
+}
+
+Drupal.OfflineSignup.actionLinks = function() {
+  var ul = $('<ul class="links">');
+  ul.append('<li class="0 first"><a href="#sync" onclick="Drupal.OfflineSignup.editUser($(this).parents(\'tr\'))">' + Drupal.t('Edit') + '</a></li>');
+  ul.append('<li class="1 last"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
+  return ul;
 }
 
 Drupal.OfflineSignup.editUser = function(row) {

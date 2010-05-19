@@ -284,7 +284,7 @@ function theme_offline_signup_content_sync() {
   $output = '<div id="offline-signup-content-sync">';
   $output .= drupal_get_form('offline_signup_sync_form');
   $output .= theme('offline_signup_sync_users_table');
-  // $output .= theme('offline_signup_sync_drawings_table');
+  $output .= theme('offline_signup_sync_drawings_table');
   $output .= '</div>';
   return $output;
 }
