@@ -28,20 +28,24 @@ Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
     }
   }
 
+  if (this.drawings[this.drawings.length - 1].state == 3) {
+    var enableFirst = true;
+  }
+
   if (num > this.drawings.length) {
     var diff = num - this.drawings.length;
     for (i = 0; i < diff; i++) {
       this.initDrawing();
+      if (enableFirst && i == 0) {
+        var key = this.drawings.length - 1;
+        this.drawings[key].enableState(1);
+      }
     }
   }
 }
 
 Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
   var drawing = new Drupal.OfflineSignup.Drawing();
-
-  if (data) {
-    $.extend(drawing, data);
-  }
 
   // Set the ID based on the number of existing drawings.
   drawing.id = this.drawings.length + 1;
@@ -55,8 +59,14 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
   // Modify fieldset legend to reflect which drawing number this is.
   $('fieldset > legend', drawing.form).empty().append(Drupal.t('Drawing @num', { '@num': drawing.id }));
 
+  if (data) {
+    drawing.user = Drupal.OfflineSignup.users[data.mail];
+    drawing.state = data.state;
+    drawing.date = new Date(data.date);
+    drawing.setInfos();
+  }
   // If this is the first drawing and it's state is 0, move it to state 1.
-  if (drawing.id == 1 && drawing.state == 0) {
+  else if (drawing.id == 1 && drawing.state == 0) {
     drawing.state = 1;
   }
 
@@ -88,9 +98,13 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
 
 Drupal.OfflineSignup.Drawings.prototype.save = function() {
   var drawings = new Array();
-  for (var i in drawings) {
-    if (drawings[i].state > 1) {
-      drawings.push({ mail: drawings[i].user.mail, state: drawings[i].state });
+  for (var i in this.drawings) {
+    if (this.drawings[i].state > 1) {
+      drawings.push({
+        mail: this.drawings[i].user.mail,
+        state: this.drawings[i].state,
+        date: this.drawings[i].date.getTime()
+      });
     }
   }
 
@@ -114,7 +128,9 @@ Drupal.OfflineSignup.Drawing.prototype.enableState = function(state) {
   }
   else {
     this.state = state;
-    Drupal.OfflineSignup.drawings.save();
+    if (Drupal.OfflineSignup.drawings) {
+      Drupal.OfflineSignup.drawings.save();
+    }
   }
 
   switch (state) {
@@ -150,17 +166,7 @@ Drupal.OfflineSignup.Drawing.prototype.selectWinner = function() {
     this.user = user;
     this.date = new Date();
 
-    this.setInfo('Name', user.name);
-    this.setInfo('E-mail', user.mail);
-
-    // Format date and time selected.
-    var hours = this.date.getHours();
-    var minutes = this.date.getMinutes();
-    if (minutes < 10) {
-      minutes = "0" + minutes;
-    }
-    var date = this.date.getMonth() + '/' + this.date.getDate() + '/' + this.date.getFullYear() + ' - ' + hours + ':' + minutes;
-    this.setInfo('Selected', date);
+    this.setInfos();
 
     // Enabling the state this way saves locally the changes made.
     this.enableState(2);
@@ -168,6 +174,20 @@ Drupal.OfflineSignup.Drawing.prototype.selectWinner = function() {
   else {
     alert(Drupal.t('There was a problem selecting a winner.'));
   }
+}
+
+Drupal.OfflineSignup.Drawing.prototype.setInfos = function() {
+  this.setInfo('Name', this.user.name);
+  this.setInfo('E-mail', this.user.mail);
+
+  // Format date and time selected.
+  var hours = this.date.getHours();
+  var minutes = this.date.getMinutes();
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  var date = this.date.getMonth() + '/' + this.date.getDate() + '/' + this.date.getFullYear() + ' - ' + hours + ':' + minutes;
+  this.setInfo('Selected', date);
 }
 
 Drupal.OfflineSignup.Drawing.prototype.setInfo = function(label, text) {
