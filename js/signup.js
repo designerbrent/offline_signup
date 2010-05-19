@@ -82,9 +82,10 @@ Drupal.behaviors.offlineSignupContent = function() {
       if (Drupal.OfflineSignup.users[user.mail] == undefined) {
         // Generate name from mail.
         user.name = Drupal.OfflineSignup.genName(user.mail);
+        user.source = 'local';
       }
       else {
-        user.name = Drupal.OfflineSignup.users[user.mail].name;
+        user = $.extend(Drupal.OfflineSignup.users[user.mail], user);
       }
 
       // Mark user status as new.
