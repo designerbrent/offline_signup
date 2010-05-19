@@ -306,7 +306,7 @@ function theme_offline_signup_sync_users_table() {
   );
   // Add empty row.
   $rows = array(array('data' => array(array('data' => t('No users added to this event.'), 'class' => 'active', 'colspan' => 6)), 'class' => 'empty'));
-  return theme('table', $headers, $rows);
+  return theme('table', $headers, $rows, array('id' => 'offline-signup-sync-users-table'));
 }
 
 function theme_offline_signup_sync_drawings_table() {
@@ -323,7 +323,7 @@ function theme_offline_signup_sync_drawings_table() {
   );
   // Add empty row.
   $rows = array(array('data' => array(array('data' => t('No drawings yet completed.'), 'class' => 'active', 'colspan' => 3)), 'class' => 'empty'));
-  return theme('table', $headers, $rows);
+  return theme('table', $headers, $rows, array('id' => 'offline-signup-sync-drawings-table'));
 }
 
 function theme_offline_signup_menu_bar() {
