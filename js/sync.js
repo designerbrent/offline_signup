@@ -2,7 +2,6 @@
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.OfflineSignup.Sync = {};
-Drupal.OfflineSignup.Sync.activeRowIndex = 0;
 
 Drupal.behaviors.offlineSignupSync = function() {
   if ($('#offline-signup-sync-form:not(.offline-signup-sync-processed)').size()) {
