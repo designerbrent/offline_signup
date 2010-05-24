@@ -2,8 +2,19 @@
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.OfflineSignup.Sync = {};
+Drupal.OfflineSignup.Sync.activeRowIndex = 0;
 
 Drupal.behaviors.offlineSignupSync = function() {
+  if ($('#offline-signup-sync-form:not(.offline-signup-sync-processed)').size()) {
+    var $syncForm = $('#offline-signup-sync-form');
+    $('input[name=sync]', $syncForm).click(function() {
+      Drupal.OfflineSignup.Sync.syncUser(0);
+      return false;
+    });
+
+    $syncForm.addClass('offline-signup-sync-processed');
+  }
+
   if ($('#offline-signup-sync-users-table:not(.offline-signup-sync-processed)').size()) {
     Drupal.OfflineSignup.Sync.userTable = new Drupal.OfflineSignup.Table($('#offline-signup-sync-users-table').get());
 
@@ -264,4 +275,54 @@ Drupal.OfflineSignup.removeUser = function(row) {
     $('tbody', $table).append('<tr><td class="active" colspan="5">' + Drupal.t('No users added to this event.') + '</td></tr>');
   }
   Drupal.OfflineSignup.stripeTable($table);
+}
+
+Drupal.OfflineSignup.Sync.syncUser = function() {
+  if (user = Drupal.OfflineSignup.Sync.nextUser()) {
+    $('#offline-signup-sync-form').ajaxSubmit({
+      data: Drupal.OfflineSignup.Sync.getUserData(user),
+      success: function(responseText, status) {
+        
+      },
+      complete: function(response, status) {
+        if (status == 'success') {
+          Drupal.OfflineSignup.Sync.activeRow = Drupal.OfflineSignup.Sync.activeRow.next();
+          Drupal.OfflineSignup.Sync.syncUser();
+        }
+        else {
+          alert(Drupal.t('Cannot connect to the server.'));
+        }
+      },
+      dataType: 'json',
+      type: 'POST'
+    });
+  }
+  else {
+    alert(Drupal.t('Sync complete!'));
+  }
+}
+
+Drupal.OfflineSignup.Sync.nextUser = function(reset) {
+  var $table = $('#offline-signup-sync-users-table');
+
+  if (reset || Drupal.OfflineSignup.Sync.activeRow == undefined) {
+    Drupal.OfflineSignup.Sync.activeRow = $('tbody tr:first', $table);
+  }
+
+  var $row = Drupal.OfflineSignup.Sync.activeRow;
+  if ($row.size() && (user = Drupal.OfflineSignup.users[$('td:nth(1)', $row).text()])) {
+    return user;
+  }
+  else {
+    Drupal.OfflineSignup.Sync.activeRow = undefined;
+  }
+  return false;
+}
+
+Drupal.OfflineSignup.Sync.getUserData = function(user) {
+  var data = { "user": {} };
+  for (var i in user) {
+    data["user[" + i + "]"] = user[i];
+  }
+  return data;
 }
