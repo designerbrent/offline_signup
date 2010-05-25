@@ -1,45 +1,42 @@
 // $Id$
 
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
-Drupal.OfflineSignup.Sync = {};
 
 Drupal.behaviors.offlineSignupSync = function() {
   if ($('#offline-signup-sync-form:not(.offline-signup-sync-processed)').size()) {
-    var $syncForm = $('#offline-signup-sync-form');
-    $('input[name=sync]', $syncForm).click(function() {
-      Drupal.OfflineSignup.Sync.syncUser(0);
-      return false;
-    });
+    Drupal.OfflineSignup.sync = new Drupal.OfflineSignup.Sync();
 
-    $syncForm.addClass('offline-signup-sync-processed');
+    $('#offline-signup-sync-form').addClass('offline-signup-sync-processed');
   }
 
   if ($('#offline-signup-sync-users-table:not(.offline-signup-sync-processed)').size()) {
-    Drupal.OfflineSignup.Sync.userTable = new Drupal.OfflineSignup.Table($('#offline-signup-sync-users-table').get());
+    var table = Drupal.OfflineSignup.sync.setTable('#offline-signup-sync-users-table');
 
     // Add our sub-tabs of 'Event' and 'Local'.
     var ul = $('<ul id="offline-signup-sync-sub-tabs" class="links">');
     ul.append('<li><a href="#sync">' + Drupal.t('Event') + '</a></li>');
     ul.append('<li class="active"><a class="active" href="#sync">' + Drupal.t('Local') + '</a></li>');
-    $(Drupal.OfflineSignup.Sync.userTable.element).before(ul);
-    Drupal.OfflineSignup.Sync.userTable.data = 'local';
+    $(table.element).before(ul);
+    table.data = 'local';
     // Add click events to the sub-tabs.
     $('#offline-signup-sync-sub-tabs li:first a').click(function() {
-      delete(Drupal.OfflineSignup.Sync.userTable.data);
+      var table = Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-users-table');
+      delete(table.data);
       $('#offline-signup-sync-sub-tabs li:last').removeClass('active').children('a').removeClass('active');
       $(this).addClass('active').parents('li').addClass('active');
-      Drupal.OfflineSignup.Sync.userTable.update();
+      table.update();
       return false;
     });
     $('#offline-signup-sync-sub-tabs li:last a').click(function() {
-      Drupal.OfflineSignup.Sync.userTable.data = 'local';
+      var table = Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-users-table');
+      table.data = 'local';
       $('#offline-signup-sync-sub-tabs li:first').removeClass('active').children('a').removeClass('active');
       $(this).addClass('active').parents('li').addClass('active');
-      Drupal.OfflineSignup.Sync.userTable.update();
+      table.update();
       return false;
     });
 
-    Drupal.OfflineSignup.Sync.userTable.update = function() {
+    table.update = function() {
       var tbody = $('<tbody>');
       for (var i in Drupal.OfflineSignup.users) {
         var user = Drupal.OfflineSignup.users[i];
@@ -65,15 +62,15 @@ Drupal.behaviors.offlineSignupSync = function() {
     }
 
     // Update users table on load.
-    Drupal.OfflineSignup.Sync.userTable.update();
+    table.update();
 
     $('#offline-signup-sync-users-table').addClass('offline-signup-sync-processed');
   }
 
   if ($('#offline-signup-sync-drawings-table:not(.offline-signup-sync-processed)').size()) {
-    Drupal.OfflineSignup.Sync.drawingsTable = new Drupal.OfflineSignup.Table($('#offline-signup-sync-drawings-table').get());
+    var table = Drupal.OfflineSignup.sync.setTable('#offline-signup-sync-drawings-table');
 
-    Drupal.OfflineSignup.Sync.drawingsTable.update = function() {
+    table.update = function() {
       var tbody = $('<tbody>');
       for (var i in Drupal.OfflineSignup.drawings.drawings) {
         var drawing = Drupal.OfflineSignup.drawings.drawings[i];
@@ -95,7 +92,7 @@ Drupal.behaviors.offlineSignupSync = function() {
     }
 
     // Update drawings table on load.
-    Drupal.OfflineSignup.Sync.drawingsTable.update();
+    table.update();
 
     $('#offline-signup-sync-drawings-table').addClass('offline-signup-sync-processed');
   }
@@ -104,8 +101,10 @@ Drupal.behaviors.offlineSignupSync = function() {
     // When tab is active, we need to (re)populate the table rows for all local
     // users. Override the default focus method with our own.
     Drupal.OfflineSignup.menuBar.tabs['sync'].focus = function(animate) {
-      // Before we reveal the sync page, we first (re)populate the user table.
-      Drupal.OfflineSignup.Sync.userTable.update();
+      // Before we reveal the sync page, we first (re)populate the user table
+      // and drawings table.
+      Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-users-table').update();
+      Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-drawings-table').update();
 
       $(this.element).addClass('active').parent().addClass('active');
       if (animate) {
@@ -118,6 +117,28 @@ Drupal.behaviors.offlineSignupSync = function() {
 
     $('#offline-signup-content-sync').addClass('offline-signup-sync-processed');
   }
+}
+
+Drupal.OfflineSignup.Sync = function() {
+  this.tables = {};
+
+  $('input[name=sync]', $('#offline-signup-sync-form')).click(function() {
+    this.sync('#offline-signup-sync-users-table', "this.sync('#offline-signup-sync-drawings-table')");
+    return false;
+  });
+}
+
+Drupal.OfflineSignup.Sync.prototype.setTable = function(id) {
+  this.tables[id] = new Drupal.OfflineSignup.Table($(id).get());
+  return this.tables[id];
+}
+
+Drupal.OfflineSignup.Sync.prototype.getTable = function(id) {
+  return this.tables[id];
+}
+
+Drupal.OfflineSignup.Sync.prototype.sync = function(id, callback) {
+  
 }
 
 Drupal.OfflineSignup.Table = function(element) {
