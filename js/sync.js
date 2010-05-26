@@ -10,7 +10,7 @@ Drupal.behaviors.offlineSignupSync = function() {
   }
 
   if ($('#offline-signup-sync-users-table:not(.offline-signup-sync-processed)').size()) {
-    var table = Drupal.OfflineSignup.sync.setTable('#offline-signup-sync-users-table');
+    var table = new Drupal.OfflineSignup.Table($('#offline-signup-sync-users-table').get());
 
     // Add our sub-tabs of 'Event' and 'Local'.
     var ul = $('<ul id="offline-signup-sync-sub-tabs" class="links">');
@@ -20,7 +20,7 @@ Drupal.behaviors.offlineSignupSync = function() {
     table.data = 'local';
     // Add click events to the sub-tabs.
     $('#offline-signup-sync-sub-tabs li:first a').click(function() {
-      var table = Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-users-table');
+      var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
       delete(table.data);
       $('#offline-signup-sync-sub-tabs li:last').removeClass('active').children('a').removeClass('active');
       $(this).addClass('active').parents('li').addClass('active');
@@ -28,7 +28,7 @@ Drupal.behaviors.offlineSignupSync = function() {
       return false;
     });
     $('#offline-signup-sync-sub-tabs li:last a').click(function() {
-      var table = Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-users-table');
+      var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
       table.data = 'local';
       $('#offline-signup-sync-sub-tabs li:first').removeClass('active').children('a').removeClass('active');
       $(this).addClass('active').parents('li').addClass('active');
@@ -64,11 +64,13 @@ Drupal.behaviors.offlineSignupSync = function() {
     // Update users table on load.
     table.update();
 
+    Drupal.OfflineSignup.tables['offline-signup-sync-users-table'] = table;
+
     $('#offline-signup-sync-users-table').addClass('offline-signup-sync-processed');
   }
 
   if ($('#offline-signup-sync-drawings-table:not(.offline-signup-sync-processed)').size()) {
-    var table = Drupal.OfflineSignup.sync.setTable('#offline-signup-sync-drawings-table');
+    var table = new Drupal.OfflineSignup.Table($('#offline-signup-sync-drawings-table').get());
 
     table.update = function() {
       var tbody = $('<tbody>');
@@ -94,6 +96,8 @@ Drupal.behaviors.offlineSignupSync = function() {
     // Update drawings table on load.
     table.update();
 
+    Drupal.OfflineSignup.tables['offline-signup-sync-drawings-table'] = table;
+
     $('#offline-signup-sync-drawings-table').addClass('offline-signup-sync-processed');
   }
 
@@ -103,8 +107,8 @@ Drupal.behaviors.offlineSignupSync = function() {
     Drupal.OfflineSignup.menuBar.tabs['sync'].focus = function(animate) {
       // Before we reveal the sync page, we first (re)populate the user table
       // and drawings table.
-      Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-users-table').update();
-      Drupal.OfflineSignup.sync.getTable('#offline-signup-sync-drawings-table').update();
+      Drupal.OfflineSignup.tables['offline-signup-sync-users-table'].update();
+      Drupal.OfflineSignup.tables['offline-signup-sync-drawings-table'].update();
 
       $(this.element).addClass('active').parent().addClass('active');
       if (animate) {
@@ -211,7 +215,7 @@ Drupal.OfflineSignup.editUser = function(row) {
 }
 
 Drupal.OfflineSignup.removeUser = function(row) {
-  var $table = $('#offline-signup-content-sync table.sticky-enabled');
+  var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
   var mail = $('td:nth(1)', row).text();
   delete(Drupal.OfflineSignup.users[mail]);
   localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
@@ -222,10 +226,10 @@ Drupal.OfflineSignup.removeUser = function(row) {
     }
   }
   $(row).remove();
-  if (!$('tbody', $table).html()) {
-    $('tbody', $table).append('<tr><td class="active" colspan="5">' + Drupal.t('No users added to this event.') + '</td></tr>');
+  if (!$('tbody', $(table.element)).html()) {
+    $('tbody', $(table.element)).append('<tr><td class="active" colspan="5">' + Drupal.t('No users added to this event.') + '</td></tr>');
   }
-  Drupal.OfflineSignup.stripeTable($table);
+  table.stripe();
 }
 
 Drupal.OfflineSignup.Sync.syncUser = function() {
@@ -254,10 +258,10 @@ Drupal.OfflineSignup.Sync.syncUser = function() {
 }
 
 Drupal.OfflineSignup.Sync.nextUser = function(reset) {
-  var $table = $('#offline-signup-sync-users-table');
+  var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
 
   if (reset || Drupal.OfflineSignup.Sync.activeRow == undefined) {
-    Drupal.OfflineSignup.Sync.activeRow = $('tbody tr:first', $table);
+    Drupal.OfflineSignup.Sync.activeRow = $('tbody tr:first', $(table.element));
   }
 
   var $row = Drupal.OfflineSignup.Sync.activeRow;

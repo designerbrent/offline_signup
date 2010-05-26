@@ -3,6 +3,7 @@
 Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 Drupal.OfflineSignup.emails = {};
 Drupal.OfflineSignup.users = {};
+Drupal.OfflineSignup.tables = {};
 
 Drupal.behaviors.offlineSignup = function(context) {
   if ($('#offline-signup-page:not(.offline-signup-processed)').size()) {
