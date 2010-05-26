@@ -102,3 +102,72 @@ Drupal.OfflineSignup.toJson = function(v) {
       return 'null';
   }
 };
+
+Drupal.OfflineSignup.Table = function(element) {
+  var self = this;
+
+  this.element = element;
+
+  // Store the ASC and DESC images and remove the DESC from displaying by default.
+  this.images = {
+    asc: $('thead th a img:first', $(this.element)),
+    desc: $('thead th a img:last', $(this.element)).remove()
+  }
+
+  // Set the default activeColumn.
+  $('thead th:first', $(this.element)).addClass('active').children('a').addClass('active');
+  this.activeColumn = $('thead th.active a.active', $(this.element)).data('sort', 'asc');
+
+  // Apply click events to table headers.
+  $('thead th a', $(this.element)).each(function() {
+    var $header = $(this).parents('th');
+    $(this).click(function() {
+      var sort = 'asc';
+      var index = $('th', $(self.element)).index($header);
+      if ($('img', $header).size()) {
+        // Determine the sort direction.
+        sort = (self.activeColumn.data('sort') != 'asc') ? 'asc' : 'desc';
+        $('img', $header).replaceWith(self.images[sort]);
+      }
+      else {
+        // Since no img yet exists, we default sort to ASC.
+        $('img', self.activeColumn).remove();
+        $header.append(self.images.asc);
+      }
+      // Set this header to activeColumn.
+      self.activeColumn = $(this).data('sort', sort);
+      self.sort(index, sort);
+      return false;
+    });
+  });
+}
+
+Drupal.OfflineSignup.Table.prototype.update = function() {
+  
+}
+
+Drupal.OfflineSignup.Table.prototype.sort = function(column, sort) {
+  var self = this;
+  var rows = $(self.element).find('tbody > tr').get();
+  rows.sort(function(a, b) {
+    var keyA = $(a).children('td').eq(column).text().toUpperCase();
+    var keyB = $(b).children('td').eq(column).text().toUpperCase();
+
+    if (keyA < keyB) return (sort == 'asc') ? -1 : 1;
+    if (keyA > keyB) return (sort == 'asc') ? 1 : -1;
+    return 0;
+  });
+
+  $.each(rows, function(index, row) {
+    $('td', $(row)).removeClass('active');
+    $(row).children('td').eq(column).addClass('active');
+    $('tbody', $(self.element)).append(row);
+  });
+
+  self.stripe();
+}
+
+Drupal.OfflineSignup.Table.prototype.stripe = function() {
+  $('tbody tr:even', $(this.element)).removeClass('even').addClass('odd');
+  $('tbody tr:odd', $(this.element)).removeClass('odd').addClass('even');
+}
