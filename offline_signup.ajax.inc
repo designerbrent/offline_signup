@@ -45,7 +45,7 @@ function offline_signup_ajax_settings() {
   exit();
 }
 
-function offline_signup_ajax_sync() {
+function offline_signup_ajax_sync_user() {
   $form_state = array('storage' => NULL, 'submitted' => FALSE);
   $form_build_id = $_POST['form_build_id'];
   $form = form_get_cache($form_build_id, $form_state);
