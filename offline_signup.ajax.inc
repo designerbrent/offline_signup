@@ -55,6 +55,12 @@ function offline_signup_ajax_sync_user() {
 
   switch ($user['status']) {
     case 'new':
+      $form_state['values'] += array(
+        // Notify the user of the new account.
+        'notify' => TRUE,
+        // Generate a password.
+        'pass' => user_password()
+      );
       $form_state['values']['op'] = t('Create new account');
       drupal_execute('user_register', $form_state);
       break;
@@ -83,7 +89,7 @@ function offline_signup_ajax_response() {
     
   }
 
-  if ($messages = drupal_get_messages()) {
+  if ($messages = theme('status_messages')) {
     $response['messages'] = $messages;
   }
 
