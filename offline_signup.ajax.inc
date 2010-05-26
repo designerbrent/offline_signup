@@ -51,11 +51,12 @@ function offline_signup_ajax_sync_user() {
   $user = $_POST['user'];
   $form_state = array();
   $form_state['values'] = $user;
+  unset($form_state['values']['status'], $form_state['values']['source'], $form_state['values']['profiles']);
 
   switch ($user['status']) {
     case 'new':
       $form_state['values']['op'] = t('Create new account');
-      drupal_execute('offline_signup_user_register_form', $form_state);
+      drupal_execute('user_register', $form_state);
       break;
     case 'update':
       $form_state['values']['op'] = t('Update account');
@@ -76,7 +77,7 @@ function offline_signup_ajax_response() {
     if (is_array($errors)) {
       $errors = implode("\n", $errors);
     }
-    $response['errors'] = check_plain($errors);
+    $response['error'] = check_plain($errors);
   }
   else {
     

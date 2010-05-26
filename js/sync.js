@@ -72,13 +72,24 @@ Drupal.behaviors.offlineSignupSync = function() {
     // Sync table.
     table.sync = function() {
       $('tbody tr', $(this.element)).each(function() {
-        if (user = Drupal.OfflineSignup.users[$('td:nth(1)', $(this)).text()]) {
-          // Only push new or updated user data.
+        var $row = $(this);
+        if (user = Drupal.OfflineSignup.users[$('td:nth(1)', $row).text()]) {
           if (user.status == 'updated' || user.status == 'new') {
+            var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/user';
+            if (user.profiles) {
+              var profiles = user.profiles.join(',');
+              url += '?profile=' + escape(profiles);
+            }
             $('#offline-signup-sync-form').ajaxSubmit({
-              url: Drupal.settings.basePath + 'offline_signup/ajax/sync/user',
+              url: url,
               data: Drupal.OfflineSignup.Sync.getUserData(user),
               success: function(responseText, status) {
+                if (responseText.error) {
+                  $row.addClass('error');
+                }
+                else {
+                  $row.removeClass('error');
+                }
                 console.log(responseText);
               },
               complete: function(response, status) {
