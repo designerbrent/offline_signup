@@ -46,18 +46,46 @@ function offline_signup_ajax_settings() {
 }
 
 function offline_signup_ajax_sync_user() {
-  $form_state = array('storage' => NULL, 'submitted' => FALSE);
-  $form_build_id = $_POST['form_build_id'];
-  $form = form_get_cache($form_build_id, $form_state);
+  module_load_include('inc', 'offline_signup', 'offline_signup.pages');
 
-  $args = $form['#parameters'];
-  $form_id = array_shift($args);
-  $form_state['post'] = $form['#post'] = $_POST;
-  $form['#programmed'] = $form['#redirect'] = FALSE;
+  $user = $_POST['user'];
+  $form_state = array();
+  $form_state['values'] = $user;
 
-  drupal_process_form($form_id, $form, $form_state);
-  $form = drupal_rebuild_form($form_id, $form_state, $args, $form_build_id);
+  switch ($user['status']) {
+    case 'new':
+      $form_state['values']['op'] = t('Create new account');
+      drupal_execute('offline_signup_user_register_form', $form_state);
+      break;
+    case 'update':
+      $form_state['values']['op'] = t('Update account');
+      drupal_execute('offline_signup_user_update_form', $form_state);
+      break;
+  }
 
-  print drupal_json(array('status' => TRUE, 'data' => array()));
+  // No need to call exit() since offline_signup_ajax_response() does it for
+  // us.
+  offline_signup_ajax_response();
+}
+
+function offline_signup_ajax_response() {
+  $response = array('status' => TRUE);
+
+  if ($errors = form_get_errors()) {
+    $response['status'] = 'error';
+    if (is_array($errors)) {
+      $errors = implode("\n", $errors);
+    }
+    $response['errors'] = check_plain($errors);
+  }
+  else {
+    
+  }
+
+  if ($messages = drupal_get_messages()) {
+    $response['messages'] = $messages;
+  }
+
+  print drupal_json($response);
   exit();
 }

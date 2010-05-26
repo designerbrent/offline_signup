@@ -55,6 +55,14 @@ function offline_signup_user_register_form() {
   return $form;
 }
 
+function offline_signup_user_register_form_validate($form, &$form_state) {
+  form_set_error('name', t('Register user error'));
+}
+
+function offline_signup_user_register_form_submit($form, &$form_state) {
+  
+}
+
 function offline_signup_user_update_form() {
   $form['mail'] = array(
     '#type' => 'textfield',
@@ -87,6 +95,14 @@ function offline_signup_user_update_form() {
   );
 
   return $form;
+}
+
+function offline_signup_user_update_form_validate($form, &$form_state) {
+  form_set_error('name', t('Update user error'));
+}
+
+function offline_signup_user_update_form_submit($form, &$form_state) {
+  
 }
 
 function offline_signup_settings_form() {
