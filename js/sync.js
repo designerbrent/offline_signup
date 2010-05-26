@@ -84,6 +84,11 @@ Drupal.behaviors.offlineSignupSync = function() {
               url: url,
               data: Drupal.OfflineSignup.Sync.getUserData(user),
               success: function(responseText, status) {
+                if (jQuery().bt && responseText.messages) {
+                  $row.bt(responseText.messages, {
+                    positions: ['left', 'right', 'top']
+                  });
+                }
                 if (responseText.error) {
                   $row.addClass('error');
                 }

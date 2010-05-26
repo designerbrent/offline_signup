@@ -300,6 +300,10 @@ function theme_offline_signup_drawings_form_fieldset($form) {
 function theme_offline_signup_content_sync() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/sync.js');
 
+  if (module_exists('beautytips')) {
+    beautytips_add_beautytips();
+  }
+
   $output = '<div id="offline-signup-content-sync">';
   $output .= drupal_get_form('offline_signup_sync_form');
   $output .= theme('offline_signup_sync_users_table');
