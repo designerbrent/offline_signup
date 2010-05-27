@@ -201,6 +201,7 @@ function offline_signup_sync_form_submit($form, &$form_state) {
 function theme_offline_signup_page() {
   drupal_add_css(drupal_get_path('module', 'offline_signup') .'/offline_signup.css');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/json2.js');
 
   drupal_add_js('misc/jquery.form.js', 'core');
 
@@ -299,10 +300,6 @@ function theme_offline_signup_drawings_form_fieldset($form) {
 
 function theme_offline_signup_content_sync() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/sync.js');
-
-  if (module_exists('beautytips')) {
-    beautytips_add_beautytips();
-  }
 
   $output = '<div id="offline-signup-content-sync">';
   $output .= drupal_get_form('offline_signup_sync_form');

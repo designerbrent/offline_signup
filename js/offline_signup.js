@@ -15,7 +15,7 @@ Drupal.behaviors.offlineSignup = function(context) {
     Drupal.OfflineSignup.emails = Drupal.settings.offlineSignup.emails;
 
     if (Drupal.settings.offlineSignup.users) {
-      Drupal.OfflineSignup.users = Drupal.settings.offlineSignup.users;
+      $.extend(Drupal.OfflineSignup.users, Drupal.settings.offlineSignup.users);
     }
 
     if (users = Drupal.OfflineSignup.getLocal('offlineSignupUsers')) {
@@ -36,13 +36,12 @@ Drupal.behaviors.offlineSignup = function(context) {
 }
 
 Drupal.OfflineSignup.setLocal = function(id, data) {
-  localStorage.setItem(id, Drupal.OfflineSignup.toJson(data));
-  console.log(localStorage.getItem('offlineSignupUsers'));
+  localStorage.setItem(id, JSON.stringify(data));
 }
 
 Drupal.OfflineSignup.getLocal = function(id) {
   if (string = localStorage.getItem(id)) {
-    return Drupal.parseJson(string);
+    return JSON.parse(string);
   }
   return false;
 }

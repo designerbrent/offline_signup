@@ -56,6 +56,11 @@ Drupal.behaviors.offlineSignupSync = function() {
         var row = $('<tr>');
         if (user.error) {
           row.addClass('error');
+          if (jQuery().bt) {
+            row.bt(user.error, {
+              positions: ['left', 'right', 'top']
+            });
+          }
         }
         row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
         row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
@@ -94,12 +99,11 @@ Drupal.behaviors.offlineSignupSync = function() {
                 }
                 if (responseText.error) {
                   $row.addClass('error');
-                  user.error = responseText.error;
+                  user.error = responseText.messages;
                 }
                 else {
                   $row.removeClass('error');
                 }
-                console.log(Drupal.OfflineSignup.users);
                 Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
               },
               complete: function(response, status) {
