@@ -61,6 +61,7 @@ function offline_signup_ajax_sync_user() {
         // Generate a password.
         'pass' => user_password()
       );
+      $form_state['values']['event'] = $_POST['event'];
       $form_state['values']['op'] = t('Create new account');
       drupal_execute('user_register', $form_state);
       break;

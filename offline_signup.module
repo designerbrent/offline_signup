@@ -122,6 +122,31 @@ function offline_signup_theme() {
 }
 
 /**
+ * Implementation of hook_user().
+ */
+function offline_signup_user($op, &$edit, &$account, $category = NULL) {
+  if (user_access('administer offline signup')) {
+    switch ($op) {
+      case 'register':
+        $form['event'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Event')
+        );
+        return $form;
+      case 'insert':
+        $event = trim($edit['event']);
+        if ($event != '') {
+          db_query("INSERT INTO {offline_signup_event_users} (uid, event) VALUES (%d, '%s')", $account->uid, $event);
+        }
+        break;
+    }
+  }
+  if ($op == 'delete') {
+    db_query("DELETE FROM {offline_signup_event_users} WHERE uid = %d", $account->uid);
+  }
+}
+
+/**
  * Implementation of form_type_element_value().
  */
 function form_type_email_value($form, $edit = FALSE) {
