@@ -93,7 +93,7 @@ Drupal.behaviors.offlineSignupContent = function() {
 
       // Save new user locally.
       Drupal.OfflineSignup.users[user.mail] = user;
-      localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
+      Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
 
       // Reset forms and navigate back to the router form.
       $routerForm[0].reset();

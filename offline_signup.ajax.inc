@@ -51,7 +51,7 @@ function offline_signup_ajax_sync_user() {
   $user = $_POST['user'];
   $form_state = array();
   $form_state['values'] = $user;
-  unset($form_state['values']['status'], $form_state['values']['source'], $form_state['values']['profiles']);
+  unset($form_state['values']['status'], $form_state['values']['source'], $form_state['values']['profiles'], $form_state['values']['error']);
 
   switch ($user['status']) {
     case 'new':
@@ -83,7 +83,7 @@ function offline_signup_ajax_response() {
     if (is_array($errors)) {
       $errors = implode("\n", $errors);
     }
-    $response['error'] = check_plain($errors);
+    $response['error'] = $errors;
   }
   else {
     

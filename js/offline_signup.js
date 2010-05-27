@@ -18,8 +18,7 @@ Drupal.behaviors.offlineSignup = function(context) {
       Drupal.OfflineSignup.users = Drupal.settings.offlineSignup.users;
     }
 
-    if (users = localStorage.getItem('offlineSignupUsers')) {
-      users = Drupal.parseJson(users);
+    if (users = Drupal.OfflineSignup.getLocal('offlineSignupUsers')) {
       $.extend(Drupal.OfflineSignup.users, users);
     }
 
@@ -34,6 +33,22 @@ Drupal.behaviors.offlineSignup = function(context) {
 
     $('#offline-signup-page').addClass('offline-signup-processed');
   }
+}
+
+Drupal.OfflineSignup.setLocal = function(id, data) {
+  localStorage.setItem(id, Drupal.OfflineSignup.toJson(data));
+  console.log(localStorage.getItem('offlineSignupUsers'));
+}
+
+Drupal.OfflineSignup.getLocal = function(id) {
+  if (string = localStorage.getItem(id)) {
+    return Drupal.parseJson(string);
+  }
+  return false;
+}
+
+Drupal.OfflineSignup.removeLocal = function(id) {
+  localStorage.removeItem(id);
 }
 
 Drupal.OfflineSignup.getUser = function(mail) {

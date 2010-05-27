@@ -10,8 +10,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
   if ($('#offline-signup-settings-form:not(.offline-signup-settings-processed)').size() && window.localStorage) {
     $settingsForm = $('#offline-signup-settings-form');
 
-    if (settings = localStorage.getItem('offlineSignupSettings')) {
-      settings = Drupal.parseJson(settings);
+    if (settings = Drupal.OfflineSignup.getLocal('offlineSignupSettings')) {
       $.extend(Drupal.OfflineSignup.settings, settings);
     }
 
@@ -54,7 +53,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
         // Save changes to the number of drawings.
         // Save settings.
         Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
-        localStorage.setItem('offlineSignupSettings', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.settings));
+        Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
       }
       else {
         alert(Drupal.t('Please enter an event.'));

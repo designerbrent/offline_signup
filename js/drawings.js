@@ -20,9 +20,7 @@ Drupal.OfflineSignup.Drawings = function() {
 Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
   $('form', $('#offline-signup-content-drawings')).remove();
 
-  var localDrawings = localStorage.getItem('offlineSignupDrawings');
-  if (localDrawings) {
-    localDrawings = Drupal.parseJson(localDrawings);
+  if (localDrawings = Drupal.OfflineSignup.getLocal('offlineSignupDrawings')) {
     for (var i in localDrawings) {
       this.initDrawing(localDrawings[i]);
     }
@@ -108,7 +106,7 @@ Drupal.OfflineSignup.Drawings.prototype.save = function() {
     }
   }
 
-  localStorage.setItem('offlineSignupDrawings', Drupal.OfflineSignup.toJson(drawings));
+  Drupal.OfflineSignup.setLocal('offlineSignupDrawings', drawings);
 }
 
 Drupal.OfflineSignup.Drawings.prototype.nextDrawing = function(id) {

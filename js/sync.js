@@ -54,6 +54,9 @@ Drupal.behaviors.offlineSignupSync = function() {
         }
 
         var row = $('<tr>');
+        if (user.error) {
+          row.addClass('error');
+        }
         row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
         row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
         row.append('<td>TODO</td>');
@@ -91,11 +94,13 @@ Drupal.behaviors.offlineSignupSync = function() {
                 }
                 if (responseText.error) {
                   $row.addClass('error');
+                  user.error = responseText.error;
                 }
                 else {
                   $row.removeClass('error');
                 }
-                console.log(responseText);
+                console.log(Drupal.OfflineSignup.users);
+                Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
               },
               complete: function(response, status) {
                 if (status != 'success') {
@@ -103,7 +108,8 @@ Drupal.behaviors.offlineSignupSync = function() {
                 }
               },
               dataType: 'json',
-              type: 'POST'
+              type: 'POST',
+              async: true
             });
           }
         }
@@ -259,7 +265,7 @@ Drupal.OfflineSignup.removeUser = function(row) {
   var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
   var mail = $('td:nth(1)', row).text();
   delete(Drupal.OfflineSignup.users[mail]);
-  localStorage.setItem('offlineSignupUsers', Drupal.OfflineSignup.toJson(Drupal.OfflineSignup.users));
+  Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
   for (var i in Drupal.OfflineSignup.emails) {
     if (Drupal.OfflineSignup.emails[i] == mail) {
       delete(Drupal.OfflineSignup.emails[i]);
