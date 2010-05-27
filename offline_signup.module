@@ -172,10 +172,6 @@ function theme_email($element) {
 }
 
 function template_preprocess_offline_signup(&$vars) {
-  if (module_exists('beautytips')) {
-    beautytips_add_beautytips();
-  }
-
   $vars['menu_bar'] = theme('offline_signup_menu_bar');
   $vars['content'] = theme('offline_signup_content');
 }

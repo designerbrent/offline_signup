@@ -56,11 +56,6 @@ Drupal.behaviors.offlineSignupSync = function() {
         var row = $('<tr>');
         if (user.error) {
           row.addClass('error');
-          if (jQuery().bt) {
-            row.bt(user.error, {
-              positions: ['left', 'right', 'top']
-            });
-          }
         }
         row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
         row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
@@ -92,11 +87,6 @@ Drupal.behaviors.offlineSignupSync = function() {
               url: url,
               data: Drupal.OfflineSignup.Sync.getUserData(user),
               success: function(responseText, status) {
-                if (jQuery().bt && responseText.messages) {
-                  $row.bt(responseText.messages, {
-                    positions: ['left', 'right', 'top']
-                  });
-                }
                 if (responseText.error) {
                   $row.addClass('error');
                   user.error = responseText.messages;
