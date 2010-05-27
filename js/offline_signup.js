@@ -135,7 +135,7 @@ Drupal.OfflineSignup.Table = function(element) {
   }
 
   // Set the default activeColumn.
-  $('thead th:first', $(this.element)).addClass('active').children('a').addClass('active');
+  $('thead th a img', $(this.element)).parents('a').addClass('active').parents('th').addClass('active');
   this.activeColumn = $('thead th.active a.active', $(this.element)).data('sort', 'asc');
 
   // Apply click events to table headers.

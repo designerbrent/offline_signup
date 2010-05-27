@@ -317,15 +317,16 @@ function theme_offline_signup_sync_users_table() {
   // We generate link so we can control the sort via JavaScript and so the href
   // is simply '#sync'.
   $headers = array(
-    '<a href="#sync">'. t('Name') . $image .'</a>',
-    '<a href="#sync">'. t('E-mail') .'</a>',
-    '<a href="#sync">'. t('Profile(s)') .'</a>',
-    '<a href="#sync">'. t('Source') .'</a>',
-    '<a href="#sync">'. t('Status') .'</a>',
-    t('Actions')
+    array('data' => '', 'class' => 'ajax-status'),
+    array('data' => '<a href="#sync">'. t('Name') . $image .'</a>', 'class' => 'name'),
+    array('data' => '<a href="#sync">'. t('E-mail') .'</a>', 'class' => 'mail'),
+    array('data' => '<a href="#sync">'. t('Profile(s)') .'</a>', 'class' => 'profiles'),
+    array('data' => '<a href="#sync">'. t('Source') .'</a>', 'class' => 'source'),
+    array('data' => '<a href="#sync">'. t('Status') .'</a>', 'class' => 'status'),
+    array('data' => t('Actions'), 'class' => 'actions')
   );
   // Add empty row.
-  $rows = array(array('data' => array(array('data' => t('No users added to this event.'), 'class' => 'active', 'colspan' => 6)), 'class' => 'empty'));
+  $rows = array(array('data' => array(array('data' => t('No users added to this event.'), 'class' => 'active', 'colspan' => 7)), 'class' => 'empty'));
   return theme('table', $headers, $rows, array('id' => 'offline-signup-sync-users-table'));
 }
 

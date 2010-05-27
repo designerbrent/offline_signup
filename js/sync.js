@@ -57,12 +57,13 @@ Drupal.behaviors.offlineSignupSync = function() {
         if (user.error) {
           row.addClass('error');
         }
-        row.append('<td>' + Drupal.checkPlain(user.name) + '</td>');
-        row.append('<td>' + Drupal.checkPlain(user.mail) + '</td>');
-        row.append('<td>TODO</td>');
-        row.append('<td>' + Drupal.checkPlain(user.source) + '</td>');
-        row.append('<td>' + Drupal.checkPlain(user.status) + '</td>');
-        row.append($('<td>').append(Drupal.OfflineSignup.actionLinks(user)));
+        row.append('<td class="ajax-status">');
+        row.append('<td class="name">' + Drupal.checkPlain(user.name) + '</td>');
+        row.append('<td class="mail">' + Drupal.checkPlain(user.mail) + '</td>');
+        row.append('<td class="profiles">TODO</td>');
+        row.append('<td class="source">' + Drupal.checkPlain(user.source) + '</td>');
+        row.append('<td class="status">' + Drupal.checkPlain(user.status) + '</td>');
+        row.append($('<td class="actions">').append(Drupal.OfflineSignup.actionLinks(user)));
         tbody.append(row);
       }
 
@@ -77,7 +78,7 @@ Drupal.behaviors.offlineSignupSync = function() {
       $('#offline-signup-sync-sub-tabs li.active').removeClass('active').children('a').removeClass('active');
       $('tbody tr', $(this.element)).each(function() {
         var $row = $(this);
-        if (user = Drupal.OfflineSignup.users[$('td:nth(1)', $row).text()]) {
+        if (user = Drupal.OfflineSignup.users[$('td.mail', $row).text()]) {
           if (user.status == 'updated' || user.status == 'new') {
             var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/user';
             if (user.profiles) {
@@ -99,9 +100,9 @@ Drupal.behaviors.offlineSignupSync = function() {
                     delete(user.error);
                   }
                   user.status = '';
-                  $('td:nth(3)', $row).empty().append('server');
-                  $('td:nth(4)', $row).empty();
-                  $('td:nth(5)', $row).empty().append(Drupal.OfflineSignup.actionLinks(user));
+                  $('td.source', $row).empty().append('server');
+                  $('td.status', $row).empty();
+                  $('td.actions', $row).empty().append(Drupal.OfflineSignup.actionLinks(user));
                 }
                 Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
               },
@@ -205,7 +206,7 @@ Drupal.OfflineSignup.actionLinks = function(user) {
 }
 
 Drupal.OfflineSignup.editUser = function(row) {
-  var mail = $('td:nth(1)', row).text();
+  var mail = $('td.mail', row).text();
   var user = Drupal.OfflineSignup.users[mail];
 
   switch (user.status) {
@@ -268,7 +269,7 @@ Drupal.OfflineSignup.editUser = function(row) {
 
 Drupal.OfflineSignup.removeUser = function(row) {
   var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
-  var mail = $('td:nth(1)', row).text();
+  var mail = $('td.mail', row).text();
   delete(Drupal.OfflineSignup.users[mail]);
   Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
   for (var i in Drupal.OfflineSignup.emails) {
