@@ -8,8 +8,14 @@
   display: none;
 }
 
-#offline-signup-page td.ajax-status img {
+#offline-signup-page td.ajax-status img,
+#offline-signup-page td.ajax-status .throbber {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+#offline-signup-page td.ajax-status .throbber {
+  width: 15px;
+  height: 15px;
+  background: transparent url(/misc/throbber.gif) no-repeat 0px -18px;
 }

@@ -89,7 +89,7 @@ Drupal.behaviors.offlineSignupSync = function() {
               url: url,
               data: $.extend(Drupal.OfflineSignup.Sync.getUserData(user), { event: Drupal.OfflineSignup.settings.event }),
               beforeSubmit: function(arr, $form, options) {
-                $('td.ajax-status', $row).empty().append('<img src="' + Drupal.settings.basePath + 'misc/throbber.gif" alt="syncing" title="syncing" width="15" height="40" class="throbber" />');
+                $('td.ajax-status', $row).append('<span class="throbber">');
               },
               success: function(responseText, status) {
                 if (responseText.error) {
@@ -118,7 +118,7 @@ Drupal.behaviors.offlineSignupSync = function() {
                   else {
                     var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
                   }
-                  $('td.ajax-status', $row).empty().append(img);
+                  $('td.ajax-status', $row).append(img);
                 }
                 else {
                   alert(Drupal.t('Cannot connect to the server.'));
