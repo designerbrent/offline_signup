@@ -185,15 +185,6 @@ function offline_signup_sync_form() {
   return $form;
 }
 
-function offline_signup_sync_form_validate($form, &$form_state) {
-  form_set_error('sync', 'error');
-}
-
-function offline_signup_sync_form_submit($form, &$form_state) {
-  dpm('hi');
-  die();
-}
-
 /*******************************************************************************
  * Theme Functions
  ******************************************************************************/
