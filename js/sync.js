@@ -88,6 +88,9 @@ Drupal.behaviors.offlineSignupSync = function() {
             $('#offline-signup-sync-form').ajaxSubmit({
               url: url,
               data: $.extend(Drupal.OfflineSignup.Sync.getUserData(user), { event: Drupal.OfflineSignup.settings.event }),
+              beforeSubmit: function(arr, $form, options) {
+                $('td.ajax-status', $row).empty().append('<img src="' + Drupal.settings.basePath + 'misc/throbber.gif" alt="syncing" title="syncing" width="15" height="40" class="throbber" />');
+              },
               success: function(responseText, status) {
                 if (responseText.error) {
                   $row.addClass('error');
@@ -107,7 +110,17 @@ Drupal.behaviors.offlineSignupSync = function() {
                 Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
               },
               complete: function(response, status) {
-                if (status != 'success') {
+                $('td.ajax-status', $row).empty();
+                if (status == 'success') {
+                  if (user.error) {
+                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
+                  }
+                  else {
+                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
+                  }
+                  $('td.ajax-status', $row).empty().append(img);
+                }
+                else {
                   alert(Drupal.t('Cannot connect to the server.'));
                 }
               },

@@ -7,3 +7,9 @@
 #offline-signup-content-sync {
   display: none;
 }
+
+#offline-signup-page td.ajax-status img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
