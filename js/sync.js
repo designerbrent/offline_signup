@@ -74,6 +74,7 @@ Drupal.behaviors.offlineSignupSync = function() {
 
     // Sync table.
     table.sync = function() {
+      $('#offline-signup-sync-sub-tabs li.active').removeClass('active').children('a').removeClass('active');
       $('tbody tr', $(this.element)).each(function() {
         var $row = $(this);
         if (user = Drupal.OfflineSignup.users[$('td:nth(1)', $row).text()]) {
@@ -93,6 +94,14 @@ Drupal.behaviors.offlineSignupSync = function() {
                 }
                 else {
                   $row.removeClass('error');
+                  user.source = 'server';
+                  if (user.error) {
+                    delete(user.error);
+                  }
+                  user.status = '';
+                  $('td:nth(3)', $row).empty().append('server');
+                  $('td:nth(4)', $row).empty();
+                  $('td:nth(5)', $row).empty().append(Drupal.OfflineSignup.actionLinks(user));
                 }
                 Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
               },
