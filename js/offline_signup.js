@@ -123,6 +123,11 @@ Drupal.OfflineSignup.Table = function(element) {
 
   this.element = element;
 
+  var emptyRow = $('tbody tr.empty', this.element);
+  if (emptyRow.size()) {
+    this.emptyRow = emptyRow;
+  }
+
   // Store the ASC and DESC images and remove the DESC from displaying by default.
   this.images = {
     asc: $('thead th a img:first', $(this.element)),
@@ -183,6 +188,11 @@ Drupal.OfflineSignup.Table.prototype.sort = function(column, sort) {
 }
 
 Drupal.OfflineSignup.Table.prototype.stripe = function() {
-  $('tbody tr:even', $(this.element)).removeClass('even').addClass('odd');
-  $('tbody tr:odd', $(this.element)).removeClass('odd').addClass('even');
+  if (!$('tbody', $(this.element)).html() && this.emptyRow) {
+    $('tbody', $(this.element)).append(this.emptyRow);
+  }
+  else {
+    $('tbody tr:even', $(this.element)).removeClass('even').addClass('odd');
+    $('tbody tr:odd', $(this.element)).removeClass('odd').addClass('even');
+  }
 }

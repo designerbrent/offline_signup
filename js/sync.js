@@ -62,7 +62,7 @@ Drupal.behaviors.offlineSignupSync = function() {
         row.append('<td>TODO</td>');
         row.append('<td>' + Drupal.checkPlain(user.source) + '</td>');
         row.append('<td>' + Drupal.checkPlain(user.status) + '</td>');
-        row.append($('<td>').append(Drupal.OfflineSignup.actionLinks()));
+        row.append($('<td>').append(Drupal.OfflineSignup.actionLinks(user)));
         tbody.append(row);
       }
 
@@ -186,10 +186,12 @@ Drupal.OfflineSignup.Sync.getUserData = function(user) {
   return data;
 }
 
-Drupal.OfflineSignup.actionLinks = function() {
+Drupal.OfflineSignup.actionLinks = function(user) {
   var ul = $('<ul class="links">');
   ul.append('<li class="0 first"><a href="#sync" onclick="Drupal.OfflineSignup.editUser($(this).parents(\'tr\'))">' + Drupal.t('Edit') + '</a></li>');
-  ul.append('<li class="1 last"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
+  if (user.status == 'new' || user.status == 'updated') {
+    ul.append('<li class="1 last"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
+  }
   return ul;
 }
 
@@ -267,8 +269,5 @@ Drupal.OfflineSignup.removeUser = function(row) {
     }
   }
   $(row).remove();
-  if (!$('tbody', $(table.element)).html()) {
-    $('tbody', $(table.element)).append('<tr><td class="active" colspan="5">' + Drupal.t('No users added to this event.') + '</td></tr>');
-  }
   table.stripe();
 }
