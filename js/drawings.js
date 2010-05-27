@@ -26,7 +26,7 @@ Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
     }
   }
 
-  if (this.drawings[this.drawings.length - 1].state == 3) {
+  if (this.drawings[this.drawings.length - 1] && this.drawings[this.drawings.length - 1].state == 3) {
     var enableFirst = true;
   }
 
