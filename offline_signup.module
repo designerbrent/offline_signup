@@ -97,6 +97,9 @@ function offline_signup_theme() {
     'offline_signup_user_update_form' => array(
       'arguments' => array('form' => NULL)
     ),
+    'offline_signup_profiles' => array(
+      'arguments' => array()
+    ),
     'offline_signup_content_settings' => array(
       'arguments' => array()
     ),
@@ -163,7 +166,24 @@ function form_type_email_value($form, $edit = FALSE) {
  * Module and Helper Functions
  ******************************************************************************/
 
+function offline_signup_add_profile_form($type) {
+  // Initialize new node.
+  $node = array('uid' => 0, 'name' => '', 'type' => $type);
+  // Get the original node form.
+  $form_state = array('storage' => NULL, 'submitted' => FALSE);
+  $node_form = drupal_retrieve_form($type .'_node_form', $form_state, $node);
+  drupal_prepare_form($type .'_node_form', $node_form, $form_state);
+  $node_form['#post'] = NULL;
+  drupal_process_form($type .'_node_form', $node_form, $form_state);
 
+  foreach (array('uid', 'name', 'author', 'buttons', 'language', 'options', 'menu', 'revision_information', 'comment_settings', 'attachments') as $key) {
+    unset($node_form[$key]);
+  }
+
+  $node_form['#id'] = $type .'-node-form';
+
+  return $node_form;
+}
 
 /*******************************************************************************
  * Theme Functions

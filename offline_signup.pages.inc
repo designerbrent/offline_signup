@@ -192,6 +192,7 @@ function offline_signup_sync_form() {
 function theme_offline_signup_page() {
   drupal_add_css(drupal_get_path('module', 'offline_signup') .'/offline_signup.css');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/profiles.js');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/json2.js');
 
   drupal_add_js('misc/jquery.form.js', 'core');
@@ -244,6 +245,7 @@ function theme_offline_signup_content_signup() {
   $output .= drupal_get_form('offline_signup_user_router_form');
   $output .= drupal_get_form('offline_signup_user_register_form');
   $output .= drupal_get_form('offline_signup_user_update_form');
+  $output .= theme('offline_signup_profiles');
   $output .= '</div>';
   return $output;
 }
@@ -258,6 +260,17 @@ function theme_offline_signup_user_register_form($form) {
 
 function theme_offline_signup_user_update_form($form) {
   return drupal_render($form);
+}
+
+function theme_offline_signup_profiles() {
+  module_load_include('inc', 'node', 'node.pages');
+
+  $output = '';
+  $types = content_profile_get_types('names');
+  foreach ($types as $type => $name) {
+    $output .= '<div id="'. $type .'-node-form-wrapper" class="node-form-wrapper">'. drupal_render(offline_signup_add_profile_form($type)) .'</div>';
+  }
+  return $output;
 }
 
 function theme_offline_signup_content_settings() {
