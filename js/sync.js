@@ -85,7 +85,7 @@ Drupal.behaviors.offlineSignupSync = function() {
             }
             $('#offline-signup-sync-form').ajaxSubmit({
               url: url,
-              data: Drupal.OfflineSignup.Sync.getUserData(user),
+              data: $.extend(Drupal.OfflineSignup.Sync.getUserData(user), { event: Drupal.OfflineSignup.settings.event }),
               success: function(responseText, status) {
                 if (responseText.error) {
                   $row.addClass('error');
@@ -179,7 +179,7 @@ Drupal.behaviors.offlineSignupSync = function() {
 }
 
 Drupal.OfflineSignup.Sync.getUserData = function(user) {
-  var data = { "user": {} };
+  var data = {};
   for (var i in user) {
     data["user[" + i + "]"] = user[i];
   }
