@@ -91,7 +91,7 @@ Drupal.behaviors.offlineSignupContent = function() {
       // Mark user status as new.
       user.status = 'new';
 
-      // Attach profile types.
+      // Attach profile types for the user.
       user.profiles = Drupal.OfflineSignup.profiles.types($registerForm, user);
 
       // Save new user locally.
