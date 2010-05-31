@@ -95,6 +95,9 @@ Drupal.behaviors.offlineSignupContent = function() {
       user.profiles = Drupal.OfflineSignup.profiles.types($registerForm, user);
 
       if (user.profiles.length > 0) {
+        // Save current user data into a temp object.
+        Drupal.OfflineSignup.tempUser = user;
+
         // Since profiles are requested, we don't save the new user until all
         // requested profiles have been filled out. We add the profile types
         // to a 'stack' the form progress will follow. We use slice(0) on the
