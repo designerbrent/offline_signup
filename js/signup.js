@@ -101,6 +101,8 @@ Drupal.behaviors.offlineSignupContent = function() {
         // user.profiles array to create a full copy of the profile types the
         // user wants.
         Drupal.OfflineSignup.stack = user.profiles.slice(0);
+
+        var profile = Drupal.OfflineSignup.profiles.getProfile(Drupal.OfflineSignup.stack.shift());
       }
       else {
         // Save new user locally.

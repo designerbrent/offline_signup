@@ -15,6 +15,13 @@ Drupal.OfflineSignup.Profiles = function() {
   }
 }
 
+Drupal.OfflineSignup.Profiles.prototype.getProfile = function(type) {
+  if (this.profiles[type]) {
+    return this.profiles[type];
+  }
+  return false;
+}
+
 Drupal.OfflineSignup.Profiles.prototype.types = function($form, user) {
   var profiles = new Array();
   $('.profile-type', $form).each(function() {
