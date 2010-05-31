@@ -111,6 +111,10 @@ Drupal.behaviors.offlineSignupContent = function() {
 
         var profileType = Drupal.OfflineSignup.stack.shift();
         if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
+          // Disable the menu tabs. The only way to break from this multistep
+          // form is to cancel or finish it.
+          Drupal.OfflineSignup.menuBar.disableTabs();
+
           // Show the appropriate profile form.
           profile.show(user);
         }
