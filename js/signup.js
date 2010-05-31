@@ -105,7 +105,12 @@ Drupal.behaviors.offlineSignupContent = function() {
         // user wants.
         Drupal.OfflineSignup.stack = user.profiles.slice(0);
 
+        // Hide the register form and remove any errors from the form.
+        $registerForm.hide();
+        $inputs.removeClass('error');
+
         var profile = Drupal.OfflineSignup.profiles.getProfile(Drupal.OfflineSignup.stack.shift());
+        profile.show(user);
       }
       else {
         // Save new user locally.

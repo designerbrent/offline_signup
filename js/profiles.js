@@ -58,3 +58,23 @@ Drupal.OfflineSignup.Profile = function(type) {
     $(this.element).addClass('node-form-wrapper-processed');
   }
 }
+
+Drupal.OfflineSignup.Profile.prototype.show = function(user) {
+  if (user) {
+    // Loop through the form elements and update the form with any necessary
+    // changes based on the user data.
+    var $inputs = $('input, textarea, select', $(this.element));
+    $inputs.each(function(i, el) {
+      if (user[el.name]) {
+        if (el.type == 'checkbox') {
+          $(el).attr('checked', user[el.name]);
+        }
+        else {
+          $(el).val(user[el.name]);
+        }
+      }
+    });
+  }
+
+  $(this.element).show();
+}
