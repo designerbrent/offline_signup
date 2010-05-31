@@ -265,8 +265,11 @@ function theme_offline_signup_user_update_form($form) {
 function theme_offline_signup_profiles() {
   module_load_include('inc', 'node', 'node.pages');
 
-  $output = '';
   $types = content_profile_get_types('names');
+
+  drupal_add_js(array('offlineSignup' => array('profiles' => $types)), 'setting');
+
+  $output = '';
   foreach ($types as $type => $name) {
     $output .= '<div id="'. $type .'-node-form-wrapper" class="node-form-wrapper">'. drupal_render(offline_signup_add_profile_form($type)) .'</div>';
   }

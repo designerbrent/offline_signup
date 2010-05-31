@@ -19,7 +19,8 @@ function offline_signup_profile_types_form() {
     $form['offline_signup_profiles'][$type->type] = array(
       '#type' => 'checkbox',
       '#title' => check_plain($type->name),
-      '#description' => filter_xss_admin($type->description)
+      '#description' => filter_xss_admin($type->description),
+      '#attributes' => array('class' => 'profile-type')
     );
   }
   return $form;

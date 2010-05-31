@@ -176,9 +176,11 @@ function offline_signup_add_profile_form($type) {
   $node_form['#post'] = NULL;
   drupal_process_form($type .'_node_form', $node_form, $form_state);
 
-  foreach (array('uid', 'name', 'author', 'buttons', 'language', 'options', 'menu', 'revision_information', 'comment_settings', 'attachments') as $key) {
+  foreach (array('uid', 'name', 'author', 'language', 'options', 'menu', 'revision_information', 'comment_settings', 'attachments') as $key) {
     unset($node_form[$key]);
   }
+
+  unset($node_form['buttons']['preview']);
 
   $node_form['#id'] = $type .'-node-form';
 
