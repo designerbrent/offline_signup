@@ -95,7 +95,12 @@ Drupal.behaviors.offlineSignupContent = function() {
       user.profiles = Drupal.OfflineSignup.profiles.types($registerForm, user);
 
       if (user.profiles.length > 0) {
-        
+        // Since profiles are requested, we don't save the new user until all
+        // requested profiles have been filled out. We add the profile types
+        // to a 'stack' the form progress will follow. We use slice(0) on the
+        // user.profiles array to create a full copy of the profile types the
+        // user wants.
+        Drupal.OfflineSignup.stack = user.profiles.slice(0);
       }
       else {
         // Save new user locally.
