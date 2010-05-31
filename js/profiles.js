@@ -11,7 +11,7 @@ Drupal.behaviors.offlineSignupProfiles = function() {
 Drupal.OfflineSignup.Profiles = function() {
   this.profiles = {};
   for (var type in Drupal.settings.offlineSignup.profiles) {
-    this.profiles[type] = Drupal.OfflineSignup.Profile(type);
+    this.profiles[type] = new Drupal.OfflineSignup.Profile(type);
   }
 }
 
