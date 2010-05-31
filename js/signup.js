@@ -111,6 +111,7 @@ Drupal.behaviors.offlineSignupContent = function() {
 
         var profileType = Drupal.OfflineSignup.stack.shift();
         if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
+          // Show the appropriate profile form.
           profile.show(user);
         }
         else {
