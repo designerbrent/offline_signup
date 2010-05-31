@@ -109,8 +109,13 @@ Drupal.behaviors.offlineSignupContent = function() {
         $registerForm.hide();
         $inputs.removeClass('error');
 
-        var profile = Drupal.OfflineSignup.profiles.getProfile(Drupal.OfflineSignup.stack.shift());
-        profile.show(user);
+        var profileType = Drupal.OfflineSignup.stack.shift();
+        if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
+          profile.show(user);
+        }
+        else {
+          alert(Drupal.t('There was an error loading the request profile type object.'));
+        }
       }
       else {
         // Save new user locally.
