@@ -246,7 +246,7 @@ Drupal.OfflineSignup.editUser = function(row) {
       $registerForm.show();
 
       // We want to redirect back to this tab.
-      Drupal.OfflineSignup.redirect = 'sync';
+      Drupal.OfflineSignup.redirectTab = 'sync';
 
       $(Drupal.OfflineSignup.menuBar.tabs['signup'].element).click();
       break;
@@ -273,7 +273,7 @@ Drupal.OfflineSignup.editUser = function(row) {
       $updateForm.show();
 
       // We want to redirect back to this tab.
-      Drupal.OfflineSignup.redirect = 'sync';
+      Drupal.OfflineSignup.redirectTab = 'sync';
 
       $(Drupal.OfflineSignup.menuBar.tabs['signup'].element).click();
       break;

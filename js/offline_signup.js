@@ -196,3 +196,15 @@ Drupal.OfflineSignup.Table.prototype.stripe = function() {
     $('tbody tr:odd', $(this.element)).removeClass('odd').addClass('even');
   }
 }
+
+Drupal.OfflineSignup.redirect = function(tabType) {
+  if (tabType == undefined) {
+    if (Drupal.OfflineSignup.redirectTab != undefined) {
+      var tabType = Drupal.OfflineSignup.redirectTab;
+      delete(Drupal.OfflineSignup.redirectTab);
+      return Drupal.OfflineSignup.redirect(tabType);
+    }
+    return false;
+  }
+  $(Drupal.OfflineSignup.menuBar.tabs[tabType].element).click();
+}

@@ -94,23 +94,27 @@ Drupal.behaviors.offlineSignupContent = function() {
       // Attach profile types for the user.
       user.profiles = Drupal.OfflineSignup.profiles.types($registerForm, user);
 
-      // Save new user locally.
-      Drupal.OfflineSignup.users[user.mail] = user;
-      Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
+      if (user.profiles.length > 0) {
+        
+      }
+      else {
+        // Save new user locally.
+        Drupal.OfflineSignup.users[user.mail] = user;
+        Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
 
-      // Reset forms and navigate back to the router form.
-      $routerForm[0].reset();
-      $registerForm.hide();
-      alert('Account information saved.');
-      $inputs.removeClass('error');
-      $routerForm.show();
-      $registerForm[0].reset();
-      $updateForm[0].reset();
+        // Reset forms and navigate back to the router form.
+        $routerForm[0].reset();
+        $registerForm.hide();
+        alert('Account information saved.');
+        $inputs.removeClass('error');
+        $routerForm.show();
+        $registerForm[0].reset();
+        $updateForm[0].reset();
 
-      // Redirect if needed.
-      if (Drupal.OfflineSignup.redirect != undefined) {
-        $(Drupal.OfflineSignup.menuBar.tabs[Drupal.OfflineSignup.redirect].element).click();
-        delete(Drupal.OfflineSignup.redirect);
+        // Redirect if needed.
+        if (Drupal.OfflineSignup.redirectTab != undefined) {
+          Drupal.OfflineSignup.redirect(Drupal.OfflineSignup.redirectTab);
+        }
       }
 
       return false;
