@@ -50,7 +50,15 @@ Drupal.OfflineSignup.Profile = function(type) {
   this.element = $('#' + type + '-node-form-wrapper').get();
 
   if ($('#' + type + '-node-form-wrapper:not(.node-form-wrapper-processed)').size()) {
+    // After the save button, we add a cancel button.
+    var cancelButton = $('<input class="form-submit" type="submit" value="' + Drupal.t('Cancel') + '" name="cancel">');
+    $('input[name=op]', $(this.element)).after(cancelButton);
+
     $('input[name=op]', $(this.element)).click(function() {
+      
+      return false;
+    });
+    $('input[name=cancel]', $(this.element)).click(function() {
       
       return false;
     });
