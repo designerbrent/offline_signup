@@ -56,7 +56,7 @@ Drupal.OfflineSignup.Profile = function(type) {
 
     $('input[name=op]', $(this.element)).click(function() {
       if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'), Drupal.OfflineSignup.tempUser)) {
-        $('input, textarea, select', $(this).parents('form')).removeClass('error');
+        
       }
       return false;
     });

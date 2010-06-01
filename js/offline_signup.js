@@ -235,6 +235,10 @@ Drupal.OfflineSignup.submitForm = function(form, edit) {
             errors.push(Drupal.t('@label field is required.', { '@label': label }));
             $(el).addClass('error');
           }
+          else {
+            // Remove the error class if it exists.
+            $(el).removeClass('error');
+          }
           edit[el.name] = $(el).val();
           break;
       }
@@ -245,5 +249,6 @@ Drupal.OfflineSignup.submitForm = function(form, edit) {
     alert(errors.join("\n"));
     return false;
   }
+
   return edit;
 }

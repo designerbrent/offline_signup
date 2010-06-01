@@ -73,9 +73,8 @@ Drupal.behaviors.offlineSignupContent = function() {
           // user wants.
           Drupal.OfflineSignup.stack = user.profiles.slice(0);
 
-          // Hide the register form and remove any errors from the form.
+          // Hide the register form.
           $registerForm.hide();
-          $('input, textarea, select', $(this).parents('form')).removeClass('error');
 
           var profileType = Drupal.OfflineSignup.stack.shift();
           if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
