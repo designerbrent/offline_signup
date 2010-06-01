@@ -63,10 +63,6 @@ function offline_signup_user_update_form() {
     '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
     '#required' => TRUE
   );
-  $form['pass'] = array(
-    '#type' => 'password_confirm',
-    '#size' => 25
-  );
 
   if (module_exists('content_profile')) {
     module_load_include('inc', 'offline_signup', 'offline_signup.profile');

@@ -53,7 +53,10 @@ Drupal.behaviors.offlineSignupContent = function() {
           user.source = 'local';
         }
         else {
-          user = $.extend(Drupal.OfflineSignup.users[user.mail], user);
+          // We use $.extend to generate a clone of the user object rather than
+          // reference it.
+          originalUser = $.extend({}, Drupal.OfflineSignup.users[user.mail]);
+          user = $.extend(originalUser, user);
         }
 
         // Mark user status as new.
@@ -124,8 +127,13 @@ Drupal.behaviors.offlineSignupContent = function() {
     });
     $('input[name=update]', $updateForm).click(function() {
       if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'))) {
-        // Mark user status as updated.
-        user.status = 'updated';
+        // We use $.extend to generate a clone of the user object rather than
+        // reference it.
+        originalUser = $.extend({}, Drupal.OfflineSignup.users[user.mail]);
+        user = $.extend(originalUser, user);
+
+        // Mark user status as updated only if the status is not 'new'.
+        if (user.status != 'new') user.status = 'updated';
 
         // Attach profile types to the user.
         user.profiles = Drupal.OfflineSignup.profiles.types($updateForm, user);
