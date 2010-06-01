@@ -227,6 +227,7 @@ Drupal.OfflineSignup.submitForm = function(form, edit) {
         case 'form_build_id':
         case 'form_id':
         case 'form_token':
+        case '':
           break;
         default:
           if ($(el).hasClass('required') && !$(el).val()) {

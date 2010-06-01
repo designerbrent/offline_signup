@@ -56,7 +56,41 @@ Drupal.OfflineSignup.Profile = function(type) {
 
     $('input[name=op]', $(this.element)).click(function() {
       if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'), Drupal.OfflineSignup.tempUser)) {
-        
+        if (Drupal.OfflineSignup.stack && Drupal.OfflineSignup.stack.length > 0) {
+          // Save changes to temp user.
+          Drupal.OfflineSignup.tempUser = user;
+
+          // Progress to next profile in stack
+          var profileType = Drupal.OfflineSignup.stack.shift();
+          if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
+            // Show the appropriate profile form.
+            profile.show(user);
+          }
+          else {
+            alert(Drupal.t('There was an error loading the request profile type object.'));
+          }
+        }
+        else {
+          // Save the user.
+          Drupal.OfflineSignup.users[user.mail] = user;
+          Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
+          delete(Drupal.OfflineSignup.tempUser);
+
+          // Reset forms.
+          $('form', $('#offline-signup-content-signup')).each(function() {
+            $(this)[0].reset();
+          });
+
+          Drupal.OfflineSignup.activeProfile.hide();
+
+          alert('Account information saved.');
+
+          // Reveal the router form.
+          $('#offline-signup-user-router-form').show();
+
+          // Enable menu tabs.
+          Drupal.OfflineSignup.menuBar.enableTabs();
+        }
       }
       return false;
     });
@@ -70,6 +104,10 @@ Drupal.OfflineSignup.Profile = function(type) {
 }
 
 Drupal.OfflineSignup.Profile.prototype.show = function(user) {
+  if (Drupal.OfflineSignup.activeProfile) {
+    Drupal.OfflineSignup.activeProfile.hide();
+  }
+
   if (user) {
     // Loop through the form elements and update the form with any necessary
     // changes based on the user data.
@@ -86,5 +124,13 @@ Drupal.OfflineSignup.Profile.prototype.show = function(user) {
     });
   }
 
+  // Set this profile to the active profile.
+  Drupal.OfflineSignup.activeProfile = this;
+
   $(this.element).show();
+}
+
+Drupal.OfflineSignup.Profile.prototype.hide = function() {
+  $(this.element).hide();
+  delete(Drupal.OfflineSignup.activeProfile);
 }

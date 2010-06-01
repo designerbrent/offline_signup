@@ -95,13 +95,12 @@ Drupal.behaviors.offlineSignupContent = function() {
           Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
 
           // Reset forms and navigate back to the router form.
-          $routerForm[0].reset();
+          $('form', $('#offline-signup-content-signup')).each(function() {
+            $(this)[0].reset();
+          });
           $registerForm.hide();
           alert('Account information saved.');
-          $inputs.removeClass('error');
           $routerForm.show();
-          $registerForm[0].reset();
-          $updateForm[0].reset();
 
           // Redirect if needed.
           if (Drupal.OfflineSignup.redirectTab != undefined) {
