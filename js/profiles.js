@@ -55,7 +55,9 @@ Drupal.OfflineSignup.Profile = function(type) {
     $('input[name=op]', $(this.element)).after(cancelButton);
 
     $('input[name=op]', $(this.element)).click(function() {
-      
+      if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'), Drupal.OfflineSignup.tempUser)) {
+        
+      }
       return false;
     });
     $('input[name=cancel]', $(this.element)).click(function() {

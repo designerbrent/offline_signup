@@ -208,3 +208,42 @@ Drupal.OfflineSignup.redirect = function(tabType) {
   }
   $(Drupal.OfflineSignup.menuBar.tabs[tabType].element).click();
 }
+
+Drupal.OfflineSignup.submitForm = function(form, edit) {
+  if (edit == undefined) {
+    var edit = {};
+  }
+
+  var $inputs = $('input, textarea, select', form);
+  var errors = new Array();
+  $inputs.each(function(i, el) {
+    if (el.type == 'checkbox') {
+      edit[el.name] = $(el).is(':checked') * 1;
+    }
+    else {
+      switch (el.name) {
+        case 'back':
+        case 'create':
+        case 'form_build_id':
+        case 'form_id':
+        case 'form_token':
+          break;
+        default:
+          if ($(el).hasClass('required') && !$(el).val()) {
+            var label = $(el).siblings('label').text();
+            label = label.substr(0, label.indexOf(':'));
+            errors.push(Drupal.t('@label field is required.', { '@label': label }));
+            $(el).addClass('error');
+          }
+          edit[el.name] = $(el).val();
+          break;
+      }
+    }
+  });
+
+  if (errors.length > 0) {
+    alert(errors.join("\n"));
+    return false;
+  }
+  return edit;
+}
