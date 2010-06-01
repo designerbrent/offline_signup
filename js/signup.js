@@ -73,11 +73,11 @@ Drupal.behaviors.offlineSignupContent = function() {
           // user wants.
           Drupal.OfflineSignup.stack = user.profiles.slice(0);
 
-          // Hide the register form.
-          $registerForm.hide();
-
           var profileType = Drupal.OfflineSignup.stack.shift();
           if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
+            // Hide the register form.
+            $registerForm.hide();
+
             // Disable the menu tabs. The only way to break from this multistep
             // form is to cancel or finish it.
             Drupal.OfflineSignup.menuBar.disableTabs();
@@ -89,6 +89,7 @@ Drupal.behaviors.offlineSignupContent = function() {
             alert(Drupal.t('There was an error loading the request profile type object.'));
           }
         }
+        // No profiles to set so save user.
         else {
           // Save new user locally.
           Drupal.OfflineSignup.users[user.mail] = user;
@@ -119,6 +120,63 @@ Drupal.behaviors.offlineSignupContent = function() {
     $('input[name=back]', $updateForm).click(function() {
       $updateForm.hide();
       $routerForm.show();
+      return false;
+    });
+    $('input[name=update]', $updateForm).click(function() {
+      if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'))) {
+        // Mark user status as updated.
+        user.status = 'updated';
+
+        // Attach profile types to the user.
+        user.profiles = Drupal.OfflineSignup.profiles.types($updateForm, user);
+
+        if (user.profiles.length > 0) {
+          // Save current user data into a temp object.
+          Drupal.OfflineSignup.tempUser = user;
+
+          // Since profiles are requested, we don't save the new user until all
+          // requested profiles have been filled out. We add the profile types
+          // to a 'stack' the form progress will follow. We use slice(0) on the
+          // user.profiles array to create a full copy of the profile types the
+          // user wants.
+          Drupal.OfflineSignup.stack = user.profiles.slice(0);
+
+          var profileType = Drupal.OfflineSignup.stack.shift();
+          if (profile = Drupal.OfflineSignup.profiles.getProfile(profileType)) {
+            // Hide the register form.
+            $updateForm.hide();
+
+            // Disable the menu tabs. The only way to break from this multistep
+            // form is to cancel or finish it.
+            Drupal.OfflineSignup.menuBar.disableTabs();
+
+            // Show the appropriate profile form.
+            profile.show(user);
+          }
+          else {
+            alert(Drupal.t('There was an error loading the request profile type object.'));
+          }
+        }
+        // No profiles to set so save user.
+        else {
+          // Save new user locally.
+          Drupal.OfflineSignup.users[user.mail] = user;
+          Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
+
+          // Reset forms and navigate back to the router form.
+          $('form', $('#offline-signup-content-signup')).each(function() {
+            $(this)[0].reset();
+          });
+          $updateForm.hide();
+          alert('Account information saved.');
+          $routerForm.show();
+
+          // Redirect if needed.
+          if (Drupal.OfflineSignup.redirectTab != undefined) {
+            Drupal.OfflineSignup.redirect(Drupal.OfflineSignup.redirectTab);
+          }
+        }
+      }
       return false;
     });
 
