@@ -20,3 +20,7 @@
   height: 15px;
   background: transparent url(/misc/throbber.gif) no-repeat 0px -18px;
 }
+
+#offline-signup-content-sync tr.ok {
+  background-color: #DDFFDD;
+}

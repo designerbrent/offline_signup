@@ -50,7 +50,7 @@ function offline_signup_ajax_sync_user() {
 
   $form_state = array();
   $form_state['values'] = $_POST;
-  foreach (array('status', 'source') as $key) {
+  foreach (array('status', 'source', 'form_build_id', 'form_id', 'form_token') as $key) {
     unset($form_state['values'][$key]);
   }
 

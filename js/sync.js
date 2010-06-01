@@ -114,9 +114,11 @@ Drupal.behaviors.offlineSignupSync = function() {
                 if (status == 'success') {
                   if (user.error) {
                     var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
+                    $row.addClass('error');
                   }
                   else {
                     var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
+                    $row.addClass('ok');
                   }
                   $('td.ajax-status', $row).append(img);
                 }
@@ -207,13 +209,11 @@ Drupal.OfflineSignup.Sync.getUserData = function(user) {
     switch (i) {
       case 'profiles':
       case 'error':
-      case 'form_build_id':
-      case 'form_id':
-      case 'form_token':
         break;
       default:
         data[i] = user[i];
         break;
+    }
   }
   return data;
 }
