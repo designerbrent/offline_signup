@@ -204,7 +204,16 @@ Drupal.behaviors.offlineSignupSync = function() {
 Drupal.OfflineSignup.Sync.getUserData = function(user) {
   var data = {};
   for (var i in user) {
-    data["user[" + i + "]"] = user[i];
+    switch (i) {
+      case 'profiles':
+      case 'error':
+      case 'form_build_id':
+      case 'form_id':
+      case 'form_token':
+        break;
+      default:
+        data[i] = user[i];
+        break;
   }
   return data;
 }

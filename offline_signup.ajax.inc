@@ -48,12 +48,13 @@ function offline_signup_ajax_settings() {
 function offline_signup_ajax_sync_user() {
   module_load_include('inc', 'offline_signup', 'offline_signup.pages');
 
-  $user = $_POST['user'];
   $form_state = array();
-  $form_state['values'] = $user;
-  unset($form_state['values']['status'], $form_state['values']['source'], $form_state['values']['profiles'], $form_state['values']['error']);
+  $form_state['values'] = $_POST;
+  foreach (array('status', 'source') as $key) {
+    unset($form_state['values'][$key]);
+  }
 
-  switch ($user['status']) {
+  switch ($_POST['status']) {
     case 'new':
       $form_state['values'] += array(
         // Notify the user of the new account.
@@ -61,7 +62,6 @@ function offline_signup_ajax_sync_user() {
         // Generate a password.
         'pass' => user_password()
       );
-      $form_state['values']['event'] = $_POST['event'];
       $form_state['values']['op'] = t('Create new account');
       drupal_execute('user_register', $form_state);
       break;
