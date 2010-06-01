@@ -95,7 +95,18 @@ Drupal.OfflineSignup.Profile = function(type) {
       return false;
     });
     $('input[name=cancel]', $(this.element)).click(function() {
-      
+      Drupal.OfflineSignup.activeProfile.hide();
+
+      // Reset forms.
+      $('form', $('#offline-signup-content-signup')).each(function() {
+        $(this)[0].reset();
+      });
+
+      // Reveal the router form.
+      $('#offline-signup-user-router-form').show();
+
+      // Enable menu tabs.
+      Drupal.OfflineSignup.menuBar.enableTabs();
       return false;
     });
 
