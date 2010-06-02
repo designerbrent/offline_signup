@@ -342,14 +342,30 @@ Drupal.OfflineSignup.editUser = function(row) {
 Drupal.OfflineSignup.removeUser = function(row) {
   var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
   var mail = $('td.mail', row).text();
-  delete(Drupal.OfflineSignup.users[mail]);
-  Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
-  for (var i in Drupal.OfflineSignup.emails) {
-    if (Drupal.OfflineSignup.emails[i] == mail) {
-      delete(Drupal.OfflineSignup.emails[i]);
-      break;
+  var user = Drupal.OfflineSignup.users[mail];
+  if (user.source == 'server') {
+    Drupal.OfflineSignup.users[mail] = {
+      name: user.name,
+      mail: user.mail,
+      source: 'server',
+      status: ''
     }
   }
-  $(row).remove();
-  table.stripe();
+  else {
+    // Delete user data.
+    delete(Drupal.OfflineSignup.users[mail]);
+
+    // Delete user email.
+    for (var i in Drupal.OfflineSignup.emails) {
+      if (Drupal.OfflineSignup.emails[i] == mail) {
+        delete(Drupal.OfflineSignup.emails[i]);
+        break;
+      }
+    }
+  }
+  Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
+  if (table.data == 'local') {
+    $(row).remove();
+    table.stripe();
+  }
 }
