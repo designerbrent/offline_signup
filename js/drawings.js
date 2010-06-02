@@ -18,15 +18,31 @@ Drupal.OfflineSignup.Drawings = function() {
 }
 
 Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
-  $('form', $('#offline-signup-content-drawings')).remove();
-
-  if (localDrawings = Drupal.OfflineSignup.getLocal('offlineSignupDrawings')) {
-    for (var i in localDrawings) {
-      this.initDrawing(localDrawings[i]);
+  // Only grab locally stored drawings if we haven't already.
+  if (this.drawings.length == 0) {
+    if (localDrawings = Drupal.OfflineSignup.getLocal('offlineSignupDrawings')) {
+      for (var i in localDrawings) {
+        this.initDrawing(localDrawings[i]);
+      }
     }
+  }
+  // Drawings have already been loaded. Remove any with a state less than 2.
+  // We'll rebuild the blank states below.
+  else {
+    var end = null;
+    for (var i = 0; i < this.drawings.length; i++) {
+      if (this.drawings[i].state < 2) {
+        if (this.drawings[i].form) {
+          $(this.drawings[i].form).remove();
+        }
+        if (end == null) end = i;
+      }
+    }
+    this.drawings = this.drawings.slice(0, end)
   }
 
   if (this.drawings[this.drawings.length - 1] && this.drawings[this.drawings.length - 1].state == 3) {
+    // We want to enable the first new drawing.
     var enableFirst = true;
   }
 

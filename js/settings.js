@@ -81,6 +81,9 @@ Drupal.behaviors.offlineSignupSettings = function() {
 
           alert(Drupal.t('Number of drawings updated.'));
         }
+
+        // Re-initialize the drawings.
+        Drupal.OfflineSignup.drawings.init(Drupal.OfflineSignup.settings.drawings);
       }
       else {
         alert(Drupal.t('Please enter an event.'));
