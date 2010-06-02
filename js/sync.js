@@ -229,8 +229,9 @@ Drupal.behaviors.offlineSignupSync = function() {
   }
 
   if ($('#offline-signup-content-sync:not(.offline-signup-sync-processed)').size()) {
-    // When tab is active, we need to (re)populate the table rows for all local
-    // users. Override the default focus method with our own.
+    // When tab becomes active, we need to (re)populate the table rows for all
+    // local users.
+    // Override the default focus method with our own.
     Drupal.OfflineSignup.menuBar.tabs['sync'].focus = function(animate) {
       // Before we reveal the sync page, we first (re)populate the user table
       // and drawings table.
