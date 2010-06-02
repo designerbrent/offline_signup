@@ -89,9 +89,6 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
     drawing.saved = false;
   }
 
-  // Move the drawing to the appropriate state.
-  drawing.enableState();
-
   $('#offline-signup-content-drawings').append(drawing.form);
 
   // Set click events.
@@ -111,6 +108,9 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
     drawing.cancelWinner();
     return false;
   });
+
+  // Move the drawing to the appropriate state.
+  drawing.enableState();
 
   return this.drawings.push(drawing);
 }
