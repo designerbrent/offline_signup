@@ -269,7 +269,7 @@ Drupal.OfflineSignup.Sync.getUserData = function(user) {
 Drupal.OfflineSignup.actionLinks = function(user) {
   var ul = $('<ul class="links">');
   ul.append('<li class="0 first"><a href="#sync" onclick="Drupal.OfflineSignup.editUser($(this).parents(\'tr\'))">' + Drupal.t('Edit') + '</a></li>');
-  if (user.status == 'new' || user.status == 'updated') {
+  if (user.source == 'local' || user.status == 'updated') {
     ul.append('<li class="1 last"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
   }
   return ul;
@@ -343,19 +343,26 @@ Drupal.OfflineSignup.removeUser = function(row) {
   var table = Drupal.OfflineSignup.tables['offline-signup-sync-users-table'];
   var mail = $('td.mail', row).text();
   var user = Drupal.OfflineSignup.users[mail];
-  if (user.source == 'server') {
-    Drupal.OfflineSignup.users[mail] = {
+
+  // Static users are users that were loaded from the server for the active
+  // event. These users should not get deleted locally.
+  if (user.static) {
+    // Reset the user object for static users.
+    user = Drupal.OfflineSignup.users[mail] = {
       name: user.name,
       mail: user.mail,
       source: 'server',
-      status: ''
+      status: '',
+      static: true
     }
   }
   else {
     // Delete user data.
     delete(Drupal.OfflineSignup.users[mail]);
+  }
 
-    // Delete user email.
+  if (user.source == 'local') {
+    // Delete the user email.
     for (var i in Drupal.OfflineSignup.emails) {
       if (Drupal.OfflineSignup.emails[i] == mail) {
         delete(Drupal.OfflineSignup.emails[i]);
@@ -363,9 +370,16 @@ Drupal.OfflineSignup.removeUser = function(row) {
       }
     }
   }
+
   Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
-  if (table.data == 'local') {
+
+  if (table.data == 'local' || !user.static) {
     $(row).remove();
     table.stripe();
+  }
+  else {
+    // Make updates to the row.
+    $('td.status', $(row)).empty();
+    $('td.actions', $(row)).empty().append(Drupal.OfflineSignup.actionLinks(user));
   }
 }
