@@ -23,37 +23,64 @@ Drupal.behaviors.offlineSignupSettings = function() {
 
     $('input[name=save]', $settingsForm).click(function() {
       if ($('input[name=event]', $settingsForm).val()) {
-        $settingsForm.ajaxSubmit({
-          success: function(responseText, status) {
-            if (responseText.status == true) {
-              Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
-
-              // Enable tabs.
-              if (Drupal.OfflineSignup.menuBar) {
-                Drupal.OfflineSignup.menuBar.enableTabs('settings');
+        // No need to make AJAX call if event is not changing.
+        if ($('input[name=event]', $settingsForm).val() != Drupal.OfflineSignup.settings.event) {
+          $settingsForm.ajaxSubmit({
+            beforeSubmit: function(arr, $form, options) {
+              // Verify it is ok to save settings based on drawings.
+              for (var i in Drupal.OfflineSignup.drawings.drawings) {
+                var drawing = Drupal.OfflineSignup.drawings.drawings[i];
+                if (drawing.state == 2) {
+                  alert(Drupal.t('Settings not saved!') + "\n\n" + Drupal.t('There are drawing(s) pending for the current event. Either cancel or finalize the drawing(s) to continue.'));
+                  return false;
+                }
+                else if (drawing.state == 3 && drawing.saved == false) {
+                  alert(Drupal.t('Settings not saved!') + "\n\n" + Drupal.t('Drawings need synced before Event can be changed.'));
+                  return false;
+                }
               }
-            }
-            alert(responseText.message);
-            // We want to redirect to the signup form.
-            window.location = Drupal.settings.basePath + 'offline/signup#signup';
-            // Due to the page doesn't actually reload because we supplied a
-            // fragment, we force a reload. This will effectively load all
-            // pre-existing user's data that were created via the set event.
-            window.location.reload();
-          },
-          complete: function(response, status) {
-            if (status != 'success' && Drupal.OfflineSignup.settings.event == '') {
-              alert(Drupal.t('There was a problem connecting to the server. Settings were not saved.'));
-            }
-          },
-          dataType: 'json',
-          type: 'POST'
-        });
+            },
+            success: function(responseText, status) {
+              if (responseText.status == true) {
+                Drupal.OfflineSignup.settings.event = $('input[name=event]', $settingsForm).val();
 
-        // Save changes to the number of drawings.
-        // Save settings.
-        Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
-        Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
+                // Enable tabs.
+                if (Drupal.OfflineSignup.menuBar) {
+                  Drupal.OfflineSignup.menuBar.enableTabs('settings');
+                }
+              }
+
+              // Save changes to the number of drawings.
+              // Save settings.
+              Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
+              Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
+
+              alert(responseText.message);
+
+              // We want to redirect to the signup form.
+              window.location = Drupal.settings.basePath + 'offline/signup#signup';
+              // Due to the page doesn't actually reload because we supplied a
+              // fragment, we force a reload. This will effectively load all
+              // pre-existing user's data that were created via the set event.
+              window.location.reload();
+            },
+            complete: function(response, status) {
+              if (status != 'success' && Drupal.OfflineSignup.settings.event == '') {
+                alert(Drupal.t('There was a problem connecting to the server. Settings were not saved.'));
+              }
+            },
+            dataType: 'json',
+            type: 'POST'
+          });
+        }
+        else {
+          // Save changes to the number of drawings.
+          // Save settings.
+          Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
+          Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
+
+          alert(Drupal.t('Number of drawings updated.'));
+        }
       }
       else {
         alert(Drupal.t('Please enter an event.'));
