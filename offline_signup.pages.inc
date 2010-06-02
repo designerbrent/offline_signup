@@ -56,6 +56,10 @@ function offline_signup_user_register_form() {
 }
 
 function offline_signup_user_update_form() {
+  $form['user'] = array(
+    '#type' => 'value',
+    '#value' => NULL
+  );
   $form['mail'] = array(
     '#type' => 'textfield',
     '#title' => t('E-mail address'),
@@ -63,6 +67,10 @@ function offline_signup_user_update_form() {
     '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
     '#required' => TRUE
   );
+
+  if (module_exists('profile')) {
+    $form += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
+  }
 
   if (module_exists('content_profile')) {
     module_load_include('inc', 'offline_signup', 'offline_signup.profile');
@@ -86,11 +94,23 @@ function offline_signup_user_update_form() {
 }
 
 function offline_signup_user_update_form_validate($form, &$form_state) {
-  form_set_error('name', t('Update user error'));
+  if ($account = user_load(array('mail' => $form_state['values']['mail']))) {
+    form_set_value($form['user'], $account, $form_state);
+  }
+  else {
+    form_set_error('mail', t('User account could not be loaded.'));
+  }
 }
 
 function offline_signup_user_update_form_submit($form, &$form_state) {
-  
+  $form_values = $form_state['values'];
+  unset($form_values['user']);
+
+  // Delete any pending updates before saving new one.
+  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d", $form_state['values']['user']->uid);
+
+  db_query("INSERT INTO {offline_signup_user_updates} (uid, form_values, udpated) VALUES(%d, '%s', %d)",
+    $form_state['values']['user']->uid, serialize($form_state['values']), time());
 }
 
 function offline_signup_settings_form() {

@@ -25,6 +25,31 @@ function offline_signup_schema() {
     ),
     'unique keys' => array('uid_event' => array('uid', 'event'))
   );
+  $schema['offline_signup_user_updates'] = array(
+    'description' => 'Store updated user data to be applied upon confirmation from user.',
+    'fields' => array(
+      'uid' => array(
+        'description' => "User's {users}.uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'form_values' => array(
+        'description' => 'The form values submitted that need user confirmation before applying.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big'
+      ),
+      'updated' => array(
+        'description' => 'The Unix timestamp when the user update values were synced to the server.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0
+      )
+    ),
+    'unique keys' => array('uid_updated' => array('uid', 'updated'))
+  );
   return $schema;
 }
 
@@ -41,4 +66,40 @@ function offline_signup_install() {
 function offline_signup_uninstall() {
   drupal_uninstall_schema('offline_signup');
   variable_del('offline_signup_event');
+}
+
+/**
+ * Add the {offline_signup_user_updates} table.
+ */
+function offline_signup_update_6000() {
+  $ret = array();
+
+  $schema['offline_signup_user_updates'] = array(
+    'description' => 'Store updated user data to be applied upon confirmation from user.',
+    'fields' => array(
+      'uid' => array(
+        'description' => "User's {users}.uid.",
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'form_values' => array(
+        'description' => 'The form values submitted that need user confirmation before applying.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big'
+      ),
+      'updated' => array(
+        'description' => 'The Unix timestamp when the user update values were synced to the server.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0
+      )
+    ),
+    'unique keys' => array('uid_updated' => array('uid', 'updated'))
+  );
+  db_create_table($ret, 'offline_signup_user_updates', $schema['offline_signup_user_updates']);
+
+  return $ret;
 }
