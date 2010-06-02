@@ -38,7 +38,9 @@ Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
         if (end == null) end = i;
       }
     }
-    this.drawings = this.drawings.slice(0, end)
+    if (end) {
+      this.drawings = this.drawings.slice(0, end);
+    }
   }
 
   if (this.drawings[this.drawings.length - 1] && this.drawings[this.drawings.length - 1].state == 3) {
