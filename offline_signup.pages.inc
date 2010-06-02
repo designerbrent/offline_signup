@@ -109,7 +109,7 @@ function offline_signup_user_update_form_submit($form, &$form_state) {
   // Delete any pending updates before saving new one.
   db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d", $form_state['values']['user']->uid);
 
-  db_query("INSERT INTO {offline_signup_user_updates} (uid, form_values, udpated) VALUES(%d, '%s', %d)",
+  db_query("INSERT INTO {offline_signup_user_updates} (uid, form_values, updated) VALUES(%d, '%s', %d)",
     $form_state['values']['user']->uid, serialize($form_state['values']), time());
 }
 
