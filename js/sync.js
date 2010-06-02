@@ -81,7 +81,7 @@ Drupal.behaviors.offlineSignupSync = function() {
         if (user = Drupal.OfflineSignup.users[$('td.mail', $row).text()]) {
           if (user.status == 'updated' || user.status == 'new') {
             var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/user';
-            if (user.profiles) {
+            if (user.status == 'new' && user.profiles) {
               var profiles = user.profiles.join(',');
               url += '?profile=' + escape(profiles);
             }
