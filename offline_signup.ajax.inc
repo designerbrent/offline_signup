@@ -65,7 +65,7 @@ function offline_signup_ajax_sync_user() {
       $form_state['values']['op'] = t('Create new account');
       drupal_execute('user_register', $form_state);
       break;
-    case 'update':
+    case 'updated':
       $form_state['values']['op'] = t('Update account');
       drupal_execute('offline_signup_user_update_form', $form_state);
       break;
