@@ -132,6 +132,19 @@ Drupal.behaviors.offlineSignupContent = function() {
         originalUser = $.extend({}, Drupal.OfflineSignup.users[user.mail]);
         user = $.extend(originalUser, user);
 
+        // If user.name is undefined, we are updating a user on the server.
+        if (user.name == undefined) {
+          // Find and set the name for the user.
+          for (var i in Drupal.OfflineSignup.emails) {
+            if (Drupal.OfflineSignup.emails[i] == user.mail) {
+              console.log('hi');
+              user.name = i;
+              user.source = 'server';
+              break;
+            }
+          }
+        }
+
         // Mark user status as updated only if the status is not 'new'.
         if (user.status != 'new') user.status = 'updated';
 
