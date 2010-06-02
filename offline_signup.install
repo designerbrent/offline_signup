@@ -45,6 +45,15 @@ function offline_signup_schema() {
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'request_sent' => array(
+        'description' => 'Boolean of whether a request has been sent to the user to confirm these updates.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'size' => 'tiny',
         'default' => 0
       )
     ),
@@ -94,6 +103,15 @@ function offline_signup_update_6000() {
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'request_sent' => array(
+        'description' => 'Boolean of whether a request has been sent to the user to confirm these updates.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'size' => 'tiny',
         'default' => 0
       )
     ),
