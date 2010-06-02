@@ -22,8 +22,8 @@ Drupal.behaviors.offlineSignupSync = function() {
 
     // Add our sub-tabs of 'Event' and 'Local'.
     var ul = $('<ul id="offline-signup-sync-sub-tabs" class="links">');
-    ul.append('<li><a href="#sync">' + Drupal.t('Event') + '</a></li>');
-    ul.append('<li class="active"><a class="active" href="#sync">' + Drupal.t('Local') + '</a></li>');
+    ul.append('<li><a href="#sync" title="' + Drupal.t('Show all users for this event.') + '">' + Drupal.t('Event') + '</a></li>');
+    ul.append('<li class="active"><a class="active" href="#sync" title="' + Drupal.t('Show only local users and server users who have had local changes.') + '">' + Drupal.t('Local') + '</a></li>');
     $(table.element).before(ul);
     table.data = 'local';
     // Add click events to the sub-tabs.
@@ -49,7 +49,7 @@ Drupal.behaviors.offlineSignupSync = function() {
       for (var i in Drupal.OfflineSignup.users) {
         var user = Drupal.OfflineSignup.users[i];
 
-        if (this.data == 'local' && user.source != 'local') {
+        if (this.data == 'local' && (user.source != 'local' && user.status != 'updated')) {
           continue;
         }
 
@@ -307,7 +307,9 @@ Drupal.OfflineSignup.editUser = function(row) {
 
       $(Drupal.OfflineSignup.menuBar.tabs['signup'].element).click();
       break;
-    case 'update':
+    default:
+      // Catch-all for editing a user, most cases this will be for users
+      // stored on the server.
       var $updateForm = $('#offline-signup-user-update-form');
 
       // Populate the update form.
