@@ -61,11 +61,16 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
     drawing.user = Drupal.OfflineSignup.users[data.mail];
     drawing.state = data.state;
     drawing.date = new Date(data.date);
+    drawing.event = data.event;
+    drawing.saved = data.saved;
+    if (data.error) drawing.error = data.error;
     drawing.setInfos();
   }
   // If this is the first drawing and it's state is 0, move it to state 1.
   else if (drawing.id == 1 && drawing.state == 0) {
     drawing.state = 1;
+    drawing.event = Drupal.OfflineSignup.settings.event;
+    drawing.saved = false;
   }
 
   // Move the drawing to the appropriate state.
@@ -98,11 +103,17 @@ Drupal.OfflineSignup.Drawings.prototype.save = function() {
   var drawings = new Array();
   for (var i in this.drawings) {
     if (this.drawings[i].state > 1) {
-      drawings.push({
+      var drawing = {
         mail: this.drawings[i].user.mail,
         state: this.drawings[i].state,
-        date: this.drawings[i].date.getTime()
-      });
+        date: this.drawings[i].date.getTime(),
+        event: this.drawings[i].event,
+        saved: this.drawings[i].saved
+      };
+      if (this.drawings[i].error) {
+        drawing.error = this.drawings[i].error;
+      }
+      drawings.push(drawing);
     }
   }
 
@@ -112,6 +123,13 @@ Drupal.OfflineSignup.Drawings.prototype.save = function() {
 Drupal.OfflineSignup.Drawings.prototype.nextDrawing = function(id) {
   // The id is not 0-indexed so we effectively grab the next drawing.
   return this.drawings[id];
+}
+
+Drupal.OfflineSignup.Drawings.prototype.getDrawing = function(id) {
+  if (drawing = this.drawings[id - 1]) {
+    return drawing;
+  }
+  return false;
 }
 
 Drupal.OfflineSignup.Drawing = function() {
@@ -212,4 +230,23 @@ Drupal.OfflineSignup.Drawing.prototype.cancelWinner = function() {
     this.enableState(1);
   }
   return false;
+}
+
+Drupal.OfflineSignup.Drawing.prototype.getData = function() {
+  var data = {};
+  for (var i in this) {
+    switch (i) {
+      case 'form':
+        break;
+      case 'user':
+        data['mail'] = this[i].mail;
+        break;
+      case 'date':
+        data[i] = this[i].getTime();
+        break;
+      default:
+        data[i] = this[i];
+        break;
+    }
+  }
 }

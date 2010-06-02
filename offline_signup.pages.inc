@@ -341,13 +341,14 @@ function theme_offline_signup_sync_drawings_table() {
   // We generate link so we can control the sort via JavaScript and so the href
   // is simply '#sync'.
   $headers = array(
-    '<a href="#sync">'. t('Drawing') . $image .'</a>',
-    '<a href="#sync">'. t('Name') .'</a>',
-    '<a href="#sync">'. t('E-mail') .'</a>',
-    '<a href="#sync">'. t('Date selected') .'</a>'
+    array('data' => '', 'class' => 'ajax-status'),
+    array('data' => '<a href="#sync">'. t('Drawing') . $image .'</a>', 'class' => 'number'),
+    array('data' => '<a href="#sync">'. t('Name') .'</a>', 'class' => 'name'),
+    array('data' => '<a href="#sync">'. t('E-mail') .'</a>', 'class' => 'mail'),
+    array('data' => '<a href="#sync">'. t('Date selected') .'</a>', 'class' => 'date')
   );
   // Add empty row.
-  $rows = array(array('data' => array(array('data' => t('No drawings yet completed.'), 'class' => 'active', 'colspan' => 4)), 'class' => 'empty'));
+  $rows = array(array('data' => array(array('data' => t('No drawings yet completed.'), 'class' => 'active', 'colspan' => 5)), 'class' => 'empty'));
   return theme('table', $headers, $rows, array('id' => 'offline-signup-sync-drawings-table'));
 }
 

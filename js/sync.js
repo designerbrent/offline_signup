@@ -153,10 +153,11 @@ Drupal.behaviors.offlineSignupSync = function() {
 
         if (drawing.state == 3) {
           var row = $('<tr>');
-          row.append('<td>' + Drupal.checkPlain(drawing.id) + '</td>');
-          row.append('<td>' + Drupal.checkPlain(drawing.user.name) + '</td>');
-          row.append('<td>' + Drupal.checkPlain(drawing.user.mail) + '</td>');
-          row.append('<td>' + Drupal.checkPlain(drawing.formatDate()) + '</td>');
+          row.append('<td class="ajax-status">');
+          row.append('<td class="drawing-id">' + Drupal.checkPlain(drawing.id) + '</td>');
+          row.append('<td class="name">' + Drupal.checkPlain(drawing.user.name) + '</td>');
+          row.append('<td class="mail">' + Drupal.checkPlain(drawing.user.mail) + '</td>');
+          row.append('<td class="date">' + Drupal.checkPlain(drawing.formatDate()) + '</td>');
           tbody.append(row);
         }
       }
@@ -168,9 +169,55 @@ Drupal.behaviors.offlineSignupSync = function() {
     }
 
     table.sync = function() {
-      $('tbody tr', $(this.element)).each(function() {
-        
-      });
+      if (!$('tbody tr:first', $(this.element)).hasClass('empty')) {
+        $('tbody tr', $(this.element)).each(function() {
+          var $row = $(this);
+          if (drawing = Drupal.OfflineSignup.drawings.getDrawing($('td.drawing-id', $row).text())) {
+            var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/drawing';
+            $('#offline-signup-sync-form').ajaxSubmit({
+              url: url,
+              data: $.extend(drawing.getData(), { event: Drupal.OfflineSignup.settings.event }),
+              beforeSubmit: function(arr, $form, options) {
+                $('td.ajax-status', $row).append('<span class="throbber">');
+              },
+              success: function(responseText, status) {
+                if (responseText.error) {
+                  $row.addClass('error');
+                  drawing.error = responseText.messages;
+                }
+                else {
+                  $row.removeClass('error');
+                  drawing.saved = true;
+                  if (drawing.error) {
+                    delete(drawing.error);
+                  }
+                }
+                console.log(Drupal.OfflineSignup.drawings.drawings);
+              },
+              complete: function(response, status) {
+                $('td.ajax-status', $row).empty();
+                if (status == 'success') {
+                  if (user.error) {
+                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
+                    $row.addClass('error');
+                  }
+                  else {
+                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
+                    $row.addClass('ok');
+                  }
+                  $('td.ajax-status', $row).append(img);
+                }
+                else {
+                  alert(Drupal.t('Cannot connect to the server.'));
+                }
+              },
+              dataType: 'json',
+              type: 'POST',
+              async: true
+            });
+          }
+        });
+      }
     }
 
     // Update drawings table on load.
