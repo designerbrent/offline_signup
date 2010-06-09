@@ -77,12 +77,14 @@ Drupal.OfflineSignup.Drawings.prototype.initDrawing = function(data) {
 
   if (data) {
     drawing.user = Drupal.OfflineSignup.users[data.mail];
-    drawing.state = data.state;
-    drawing.date = new Date(data.date);
-    drawing.event = data.event;
-    drawing.saved = data.saved;
-    if (data.error) drawing.error = data.error;
-    drawing.setInfos();
+    if (drawing.user) {
+      drawing.state = data.state;
+      drawing.date = new Date(data.date);
+      drawing.event = data.event;
+      drawing.saved = data.saved;
+      if (data.error) drawing.error = data.error;
+      drawing.setInfos();
+    }
   }
   // If this is the first drawing and it's state is 0, move it to state 1.
   else if (drawing.id == 1 && drawing.state == 0) {

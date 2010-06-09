@@ -83,7 +83,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
         }
 
         // Re-initialize the drawings.
-        Drupal.OfflineSignup.drawings.init(Drupal.OfflineSignup.settings.drawings);
+        return Drupal.OfflineSignup.drawings.init(Drupal.OfflineSignup.settings.drawings);
       }
       else {
         alert(Drupal.t('Please enter an event.'));
