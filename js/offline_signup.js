@@ -206,6 +206,7 @@ Drupal.OfflineSignup.redirect = function(tabType) {
     }
     return false;
   }
+  delete(Drupal.OfflineSignup.redirectTab);
   $(Drupal.OfflineSignup.menuBar.tabs[tabType].element).click();
 }
 
