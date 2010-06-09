@@ -210,6 +210,9 @@ function theme_offline_signup_page() {
 
   drupal_add_js('misc/jquery.form.js', 'core');
 
+  // Add the password so JavaScript can validate.
+  drupal_add_js(array('offlineSignup' => array('password' => variable_get('offline_signup_password', OFFLINE_SIGNUP_DEFAULT_PASSWORD))), 'setting');
+
   $result = db_query("SELECT name, mail FROM {users} WHERE uid > 0");
   $emails = array();
   while ($data = db_fetch_object($result)) {
@@ -372,7 +375,7 @@ function theme_offline_signup_sync_drawings_table() {
 
 function theme_offline_signup_menu_bar() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/menubar.js');
-  drupal_add_js(array('offlineSignup' => array('menuTabs' => array('signup', 'settings', 'drawings', 'sync'))), 'setting');
+  drupal_add_js(array('offlineSignup' => array('menuTabs' => array('signup', 'settings', 'drawings', 'sync'), 'menuSecureTabs' => array('settings', 'drawings', 'sync'))), 'setting');
 
   $items = array(
     'signup' => array(

@@ -6,6 +6,14 @@
  ******************************************************************************/
 
 function offline_signup_admin_form() {
+  $form['offline_signup_password'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Password'),
+    '#description' => t('Specify a password to authenticate with in order to gain access to the settings, drawings, and sync tabs.'),
+    '#default_value' => variable_get('offline_signup_password', OFFLINE_SIGNUP_DEFAULT_PASSWORD),
+    '#required' => TRUE
+  );
+
   $empty_account = new stdClass();
   $categories = _user_categories($empty_account);
   $options = array(0 => t('None'));

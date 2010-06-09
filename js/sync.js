@@ -245,6 +245,8 @@ Drupal.behaviors.offlineSignupSync = function() {
       else {
         $('#offline-signup-content-' + this.type).show();
       }
+
+      Drupal.OfflineSignup.authenticated = (this.secure) ? true : false;
     }
 
     $('#offline-signup-content-sync').addClass('offline-signup-sync-processed');

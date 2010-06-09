@@ -48,6 +48,14 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
   this.type = type;
   this.menuBar = menuBar;
   this.element = $('li.' + this.type + ' a', $(this.menuBar.element)).get();
+  this.secure = false;
+
+  for (var i in Drupal.settings.offlineSignup.menuSecureTabs) {
+    if (Drupal.settings.offlineSignup.menuSecureTabs[i] == this.type) {
+      this.secure = true;
+      break;
+    }
+  }
 
   var self = this;
 
@@ -56,18 +64,46 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
       return false;
     }
 
-    // Determine if there was a previously active tab.
-    var prevType = self.determineType($('li.active', $(self.menuBar.menuElement)));
-    if (prevType) {
-      // Trigger the tab blur event for the previous tab.
-      self.menuBar.tabs[prevType].blur(true);
+    var password = null;
+    if (self.secure && !Drupal.OfflineSignup.authenticated) {
+      password = prompt(Drupal.t('Please enter the password.'));
     }
+    if (!self.secure || (Drupal.OfflineSignup.authenticated || password == Drupal.settings.offlineSignup.password)) {
+      // Determine if there was a previously active tab.
+      var prevType = self.determineType($('li.active', $(self.menuBar.menuElement)));
+      if (prevType) {
+        // Trigger the tab blur event for the previous tab.
+        self.menuBar.tabs[prevType].blur(true);
+      }
 
-    // Trigger the tab focus event for the clicked tab.
-    self.focus(true);
+      // Trigger the tab focus event for the clicked tab.
+      self.focus(true);
+    }
+    else if (password != null) {
+      alert(Drupal.t('Password incorrect.'));
+    }
   });
 
-  (this.type == this.menuBar.defaultTab) ? this.focus() : this.blur();
+  if (this.type == this.menuBar.defaultTab) {
+    if (this.secure) {
+      this.blur();
+      var password = prompt(Drupal.t('Please enter the password.'));
+      if (password != Drupal.settings.offlineSignup.password) {
+        if (password != null) {
+          alert(Drupal.t('Password incorrect.'));
+        }
+        this.menuBar.defaultTab = 'signup';
+        if (this.menuBar.tabs['signup'] != undefined) {
+          $(this.menuBar.tabs['signup'].element).click();
+        }
+        return true;
+      }
+    }
+    this.focus();
+  }
+  else {
+    this.blur();
+  }
 }
 
 Drupal.OfflineSignup.Tab.prototype.determineType = function(element) {
@@ -97,6 +133,8 @@ Drupal.OfflineSignup.Tab.prototype.focus = function(animate) {
   else {
     $('#offline-signup-content-' + this.type).show();
   }
+
+  Drupal.OfflineSignup.authenticated = (this.secure) ? true : false;
 }
 
 Drupal.OfflineSignup.Tab.prototype.enable = function() {
