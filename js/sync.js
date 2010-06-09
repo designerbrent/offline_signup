@@ -352,7 +352,7 @@ Drupal.OfflineSignup.removeUser = function(row) {
   if (!confirmRemove) {
     return;
   }
-
+console.log(user);
   // Static users are users that were loaded from the server for the active
   // event. These users should not get deleted locally.
   if (user.static) {
@@ -370,7 +370,7 @@ Drupal.OfflineSignup.removeUser = function(row) {
     delete(Drupal.OfflineSignup.users[mail]);
   }
 
-  if (user.source == 'local') {
+  if (user.source == 'local' && !user.static) {
     // Delete the user email.
     for (var i in Drupal.OfflineSignup.emails) {
       if (Drupal.OfflineSignup.emails[i] == mail) {
