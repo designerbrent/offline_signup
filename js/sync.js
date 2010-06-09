@@ -346,6 +346,13 @@ Drupal.OfflineSignup.removeUser = function(row) {
   var mail = $('td.mail', row).text();
   var user = Drupal.OfflineSignup.users[mail];
 
+  // Confirm the user does want to remove the user or the changes applied to the user.
+  var message = (user.status == 'updated') ? 'Are you sure you want to remove the changes applied to this user?' : 'Are you sure you want to remove this user?';
+  var confirmRemove = confirm(Drupal.t(message));
+  if (!confirmRemove) {
+    return;
+  }
+
   // Static users are users that were loaded from the server for the active
   // event. These users should not get deleted locally.
   if (user.static) {
