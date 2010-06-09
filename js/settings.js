@@ -24,7 +24,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
     $('input[name=save]', $settingsForm).click(function() {
       if ($('input[name=event]', $settingsForm).val()) {
         // No need to make AJAX call if event is not changing.
-        if ($('input[name=event]', $settingsForm).val() != Drupal.OfflineSignup.settings.event) {
+        // if ($('input[name=event]', $settingsForm).val() != Drupal.OfflineSignup.settings.event) {
           $settingsForm.ajaxSubmit({
             beforeSubmit: function(arr, $form, options) {
               // Verify it is ok to save settings based on drawings.
@@ -73,7 +73,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
             type: 'POST',
             async: false
           });
-        }
+        // }
       }
       else {
         alert(Drupal.t('Please enter an event.'));
