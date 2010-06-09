@@ -134,7 +134,13 @@ Drupal.OfflineSignup.Tab.prototype.focus = function(animate) {
     $('#offline-signup-content-' + this.type).show();
   }
 
-  Drupal.OfflineSignup.authenticated = (this.secure) ? true : false;
+  if (this.secure) {
+    Drupal.OfflineSignup.authenticated = true;
+    Drupal.OfflineSignup.clearAuthTimeout();
+  }
+  else {
+    Drupal.OfflineSignup.setAuthTimeout();
+  }
 }
 
 Drupal.OfflineSignup.Tab.prototype.enable = function() {
@@ -143,4 +149,17 @@ Drupal.OfflineSignup.Tab.prototype.enable = function() {
 
 Drupal.OfflineSignup.Tab.prototype.disable = function() {
   $(this.element).addClass('disabled');
+}
+
+Drupal.OfflineSignup.setAuthTimeout = function() {
+  Drupal.OfflineSignup.clearAuthTimeout();
+
+  Drupal.OfflineSignup.authTimeout = setTimeout("Drupal.OfflineSignup.authenticated = false", 30000);
+}
+
+Drupal.OfflineSignup.clearAuthTimeout = function() {
+  if (Drupal.OfflineSignup.authTimeout) {
+    clearTimeout(Drupal.OfflineSignup.authTimeout);
+    delete(Drupal.OfflineSignup.authTimeout);
+  }
 }
