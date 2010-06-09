@@ -70,20 +70,10 @@ Drupal.behaviors.offlineSignupSettings = function() {
               }
             },
             dataType: 'json',
-            type: 'POST'
+            type: 'POST',
+            async: false
           });
         }
-        else {
-          // Save changes to the number of drawings.
-          // Save settings.
-          Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
-          Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
-
-          alert(Drupal.t('Number of drawings updated.'));
-        }
-
-        // Re-initialize the drawings.
-        return Drupal.OfflineSignup.drawings.init(Drupal.OfflineSignup.settings.drawings);
       }
       else {
         alert(Drupal.t('Please enter an event.'));

@@ -128,7 +128,7 @@ Drupal.behaviors.offlineSignupSync = function() {
               },
               dataType: 'json',
               type: 'POST',
-              async: true
+              async: false
             });
           }
         }
@@ -213,7 +213,7 @@ Drupal.behaviors.offlineSignupSync = function() {
               },
               dataType: 'json',
               type: 'POST',
-              async: true
+              async: false
             });
           }
         });
