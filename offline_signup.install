@@ -59,6 +59,40 @@ function offline_signup_schema() {
     ),
     'unique keys' => array('uid_updated' => array('uid', 'updated'))
   );
+  $schema['offline_signup_drawings'] = array(
+    'description' => 'Store drawings information.',
+    'fields' => array(
+      'number' => array(
+        'description' => 'The incremental number the drawing was during an event.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'event' => array(
+        'description' => 'The event the drawing was held at.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid of the user who won the drawing.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'timestamp' => array(
+        'description' => 'The Unix timestamp when the user update values were synced to the server.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      )
+    ),
+    'unique keys' => array('number_event' => array('number', 'event'))
+  );
   return $schema;
 }
 
@@ -118,6 +152,51 @@ function offline_signup_update_6000() {
     'unique keys' => array('uid_updated' => array('uid', 'updated'))
   );
   db_create_table($ret, 'offline_signup_user_updates', $schema['offline_signup_user_updates']);
+
+  return $ret;
+}
+
+/**
+ * Add the {offline_signup_drawings} table.
+ */
+function offline_signup_update_6001() {
+  $ret = array();
+
+  $schema['offline_signup_drawings'] = array(
+    'description' => 'Store drawings information.',
+    'fields' => array(
+      'number' => array(
+        'description' => 'The incremental number the drawing was during an event.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'event' => array(
+        'description' => 'The event the drawing was held at.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid of the user who won the drawing.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'timestamp' => array(
+        'description' => 'The Unix timestamp when the user update values were synced to the server.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      )
+    ),
+    'unique keys' => array('number_event' => array('number', 'event'))
+  );
+  db_create_table($ret, 'offline_signup_drawings', $schema['offline_signup_drawings']);
 
   return $ret;
 }
