@@ -18,6 +18,7 @@ Drupal.OfflineSignup.Drawings = function() {
 }
 
 Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
+  var drawings;
   if (drawings = Drupal.settings.offlineSignup.drawings) {
     for (var i in drawings) {
       this.initDrawing(drawings[i]);
@@ -247,8 +248,6 @@ Drupal.OfflineSignup.Drawing.prototype.getData = function() {
   var data = {};
   for (var i in this) {
     switch (i) {
-      case 'form':
-        break;
       case 'user':
         data['mail'] = this[i].mail;
         break;
@@ -259,7 +258,6 @@ Drupal.OfflineSignup.Drawing.prototype.getData = function() {
         data['number'] = this[i];
         break;
       default:
-        data[i] = this[i];
         break;
     }
   }

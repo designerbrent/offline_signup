@@ -45,7 +45,6 @@ function offline_signup_schema() {
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
-        'unsigned' => TRUE,
         'default' => 0
       ),
       'request_sent' => array(
@@ -87,7 +86,6 @@ function offline_signup_schema() {
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
-        'unsigned' => TRUE,
         'default' => 0
       )
     ),
@@ -137,7 +135,6 @@ function offline_signup_update_6000() {
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
-        'unsigned' => TRUE,
         'default' => 0
       ),
       'request_sent' => array(
@@ -190,13 +187,37 @@ function offline_signup_update_6001() {
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
-        'unsigned' => TRUE,
         'default' => 0
       )
     ),
     'unique keys' => array('number_event' => array('number', 'event'))
   );
   db_create_table($ret, 'offline_signup_drawings', $schema['offline_signup_drawings']);
+
+  return $ret;
+}
+
+/**
+ * Make timestamp fields not be unsigned.
+ */
+function offline_signup_update_6002() {
+  $ret = array();
+
+  $updated = array(
+    'description' => 'The Unix timestamp when the user update values were synced to the server.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0
+  );
+  db_change_field($ret, 'offline_signup_user_updates', 'updated', 'updated', $updated);
+
+  $selected = array(
+    'description' => 'The Unix timestamp when the user update values were synced to the server.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0
+  );
+  db_change_field($ret, 'offline_signup_drawings', 'selected', 'selected', $selected);
 
   return $ret;
 }

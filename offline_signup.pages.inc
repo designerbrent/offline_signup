@@ -243,7 +243,7 @@ function theme_offline_signup_page() {
         'id' => $data->number,
         'event' => $data->event,
         'mail' => $data->mail,
-        'date' => $data->selected,
+        'date' => $data->selected * 1000,
         'state' => 3,
         'saved' => TRUE
       );

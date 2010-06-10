@@ -202,7 +202,7 @@ function offline_signup_drawing_form_validate($form, &$form_state) {
 
 function offline_signup_drawing_form_submit($form, &$form_state) {
   db_query("INSERT INTO {offline_signup_drawings} (number, event, mail, selected) VALUES (%d, '%s', '%s', %d)",
-    $form_state['values']['number'], $form_state['values']['event'], $form_state['values']['mail'], $form_state['values']['selected']);
+    $form_state['values']['number'], $form_state['values']['event'], $form_state['values']['mail'], substr($form_state['values']['selected'], 0, 10));
 }
 
 /*******************************************************************************
