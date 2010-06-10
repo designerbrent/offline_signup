@@ -137,7 +137,6 @@ Drupal.behaviors.offlineSignupContent = function() {
           // Find and set the name for the user.
           for (var i in Drupal.OfflineSignup.emails) {
             if (Drupal.OfflineSignup.emails[i] == user.mail) {
-              console.log('hi');
               user.name = i;
               user.source = 'server';
               break;

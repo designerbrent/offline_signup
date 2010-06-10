@@ -18,28 +18,19 @@ Drupal.OfflineSignup.Drawings = function() {
 }
 
 Drupal.OfflineSignup.Drawings.prototype.init = function(num) {
-  // Only grab locally stored drawings if we haven't already.
-  if (this.drawings.length == 0) {
-    if (localDrawings = Drupal.OfflineSignup.getLocal('offlineSignupDrawings')) {
-      for (var i in localDrawings) {
-        this.initDrawing(localDrawings[i]);
-      }
+  if (drawings = Drupal.settings.offlineSignup.drawings) {
+    for (var i in drawings) {
+      this.initDrawing(drawings[i]);
     }
   }
-  // Drawings have already been loaded. Remove any with a state less than 2.
-  // We'll rebuild the blank states below.
-  else {
-    var end = null;
-    for (var i = 0; i < this.drawings.length; i++) {
-      if (this.drawings[i].state < 2) {
-        if (this.drawings[i].form) {
-          $(this.drawings[i].form).remove();
-        }
-        if (end == null) end = i;
+
+  if (localDrawings = Drupal.OfflineSignup.getLocal('offlineSignupDrawings')) {
+    for (var i in localDrawings) {
+      // If drawing is marked as saved, presume it's already been initialized
+      // above.
+      if (!localDrawings[i].saved) {
+        this.initDrawing(localDrawings[i]);
       }
-    }
-    if (end) {
-      this.drawings = this.drawings.slice(0, end);
     }
   }
 

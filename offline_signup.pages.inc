@@ -234,6 +234,23 @@ function theme_offline_signup_page() {
       );
     }
     drupal_add_js(array('offlineSignup' => array('users' => $users)), 'setting');
+
+    // Grab any finalized drawings held for this event.
+    $drawings = array();
+    $result = db_query("SELECT * FROM {offline_signup_drawings} WHERE event = '%s' ORDER BY number ASC", $event);
+    while ($data = db_fetch_object($result)) {
+      $drawings[] = array(
+        'id' => $data->number,
+        'event' => $data->event,
+        'mail' => $data->mail,
+        'date' => $data->selected,
+        'state' => 3,
+        'saved' => TRUE
+      );
+    }
+    if (!empty($drawings)) {
+      drupal_add_js(array('offlineSignup' => array('drawings' => $drawings)), 'setting');
+    }
   }
 
   $output = theme('offline_signup_dependency_message', t('This page is dependent on JavaScript to function.'));

@@ -55,6 +55,12 @@ Drupal.behaviors.offlineSignupSettings = function() {
               Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
               Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
 
+              // Clear locally saved drawings so they can be refreshed on the
+              // event change. This is safe because we can't reach this spot
+              // unless all drawings initiated have been completed and synced
+              // to the server.
+              localStorage.removeItem('offlineSignupDrawings');
+
               alert(responseText.message);
 
               // We want to redirect to the signup form.
