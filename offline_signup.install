@@ -76,14 +76,14 @@ function offline_signup_schema() {
         'not null' => TRUE,
         'default' => ''
       ),
-      'uid' => array(
-        'description' => 'The {users}.uid of the user who won the drawing.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0
+      'mail' => array(
+        'description' => "User's email address.",
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'default' => ''
       ),
-      'timestamp' => array(
+      'selected' => array(
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,
@@ -179,14 +179,14 @@ function offline_signup_update_6001() {
         'not null' => TRUE,
         'default' => ''
       ),
-      'uid' => array(
-        'description' => 'The {users}.uid of the user who won the drawing.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0
+      'mail' => array(
+        'description' => "User's email address.",
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+        'default' => ''
       ),
-      'timestamp' => array(
+      'selected' => array(
         'description' => 'The Unix timestamp when the user update values were synced to the server.',
         'type' => 'int',
         'not null' => TRUE,

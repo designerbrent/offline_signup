@@ -76,6 +76,21 @@ function offline_signup_ajax_sync_user() {
   offline_signup_ajax_response();
 }
 
+function offline_signup_ajax_sync_drawing() {
+  $form_state = array();
+  $form_state['values'] = $_POST;
+  foreach (array('form_build_id', 'form_id', 'form_token') as $key) {
+    unset($form_state['values'][$key]);
+  }
+
+  $form_state['values']['op'] = t('Save drawing');
+  drupal_execute('offline_signup_drawing_form', $form_state);
+
+  // No need to call exit() since offline_signup_ajax_response() does it for
+  // us.
+  offline_signup_ajax_response();
+}
+
 function offline_signup_ajax_response() {
   $response = array('status' => TRUE);
 

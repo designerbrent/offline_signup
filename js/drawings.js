@@ -262,11 +262,15 @@ Drupal.OfflineSignup.Drawing.prototype.getData = function() {
         data['mail'] = this[i].mail;
         break;
       case 'date':
-        data[i] = this[i].getTime();
+        data['selected'] = this[i].getTime();
+        break;
+      case 'id':
+        data['number'] = this[i];
         break;
       default:
         data[i] = this[i];
         break;
     }
   }
+  return data;
 }

@@ -89,7 +89,7 @@ Drupal.behaviors.offlineSignupSync = function() {
               url: url,
               data: $.extend(Drupal.OfflineSignup.Sync.getUserData(user), { event: Drupal.OfflineSignup.settings.event }),
               beforeSubmit: function(arr, $form, options) {
-                $('td.ajax-status', $row).append('<span class="throbber">');
+                $('td.ajax-status', $row).empty().append('<span class="throbber">');
               },
               success: function(responseText, status) {
                 if (responseText.error) {
@@ -178,7 +178,7 @@ Drupal.behaviors.offlineSignupSync = function() {
               url: url,
               data: $.extend(drawing.getData(), { event: Drupal.OfflineSignup.settings.event }),
               beforeSubmit: function(arr, $form, options) {
-                $('td.ajax-status', $row).append('<span class="throbber">');
+                $('td.ajax-status', $row).empty().append('<span class="throbber">');
               },
               success: function(responseText, status) {
                 if (responseText.error) {
@@ -197,7 +197,7 @@ Drupal.behaviors.offlineSignupSync = function() {
               complete: function(response, status) {
                 $('td.ajax-status', $row).empty();
                 if (status == 'success') {
-                  if (user.error) {
+                  if (drawing.error) {
                     var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
                     $row.addClass('error');
                   }
@@ -206,6 +206,9 @@ Drupal.behaviors.offlineSignupSync = function() {
                     $row.addClass('ok');
                   }
                   $('td.ajax-status', $row).append(img);
+
+                  // Save changes to drawings.
+                  Drupal.OfflineSignup.drawings.save();
                 }
                 else {
                   alert(Drupal.t('Cannot connect to the server.'));
