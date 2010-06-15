@@ -112,3 +112,64 @@ function offline_signup_ajax_response() {
   print drupal_json($response);
   exit();
 }
+
+function offline_signup_user_update_form() {
+  $form['event'] = array(
+    '#type' => 'value'
+  );
+  $form['user'] = array(
+    '#type' => 'value',
+    '#value' => NULL
+  );
+  $form['mail'] = array(
+    '#type' => 'textfield',
+    '#title' => t('E-mail address'),
+    '#maxlength' => EMAIL_MAX_LENGTH,
+    '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
+    '#required' => TRUE
+  );
+
+  if (module_exists('profile')) {
+    $form += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
+  }
+
+  module_load_include('inc', 'offline_signup', 'offline_signup.profile');
+  $form += offline_signup_profile_types_form();
+
+  $form['buttons'] = array('#weight' => 10);
+  $form['buttons']['back'] = array(
+    '#type' => 'button',
+    '#value' => t('Back'),
+    '#name' => 'back'
+  );
+  $form['buttons']['update'] = array(
+    '#type' => 'submit',
+    '#value' => t('Update account'),
+    '#name' => 'update'
+  );
+
+  return $form;
+}
+
+function offline_signup_user_update_form_validate($form, &$form_state) {
+  if ($account = user_load(array('mail' => $form_state['values']['mail']))) {
+    form_set_value($form['user'], $account, $form_state);
+  }
+  else {
+    form_set_error('mail', t('User account could not be loaded.'));
+  }
+}
+
+function offline_signup_user_update_form_submit($form, &$form_state) {
+  $form_values = $form_state['values'];
+  unset($form_values['user']);
+
+  // Delete any pending updates before saving new one.
+  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d", $form_state['values']['user']->uid);
+
+  db_query("INSERT INTO {offline_signup_user_updates} (uid, form_values, updated) VALUES (%d, '%s', %d)",
+    $form_state['values']['user']->uid, serialize($form_state['values']), time());
+
+  db_query("INSERT INTO {offline_signup_event_users} (uid, event) VALUES (%d, '%s')",
+    $form_state['values']['user']->uid, $form_state['values']['event']);
+}

@@ -5,23 +5,7 @@
  * Callback Functions, Forms, and Tables
  ******************************************************************************/
 
-function offline_signup_user_router_form() {
-  $form['mail'] = array(
-    '#type' => 'textfield',
-    '#title' => t('E-mail address'),
-    '#maxlength' => EMAIL_MAX_LENGTH,
-    '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
-    '#attributes' => array('placeholder' => 'email@example.com'),
-    '#required' => TRUE
-  );
-  $form['next'] = array(
-    '#type' => 'button',
-    '#value' => t('Next')
-  );
-  return $form;
-}
-
-function offline_signup_user_register_form() {
+function offline_signup_user_form() {
   $form['mail'] = array(
     '#type' => 'textfield',
     '#title' => t('E-mail address'),
@@ -41,79 +25,13 @@ function offline_signup_user_register_form() {
   }
 
   $form['buttons'] = array('#weight' => 10);
-  $form['buttons']['back'] = array(
-    '#type' => 'button',
-    '#value' => t('Back'),
-    '#name' => 'back'
-  );
-  $form['buttons']['submit'] = array(
+  $form['buttons']['save'] = array(
     '#type' => 'submit',
-    '#value' => t('Create new account'),
-    '#name' => 'create'
+    '#value' => t('Save'),
+    '#name' => 'save'
   );
 
   return $form;
-}
-
-function offline_signup_user_update_form() {
-  $form['event'] = array(
-    '#type' => 'value'
-  );
-  $form['user'] = array(
-    '#type' => 'value',
-    '#value' => NULL
-  );
-  $form['mail'] = array(
-    '#type' => 'textfield',
-    '#title' => t('E-mail address'),
-    '#maxlength' => EMAIL_MAX_LENGTH,
-    '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
-    '#required' => TRUE
-  );
-
-  if (module_exists('profile')) {
-    $form += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
-  }
-
-  module_load_include('inc', 'offline_signup', 'offline_signup.profile');
-  $form += offline_signup_profile_types_form();
-
-  $form['buttons'] = array('#weight' => 10);
-  $form['buttons']['back'] = array(
-    '#type' => 'button',
-    '#value' => t('Back'),
-    '#name' => 'back'
-  );
-  $form['buttons']['update'] = array(
-    '#type' => 'submit',
-    '#value' => t('Update account'),
-    '#name' => 'update'
-  );
-
-  return $form;
-}
-
-function offline_signup_user_update_form_validate($form, &$form_state) {
-  if ($account = user_load(array('mail' => $form_state['values']['mail']))) {
-    form_set_value($form['user'], $account, $form_state);
-  }
-  else {
-    form_set_error('mail', t('User account could not be loaded.'));
-  }
-}
-
-function offline_signup_user_update_form_submit($form, &$form_state) {
-  $form_values = $form_state['values'];
-  unset($form_values['user']);
-
-  // Delete any pending updates before saving new one.
-  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d", $form_state['values']['user']->uid);
-
-  db_query("INSERT INTO {offline_signup_user_updates} (uid, form_values, updated) VALUES (%d, '%s', %d)",
-    $form_state['values']['user']->uid, serialize($form_state['values']), time());
-
-  db_query("INSERT INTO {offline_signup_event_users} (uid, event) VALUES (%d, '%s')",
-    $form_state['values']['user']->uid, $form_state['values']['event']);
 }
 
 function offline_signup_settings_form() {
@@ -278,27 +196,42 @@ function theme_offline_signup_content() {
   return $output;
 }
 
+function theme_offline_signup_menu_bar() {
+  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/menubar.js');
+  drupal_add_js(array('offlineSignup' => array('menuTabs' => array('signup', 'settings', 'drawings', 'sync'), 'menuSecureTabs' => array('settings', 'drawings', 'sync'))), 'setting');
+
+  $items = array(
+    'signup' => array(
+      'data' => '<a href="#signup" class="active">'. t('Sign-up') .'</a>',
+      'class' => 'signup button active'
+    ),
+    'settings' => array(
+      'data' => '<a href="#settings">'. t('Settings') .'</a>',
+      'class' => 'settings button'
+    ),
+    'drawings' => array(
+      'data' => '<a href="#drawings">'. t('Drawings') .'</a>',
+      'class' => 'drawings button'
+    ),
+    'sync' => array(
+      'data' => '<a href="#sync">'. t('Sync') .'</a>',
+      'class' => 'sync button'
+    )
+  );
+  return theme('item_list', $items, NULL, 'ul', array('id' => 'offline-signup-menu-bar', 'class' => 'links'));
+}
+
 function theme_offline_signup_content_signup() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/signup.js');
 
   $output = '<div id="offline-signup-content-signup">';
-  $output .= drupal_get_form('offline_signup_user_router_form');
-  $output .= drupal_get_form('offline_signup_user_register_form');
-  $output .= drupal_get_form('offline_signup_user_update_form');
+  $output .= drupal_get_form('offline_signup_user_form');
   $output .= theme('offline_signup_profiles');
   $output .= '</div>';
   return $output;
 }
 
-function theme_offline_signup_user_router_form($form) {
-  return drupal_render($form);
-}
-
-function theme_offline_signup_user_register_form($form) {
-  return drupal_render($form);
-}
-
-function theme_offline_signup_user_update_form($form) {
+function theme_offline_signup_user_form($form) {
   return drupal_render($form);
 }
 
@@ -394,29 +327,4 @@ function theme_offline_signup_sync_drawings_table() {
   // Add empty row.
   $rows = array(array('data' => array(array('data' => t('No drawings yet completed.'), 'class' => 'active', 'colspan' => 5)), 'class' => 'empty'));
   return theme('table', $headers, $rows, array('id' => 'offline-signup-sync-drawings-table'));
-}
-
-function theme_offline_signup_menu_bar() {
-  drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/menubar.js');
-  drupal_add_js(array('offlineSignup' => array('menuTabs' => array('signup', 'settings', 'drawings', 'sync'), 'menuSecureTabs' => array('settings', 'drawings', 'sync'))), 'setting');
-
-  $items = array(
-    'signup' => array(
-      'data' => '<a href="#signup" class="active">'. t('Sign-up') .'</a>',
-      'class' => 'signup button active'
-    ),
-    'settings' => array(
-      'data' => '<a href="#settings">'. t('Settings') .'</a>',
-      'class' => 'settings button'
-    ),
-    'drawings' => array(
-      'data' => '<a href="#drawings">'. t('Drawings') .'</a>',
-      'class' => 'drawings button'
-    ),
-    'sync' => array(
-      'data' => '<a href="#sync">'. t('Sync') .'</a>',
-      'class' => 'sync button'
-    )
-  );
-  return theme('item_list', $items, NULL, 'ul', array('id' => 'offline-signup-menu-bar', 'class' => 'links'));
 }

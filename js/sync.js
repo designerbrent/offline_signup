@@ -296,10 +296,10 @@ Drupal.OfflineSignup.editUser = function(row) {
 
   switch (user.status) {
     case 'new':
-      var $registerForm = $('#offline-signup-user-register-form');
+      var $userForm = $('#offline-signup-user-form');
 
       // Populate the register form.
-      var $inputs = $('input, textarea, select', $registerForm);
+      var $inputs = $('input, textarea, select', $userForm);
       $inputs.each(function(i, el) {
         if (user[el.name] != undefined) {
           if (el.type == 'checkbox') {
@@ -311,11 +311,8 @@ Drupal.OfflineSignup.editUser = function(row) {
         }
       });
 
-      // Ensure router form is hidden.
-      $('#offline-signup-user-router-form').hide();
-
-      // Make register form show.
-      $registerForm.show();
+      // Make user form show.
+      $userForm.show();
 
       // We want to redirect back to this tab.
       Drupal.OfflineSignup.redirectTab = 'sync';
@@ -325,10 +322,10 @@ Drupal.OfflineSignup.editUser = function(row) {
     default:
       // Catch-all for editing a user, most cases this will be for users
       // stored on the server.
-      var $updateForm = $('#offline-signup-user-update-form');
+      var $userForm = $('#offline-signup-user-form');
 
       // Populate the update form.
-      var $inputs = $('input, textarea, select', $updateForm);
+      var $inputs = $('input, textarea, select', $userForm);
       $inputs.each(function(i, el) {
         if (user[el.name] != undefined) {
           if (el.type == 'checkbox') {
@@ -340,11 +337,8 @@ Drupal.OfflineSignup.editUser = function(row) {
         }
       });
 
-      // Ensure router form is hidden.
-      $('#offline-signup-user-router-form').hide();
-
-      // Make update form show.
-      $updateForm.show();
+      // Make user form show.
+      $userForm.show();
 
       // We want to redirect back to this tab.
       Drupal.OfflineSignup.redirectTab = 'sync';

@@ -55,6 +55,7 @@ Drupal.OfflineSignup.Profile = function(type) {
     $('input[name=op]', $(this.element)).after(cancelButton);
 
     $('input[name=op]', $(this.element)).click(function() {
+      var user;
       if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'), Drupal.OfflineSignup.tempUser)) {
         if (Drupal.OfflineSignup.stack && Drupal.OfflineSignup.stack.length > 0) {
           // Save changes to temp user.
@@ -86,7 +87,7 @@ Drupal.OfflineSignup.Profile = function(type) {
           alert('Account information saved.');
 
           // Reveal the router form.
-          $('#offline-signup-user-router-form').show();
+          $('#offline-signup-user-form').show();
 
           // Enable menu tabs.
           Drupal.OfflineSignup.menuBar.enableTabs();
@@ -103,7 +104,7 @@ Drupal.OfflineSignup.Profile = function(type) {
       });
 
       // Reveal the router form.
-      $('#offline-signup-user-router-form').show();
+      $('#offline-signup-user-form').show();
 
       // Enable menu tabs.
       Drupal.OfflineSignup.menuBar.enableTabs();
