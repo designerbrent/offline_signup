@@ -24,6 +24,11 @@ function offline_signup_user_form() {
     $form += offline_signup_profile_types_form();
   }
 
+  if (module_exists('simplenews_register')) {
+    $edit = $account = array();
+    $form += simplenews_register_user('register', $edit, $account);
+  }
+
   $form['buttons'] = array('#weight' => 10);
   $form['buttons']['save'] = array(
     '#type' => 'submit',
