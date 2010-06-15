@@ -133,6 +133,10 @@ Drupal.behaviors.offlineSignupSync = function() {
               async: false
             });
           }
+          // Row does not need to be synced so we remove it from view.
+          else {
+            $row.remove();
+          }
         }
       });
     }
