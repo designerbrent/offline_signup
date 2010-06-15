@@ -14,6 +14,15 @@ Drupal.behaviors.offlineSignupContent = function() {
         alert(Drupal.t('Invalid e-mail address. Please enter a valid e-mail address.'));
       }
     });
+    $('input.profile-type[type=checkbox]', $userForm).each(function() {
+      $(this).change(function() {
+        var buttonValue = 'Save';
+        $('input.profile-type[type=checkbox]:checked', $userForm).each(function() {
+          buttonValue = 'Next';
+        });
+        $('input[name=save]', $userForm).val(Drupal.t(buttonValue));
+      });
+    });
     $('input[name=save]', $userForm).click(function() {
       var user;
       if (user = Drupal.OfflineSignup.submitForm($(this).parents('form'))) {
