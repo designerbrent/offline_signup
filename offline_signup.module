@@ -158,6 +158,21 @@ function offline_signup_user($op, &$edit, &$account, $category = NULL) {
 }
 
 /**
+ * Implementation of hook_mail().
+ */
+function offline_signup_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'user_update':
+      dpm($message);
+      $message['header']['Content-Type'] = 'text/html';
+      $subject = 'this';
+      $message['subject'] .= str_replace(array("\r", "\n"), '', $subject);
+      $message['body'][] = 'hello';
+      return $message;
+  }
+}
+
+/**
  * Implementation of form_type_element_value().
  */
 function form_type_email_value($form, $edit = FALSE) {
