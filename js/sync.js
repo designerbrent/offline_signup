@@ -14,6 +14,8 @@ Drupal.behaviors.offlineSignupSync = function() {
       return false;
     });
 
+    $('input[name=sync]', $('#offline-signup-sync-form')).after('<a href="#sync" onclick="Drupal.OfflineSignup.resetLocals()">Reset local data</a>');
+
     $('#offline-signup-sync-form').addClass('offline-signup-sync-processed');
   }
 
@@ -402,4 +404,14 @@ Drupal.OfflineSignup.removeUser = function(row) {
     $('td.status', $(row)).empty();
     $('td.actions', $(row)).empty().append(Drupal.OfflineSignup.actionLinks(user));
   }
+}
+
+Drupal.OfflineSignup.resetLocals = function() {
+  var message = "Are you sure you want to reset all local data?\nThis action cannot be undone!";
+  var confirmReset = confirm(Drupal.t(message));
+  if (confirmReset) {
+    localStorage.removeItem('offlineSignupUsers');
+    localStorage.removeItem('offlineSignupDrawings');
+  }
+  return false;
 }
