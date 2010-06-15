@@ -172,51 +172,54 @@ Drupal.behaviors.offlineSignupSync = function() {
       if (!$('tbody tr:first', $(this.element)).hasClass('empty')) {
         $('tbody tr', $(this.element)).each(function() {
           var $row = $(this);
+          var drawing;
           if (drawing = Drupal.OfflineSignup.drawings.getDrawing($('td.drawing-id', $row).text())) {
-            var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/drawing';
-            $('#offline-signup-sync-form').ajaxSubmit({
-              url: url,
-              data: $.extend(drawing.getData(), { event: Drupal.OfflineSignup.settings.event }),
-              beforeSubmit: function(arr, $form, options) {
-                $('td.ajax-status', $row).empty().append('<span class="throbber">');
-              },
-              success: function(responseText, status) {
-                if (responseText.error) {
-                  $row.addClass('error');
-                  drawing.error = responseText.messages;
-                }
-                else {
-                  $row.removeClass('error');
-                  drawing.saved = true;
-                  if (drawing.error) {
-                    delete(drawing.error);
-                  }
-                }
-              },
-              complete: function(response, status) {
-                $('td.ajax-status', $row).empty();
-                if (status == 'success') {
-                  if (drawing.error) {
-                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
+            if (!drawing.saved) {
+              var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/drawing';
+              $('#offline-signup-sync-form').ajaxSubmit({
+                url: url,
+                data: $.extend(drawing.getData(), { event: Drupal.OfflineSignup.settings.event }),
+                beforeSubmit: function(arr, $form, options) {
+                  $('td.ajax-status', $row).empty().append('<span class="throbber">');
+                },
+                success: function(responseText, status) {
+                  if (responseText.error) {
                     $row.addClass('error');
+                    drawing.error = responseText.messages;
                   }
                   else {
-                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
-                    $row.addClass('ok');
+                    $row.removeClass('error');
+                    drawing.saved = true;
+                    if (drawing.error) {
+                      delete(drawing.error);
+                    }
                   }
-                  $('td.ajax-status', $row).append(img);
+                },
+                complete: function(response, status) {
+                  $('td.ajax-status', $row).empty();
+                  if (status == 'success') {
+                    if (drawing.error) {
+                      var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
+                      $row.addClass('error');
+                    }
+                    else {
+                      var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
+                      $row.addClass('ok');
+                    }
+                    $('td.ajax-status', $row).append(img);
 
-                  // Save changes to drawings.
-                  Drupal.OfflineSignup.drawings.save();
-                }
-                else {
-                  alert(Drupal.t('Cannot connect to the server.'));
-                }
-              },
-              dataType: 'json',
-              type: 'POST',
-              async: false
-            });
+                    // Save changes to drawings.
+                    Drupal.OfflineSignup.drawings.save();
+                  }
+                  else {
+                    alert(Drupal.t('Cannot connect to the server.'));
+                  }
+                },
+                dataType: 'json',
+                type: 'POST',
+                async: false
+              });
+            }
           }
         });
       }
