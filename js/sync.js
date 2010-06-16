@@ -6,9 +6,12 @@ Drupal.OfflineSignup.Sync = {};
 Drupal.behaviors.offlineSignupSync = function() {
   if ($('#offline-signup-sync-form:not(.offline-signup-sync-processed)').size()) {
     $('input[name=sync]', $('#offline-signup-sync-form')).click(function() {
-      for (var i in Drupal.OfflineSignup.tables) {
-        if (Drupal.OfflineSignup.tables[i].sync) {
-          Drupal.OfflineSignup.tables[i].sync();
+      if (!$(this).hasClass('throbber')) {
+        $(this).addClass('throbber');
+        for (var i in Drupal.OfflineSignup.tables) {
+          if (Drupal.OfflineSignup.tables[i].sync) {
+            Drupal.OfflineSignup.tables[i].sync();
+          }
         }
       }
       return false;
@@ -78,60 +81,16 @@ Drupal.behaviors.offlineSignupSync = function() {
     // Sync table.
     table.sync = function() {
       $('#offline-signup-sync-sub-tabs li.active').removeClass('active').children('a').removeClass('active');
+      Drupal.OfflineSignup.Sync.stack = new Array();
       $('tbody tr', $(this.element)).each(function() {
         var $row = $(this);
         if (user = Drupal.OfflineSignup.users[$('td.mail', $row).text()]) {
           if (user.status == 'updated' || user.status == 'new') {
-            var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/user';
-            if (user.status == 'new' && user.profiles.length > 0) {
-              var profiles = user.profiles.join(',');
-              url += '?profile=' + escape(profiles);
-            }
-            $('#offline-signup-sync-form').ajaxSubmit({
-              url: url,
-              data: $.extend(Drupal.OfflineSignup.Sync.getUserData(user), { event: Drupal.OfflineSignup.settings.event }),
-              beforeSubmit: function(arr, $form, options) {
-                $('td.ajax-status', $row).empty().append('<span class="throbber">');
-              },
-              success: function(responseText, status) {
-                if (responseText.error) {
-                  $row.addClass('error');
-                  user.error = responseText.messages;
-                }
-                else {
-                  $row.removeClass('error');
-                  user.source = 'server';
-                  if (user.error) {
-                    delete(user.error);
-                  }
-                  user.status = '';
-                  $('td.source', $row).empty().append('server');
-                  $('td.status', $row).empty();
-                  $('td.actions', $row).empty().append(Drupal.OfflineSignup.actionLinks(user));
-                }
-                Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
-              },
-              complete: function(response, status) {
-                $('td.ajax-status', $row).empty();
-                if (status == 'success') {
-                  if (user.error) {
-                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
-                    $row.addClass('error');
-                  }
-                  else {
-                    var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
-                    $row.addClass('ok');
-                  }
-                  $('td.ajax-status', $row).append(img);
-                }
-                else {
-                  alert(Drupal.t('Cannot connect to the server.'));
-                }
-              },
-              dataType: 'json',
-              type: 'POST',
-              async: false
-            });
+            var data = {
+              user: user,
+              row: $row
+            };
+            Drupal.OfflineSignup.Sync.stack.push(data);
           }
           // Row does not need to be synced so we remove it from view.
           else {
@@ -139,6 +98,16 @@ Drupal.behaviors.offlineSignupSync = function() {
           }
         }
       });
+      // Process syncs for user stack.
+      if (Drupal.OfflineSignup.Sync.stack.length > 0) {
+        Drupal.OfflineSignup.Sync.syncUser(Drupal.OfflineSignup.Sync.stack.shift());
+      }
+      else {
+        // Remove stack variable since it is empty.
+        delete(Drupal.OfflineSignup.Sync.stack);
+        // Remove throbber class from sync button.
+        $('input[name=sync]', $('#offline-signup-sync-form')).removeClass('throbber');
+      }
     }
 
     // Update users table on load.
@@ -402,6 +371,72 @@ Drupal.OfflineSignup.removeUser = function(row) {
     $('td.status', $(row)).empty();
     $('td.actions', $(row)).empty().append(Drupal.OfflineSignup.actionLinks(user));
   }
+}
+
+Drupal.OfflineSignup.Sync.syncUser = function(data) {
+  var user = data.user;
+  var $row = data.row;
+  var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/user';
+  if (user.status == 'new' && user.profiles.length > 0) {
+    var profiles = user.profiles.join(',');
+    url += '?profile=' + escape(profiles);
+  }
+  $('#offline-signup-sync-form').ajaxSubmit({
+    url: url,
+    data: $.extend(Drupal.OfflineSignup.Sync.getUserData(user), { event: Drupal.OfflineSignup.settings.event }),
+    beforeSubmit: function(arr, $form, options) {
+      $('td.ajax-status', $row).empty().append('<span class="throbber">');
+    },
+    success: function(responseText, status) {
+      if (responseText.error) {
+        $row.addClass('error');
+        user.error = responseText.messages;
+      }
+      else {
+        $row.removeClass('error');
+        user.source = 'server';
+        if (user.error) {
+          delete(user.error);
+        }
+        user.status = '';
+        $('td.source', $row).empty().append('server');
+        $('td.status', $row).empty();
+        $('td.actions', $row).empty().append(Drupal.OfflineSignup.actionLinks(user));
+      }
+      Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
+    },
+    complete: function(response, status) {
+      $('td.ajax-status', $row).empty();
+      if (status == 'success') {
+        if (user.error) {
+          var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-error.png" alt="error" title="error" width="18" height="18" />';
+          $row.addClass('error');
+        }
+        else {
+          var img = '<img src="' + Drupal.settings.basePath + 'misc/watchdog-ok.png" alt="ok" title="ok" width="17" height="17" />';
+          $row.addClass('ok');
+        }
+        $('td.ajax-status', $row).append(img);
+
+        // Sync the next user on the stack if one exists.
+        if (Drupal.OfflineSignup.Sync.stack.length > 0) {
+          Drupal.OfflineSignup.Sync.syncUser(Drupal.OfflineSignup.Sync.stack.shift());
+        }
+        else {
+          // Remove stack variable since it is empty.
+          delete(Drupal.OfflineSignup.Sync.stack);
+          // Remove throbber class from sync button.
+          $('input[name=sync]', $('#offline-signup-sync-form')).removeClass('throbber');
+        }
+      }
+      else {
+        alert(Drupal.t('Cannot connect to the server.'));
+      }
+    },
+    dataType: 'json',
+    type: 'POST',
+    async: false
+  });
 }
 
 Drupal.OfflineSignup.resetLocals = function() {
