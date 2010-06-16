@@ -254,3 +254,15 @@ Drupal.OfflineSignup.submitForm = function(form, edit) {
 
   return edit;
 }
+
+Drupal.OfflineSignup.randomString = function(stringLength, characters) {
+  var chars = (characters == undefined) ? "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghijklmnopqrstuvwxyz" : characters;
+  var length = (length == undefined) ? 8 : stringLength;
+  var randomString = '';
+
+  for (var i = 0; i < length; i++) {
+    var rnum = Math.floor(Math.random() * chars.length);
+    randomString += chars.substring(rnum, rnum + 1);
+  }
+  return randomString;
+}

@@ -2,6 +2,10 @@
 
 Drupal.behaviors.offlineSignupContent = function() {
   if ($('#offline-signup-content-signup:not(.offline-signup-content-processed)').size()) {
+    // Add link when clicked will randomly populate the First name, Last name,
+    // and E-mail address fields.
+    $('#offline-signup-content-signup').prepend('<a href="#signup" onclick="Drupal.OfflineSignup.randomValues()">Random values</a>');
+
     // User form.
     var $userForm = $('#offline-signup-user-form');
     $('input[name=mail]', $userForm).blur(function() {
@@ -107,4 +111,12 @@ Drupal.behaviors.offlineSignupContent = function() {
 
     $('#offline-signup-content-signup').addClass('offline-signup-content-processed');
   }
+}
+
+Drupal.OfflineSignup.randomValues = function() {
+  var $form = $('#offline-signup-user-form');
+  $('input[name=profile_name_first]', $form).val(Drupal.OfflineSignup.randomString());
+  $('input[name=profile_name_last]', $form).val(Drupal.OfflineSignup.randomString());
+  var mail = Drupal.OfflineSignup.randomString() + "@" + Drupal.OfflineSignup.randomString() + ".com";
+  $('input[name=mail]', $form).val(mail);
 }
