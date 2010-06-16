@@ -46,6 +46,11 @@ function offline_signup_settings_form() {
     '#type' => 'fieldset',
     '#title' => t('Event information')
   );
+  $form['information']['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#required' => TRUE
+  );
   $form['information']['event'] = array(
     '#type' => 'textfield',
     '#title' => t('Event'),
@@ -69,6 +74,7 @@ function offline_signup_settings_form() {
 }
 
 function offline_signup_settings_form_submit($form, &$form_state) {
+  variable_set('offline_signup_title', $form_state['values']['title']);
   variable_set('offline_signup_event', $form_state['values']['event']);
 }
 
@@ -132,6 +138,8 @@ function offline_signup_sync_form() {
  ******************************************************************************/
 
 function theme_offline_signup_page() {
+  drupal_set_title(check_plain(variable_get('offline_signup_title', t('Offline sign-up'))));
+
   drupal_add_css(drupal_get_path('module', 'offline_signup') .'/offline_signup.css');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/offline_signup.js');
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/profiles.js');
