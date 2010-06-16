@@ -51,9 +51,16 @@ Drupal.behaviors.offlineSignupSync = function() {
 
     table.update = function() {
       var tbody = $('<tbody>');
+      var eventUsers = 0;
+      var localUsers = 0;
       for (var i in Drupal.OfflineSignup.users) {
         var user = Drupal.OfflineSignup.users[i];
 
+        eventUsers++;
+        if (user.source == 'local') localUsers++;
+
+        // Skip this user if the table is set to show only local users or users
+        // with status 'updated'.
         if (this.data == 'local' && (user.source != 'local' && user.status != 'updated')) {
           continue;
         }
@@ -71,6 +78,10 @@ Drupal.behaviors.offlineSignupSync = function() {
         row.append($('<td class="actions">').append(Drupal.OfflineSignup.actionLinks(user)));
         tbody.append(row);
       }
+
+      // Set the user counts for the sub tabs.
+      $('li:first a', $('#offline-signup-sync-sub-tabs')).empty().append(Drupal.t('Event (@count)', { '@count': eventUsers }));
+      $('li:last a', $('#offline-signup-sync-sub-tabs')).empty().append(Drupal.t('Local (@count)', { '@count': localUsers }));
 
       $('tbody', $(this.element)).replaceWith(tbody);
       $column = this.activeColumn;
