@@ -49,11 +49,13 @@ function offline_signup_settings_form() {
   $form['information']['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
+    '#default_value' => variable_get('offline_signup_title', t('Offline sign-up')),
     '#required' => TRUE
   );
   $form['information']['event'] = array(
     '#type' => 'textfield',
     '#title' => t('Event'),
+    '#default_value' => variable_get('offline_signup_event', ''),
     '#required' => TRUE
   );
   $form['drawing'] = array(
