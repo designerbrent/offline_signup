@@ -423,12 +423,7 @@ Drupal.OfflineSignup.Sync.syncUser = function(data) {
         }
         else {
           // Save all changes made to local users.
-          try {
-            Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
-          }
-          catch (error) {
-            alert(error);
-          }
+          Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
           // Remove stack variable since it is empty.
           delete(Drupal.OfflineSignup.Sync.stack);
           // Remove throbber class from sync button.
