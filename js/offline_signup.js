@@ -36,6 +36,7 @@ Drupal.behaviors.offlineSignup = function(context) {
 }
 
 Drupal.OfflineSignup.setLocal = function(id, data) {
+  localStorage.removeItem(id);
   localStorage.setItem(id, JSON.stringify(data));
 }
 

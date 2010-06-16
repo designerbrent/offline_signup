@@ -87,7 +87,7 @@ Drupal.behaviors.offlineSignupSync = function() {
         if (user = Drupal.OfflineSignup.users[$('td.mail', $row).text()]) {
           if (user.status == 'updated' || user.status == 'new') {
             var data = {
-              user: user,
+              mail: user.mail,
               row: $row
             };
             Drupal.OfflineSignup.Sync.stack.push(data);
@@ -374,7 +374,7 @@ Drupal.OfflineSignup.removeUser = function(row) {
 }
 
 Drupal.OfflineSignup.Sync.syncUser = function(data) {
-  var user = data.user;
+  var user = Drupal.OfflineSignup.users[data.mail];
   var $row = data.row;
   var url = Drupal.settings.basePath + 'offline_signup/ajax/sync/user';
   if (user.status == 'new' && user.profiles.length > 0) {
@@ -403,7 +403,6 @@ Drupal.OfflineSignup.Sync.syncUser = function(data) {
         $('td.status', $row).empty();
         $('td.actions', $row).empty().append(Drupal.OfflineSignup.actionLinks(user));
       }
-      Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
     },
     complete: function(response, status) {
       $('td.ajax-status', $row).empty();
@@ -423,6 +422,13 @@ Drupal.OfflineSignup.Sync.syncUser = function(data) {
           Drupal.OfflineSignup.Sync.syncUser(Drupal.OfflineSignup.Sync.stack.shift());
         }
         else {
+          // Save all changes made to local users.
+          try {
+            Drupal.OfflineSignup.setLocal('offlineSignupUsers', Drupal.OfflineSignup.users);
+          }
+          catch (error) {
+            alert(error);
+          }
           // Remove stack variable since it is empty.
           delete(Drupal.OfflineSignup.Sync.stack);
           // Remove throbber class from sync button.
