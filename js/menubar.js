@@ -4,6 +4,10 @@ Drupal.OfflineSignup = Drupal.OfflineSignup || {};
 
 Drupal.behaviors.offlineSignupMenuBar = function(context) {
   if ($('#offline-signup-menu-bar:not(.offline-signup-menu-bar-processed)').size()) {
+    if (Drupal.settings.offlineSignup.password == '') {
+      Drupal.OfflineSignup.authenticated = true;
+    }
+
     Drupal.OfflineSignup.menuBar = new Drupal.OfflineSignup.MenuBar($('#offline-signup-menu-bar').get());
     $(this).addClass('offline-signup-menu-bar-processed');
   }
@@ -85,7 +89,7 @@ Drupal.OfflineSignup.Tab = function(type, menuBar) {
   });
 
   if (this.type == this.menuBar.defaultTab) {
-    if (this.secure) {
+    if (this.secure && !Drupal.OfflineSignup.authenticated) {
       this.blur();
       var password = prompt(Drupal.t('Please enter the password.'));
       if (password != Drupal.settings.offlineSignup.password) {

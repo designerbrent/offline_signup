@@ -9,7 +9,7 @@
  * @author greenSkin
  */
 
-define('OFFLINE_SIGNUP_DEFAULT_PASSWORD', 'changeme');
+define('OFFLINE_SIGNUP_DEFAULT_PASSWORD', '');
 
 /*******************************************************************************
  * Hook Functions (Drupal)
