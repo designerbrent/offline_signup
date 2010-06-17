@@ -17,7 +17,7 @@ Drupal.behaviors.offlineSignupSync = function() {
       return false;
     });
 
-    $('input[name=sync]', $('#offline-signup-sync-form')).after('<a href="#sync" onclick="Drupal.OfflineSignup.resetLocals()">Reset local data</a>');
+    $('input[name=sync]', $('#offline-signup-sync-form')).after('<a href="#sync" onclick="Drupal.OfflineSignup.resetLocals()">Reset local data</a><div id ="offline-signup-last-sync">Last sync: <span>' + Drupal.OfflineSignup.Sync.lastSync() + '</span></div>');
 
     $('#offline-signup-sync-form').addClass('offline-signup-sync-processed');
   }
@@ -118,6 +118,8 @@ Drupal.behaviors.offlineSignupSync = function() {
         delete(Drupal.OfflineSignup.Sync.stack);
         // Remove throbber class from sync button.
         $('input[name=sync]', $('#offline-signup-sync-form')).removeClass('throbber');
+        // Update the last sync date.
+        Drupal.OfflineSignup.Sync.updateLastSync();
       }
     }
 
@@ -449,6 +451,27 @@ Drupal.OfflineSignup.Sync.syncUser = function(data) {
     type: 'POST',
     async: false
   });
+}
+
+Drupal.OfflineSignup.Sync.lastSync = function() {
+  var lastSync = localStorage.getItem('offlineSignupLastSync');
+  if (lastSync == undefined) {
+    return '';
+  }
+
+  var syncDate = new Date(parseInt(lastSync));
+  var time = syncDate.getTime();
+  var hours = syncDate.getHours();
+  var minutes = syncDate.getMinutes();
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  return syncDate.getMonth() + '/' + syncDate.getDate() + '/' + syncDate.getFullYear() + ' - ' + hours + ':' + minutes;}
+
+Drupal.OfflineSignup.Sync.updateLastSync = function() {
+  var syncDate = new Date();
+  localStorage.setItem('offlineSignupLastSync', syncDate.getTime());
+  $('#offline-signup-last-sync span').empty().append(Drupal.OfflineSignup.Sync.lastSync());
 }
 
 Drupal.OfflineSignup.resetLocals = function() {
