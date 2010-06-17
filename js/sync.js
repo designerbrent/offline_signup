@@ -267,9 +267,9 @@ Drupal.OfflineSignup.Sync.getUserData = function(user) {
 
 Drupal.OfflineSignup.actionLinks = function(user) {
   var ul = $('<ul class="links">');
-  ul.append('<li class="0 first"><a href="#sync" onclick="Drupal.OfflineSignup.editUser($(this).parents(\'tr\'))">' + Drupal.t('Edit') + '</a></li>');
+  ul.append('<li class="0 first edit"><a href="#sync" onclick="Drupal.OfflineSignup.editUser($(this).parents(\'tr\'))">' + Drupal.t('Edit') + '</a></li>');
   if (user.source == 'local' || user.status == 'updated') {
-    ul.append('<li class="1 last"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
+    ul.append('<li class="1 last remove"><a href="#sync" onclick="Drupal.OfflineSignup.removeUser($(this).parents(\'tr\'))">' + Drupal.t('Remove') + '</a></li>');
   }
   return ul;
 }
