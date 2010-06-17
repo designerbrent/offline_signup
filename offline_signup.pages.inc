@@ -149,9 +149,9 @@ function offline_signup_update_confirm(&$form_state, $account, $updated, $hash) 
       $form['account'] = array('#type' => 'value', '#value' => $account);
       $form['updated'] = array('#type' => 'value', '#value' => $updated);
       $form['message'] = array('#value' => t('<p>You have used a link for %user_name and will expire on %expiration_date.</p><p>Click on the confirm button to apply the updates to your account or click on the cancel button to forgo the updates.</p>', array('%user_name' => $account->name, '%expiration_date' => format_date($updated + $timeout))));
-      $form['confirm'] = array('#type' => 'submit', '#value' => t('Confirm'), '#submit' => array('offline_signup_update_confirm_submit'));
+      $form['confirm'] = array('#type' => 'submit', '#value' => t('Confirm'), '#validate' => array('offline_signup_update_confirm_validate'), '#submit' => array('offline_signup_update_confirm_submit'));
       $form['cancel'] = array('#type' => 'submit', '#value' => t('Cancel'), '#submit' => array('offline_signup_update_confirm_cancel'));
-      $form['#redirect'] = '';
+      // $form['#redirect'] = '';
       return $form;
     }
     else {
@@ -171,18 +171,104 @@ function offline_signup_update_confirm(&$form_state, $account, $updated, $hash) 
   }
 }
 
+function offline_signup_update_confirm_validate($form, &$form_state) {
+  $result = db_query("SELECT form_values FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d", $form_state['values']['account']->uid, $form_state['values']['updated']);
+  if ($data = db_fetch_object($result)) {
+    $form_state['update_values'] = unserialize($data->form_values);
+
+    if (module_exists('cp_plus')) {
+      require_once drupal_get_path('module', 'node') .'/node.pages.inc';
+
+      $form_state['content_profile'] = array();
+      $types = content_profile_get_types('names');
+      foreach ($types as $type => $name) {
+        if ($form_state['update_values'][$type]) {
+          if ($node = content_profile_load($type, $form_state['values']['account']->uid)) {
+            $node = array_merge((array)$node, $form_state['update_values']);
+            $node = (object)$node;
+            $status = 'updated';
+          }
+          else {
+            $node = (object)$form_state['update_values'];
+            $node->type = $type;
+            node_object_prepare($node);
+            $status = 'new';
+          }
+
+          // Make sure there is no user name so we can node_validate.
+          $node->name = '';
+
+          if (!in_array('other', content_profile_get_settings($type, 'registration_hide'))) {
+            node_validate($node);
+          }
+          elseif (module_exists('content')) {
+            content_validate($node);
+          }
+
+          $form_state['content_profile'][$type] = array('node' => $node, 'status' => $status);
+        }
+      }
+    }
+  }
+  else {
+    form_set_error('confirm', t('There was a problem retrieving saving the updates.'));
+  }
+}
+
 function offline_signup_update_confirm_submit($form, &$form_state) {
-  // TODO We need to apply the updates to the account.
+  if (module_exists('profile')) {
+    offline_signup_update_profile($form, $form_state);
+  }
+
+  if (module_exists('cp_plus')) {
+    offline_signup_update_content_profile($form, $form_state);
+  }
+
+  if (module_exists('simplenews_register')) {
+    offline_signup_update_simplenews($form, $form_state);
+  }
 
   drupal_set_message(t('The updates have been applied.'));
-  watchdog('offline_signup', 'User %name has applied their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
+  // watchdog('offline_signup', 'User %name has applied their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
 }
 
 function offline_signup_update_confirm_cancel($form, &$form_state) {
-  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d",
-    $form_state['values']['account']->uid, $form_state['values']['updated']);
+  // db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d",
+    // $form_state['values']['account']->uid, $form_state['values']['updated']);
   drupal_set_message(t('The updates have been canceled.'));
   watchdog('offline_signup', 'User %name has canceled their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
+}
+
+function offline_signup_update_profile($form, &$form_state) {
+  
+}
+
+function offline_signup_update_content_profile($form, &$form_state) {
+  foreach ($form_state['content_profile'] as $type => $value) {
+    $node = $value['node'];
+    if (empty($node->title) && (!module_exists('auto_nodetitle') || auto_nodetitle_get_setting($type) != AUTO_NODETITLE_OPTIONAL)) {
+      $node->title = $form_state['values']['account']->name;
+    }
+    $node->uid = $form_state['values']['account']->uid;
+    $node->name = $form_state['values']['account']->name;
+
+    // Create/update the node.
+    $node = node_submit($node);
+    node_save($node);
+    // Give us a nice log message.
+    if ($node->nid) {
+      if ($value['status'] == 'new') {
+        watchdog('offline_signup', 'Offline Sign-up: added %user %type via offline sign-up page.', array('%user' => $node->name, '%type' => $type), WATCHDOG_NOTICE, l(t('view'), "node/$node->nid"));
+      }
+      else {
+        watchdog('offline_signup', 'Offline Sign-up: updated %user %type via offline sign-up page.', array('%user' => $node->name, '%type' => $type), WATCHDOG_NOTICE, l(t('view'), "node/$node->nid"));
+      }
+    }
+  }
+}
+
+function offline_signup_update_simplenews($form, &$form_state) {
+  
 }
 
 /*******************************************************************************

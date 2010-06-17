@@ -128,21 +128,12 @@ function offline_signup_user_update_form() {
     '#description' => t('A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'),
     '#required' => TRUE
   );
-
-  if (module_exists('profile')) {
-    $form += profile_form_profile($form, NULL, variable_get('offline_signup_profile_category', 'account'), TRUE);
-  }
-
-  module_load_include('inc', 'offline_signup', 'offline_signup.profile');
-  $form += offline_signup_profile_types_form();
-
-  $form['buttons'] = array('#weight' => 10);
-  $form['buttons']['back'] = array(
-    '#type' => 'button',
-    '#value' => t('Back'),
-    '#name' => 'back'
+  $form['post'] = array(
+    '#type' => 'value',
+    '#value' => array_diff_key($_POST, array_flip(array('form_build_id', 'form_token', 'form_id', 'save', 'changed', 'event', 'status')))
   );
-  $form['buttons']['update'] = array(
+
+  $form['update'] = array(
     '#type' => 'submit',
     '#value' => t('Update account'),
     '#name' => 'update'
@@ -168,7 +159,7 @@ function offline_signup_user_update_form_submit($form, &$form_state) {
   db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d", $form_state['values']['user']->uid);
 
   db_query("INSERT INTO {offline_signup_user_updates} (uid, form_values, updated) VALUES (%d, '%s', %d)",
-    $form_state['values']['user']->uid, serialize($form_state['values']), time());
+    $form_state['values']['user']->uid, serialize($form_state['values']['post']), time());
 
   db_query("INSERT INTO {offline_signup_event_users} (uid, event) VALUES (%d, '%s')",
     $form_state['values']['user']->uid, $form_state['values']['event']);
