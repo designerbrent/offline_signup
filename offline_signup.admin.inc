@@ -26,5 +26,13 @@ function offline_signup_admin_form() {
     '#default_value' => variable_get('offline_signup_profile_category', 'account'),
     '#options' => $options
   );
+
+  $form['offline_signup_user_update_mail_message'] = array(
+    '#type' => 'textarea',
+    '#title' => t('User update mail message'),
+    '#description' => t('The message sent to users to confirm the updates to their account via the Offline Sign-up page. Available variables are: !link.'),
+    '#default_value' => variable_get('offline_signup_user_update_mail_message', OFFLINE_SIGNUP_USER_UPDATE_MESSAGE_DEFAULT),
+    '#required' => TRUE
+  );
   return system_settings_form($form);
 }
