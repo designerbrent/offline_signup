@@ -135,6 +135,56 @@ function offline_signup_sync_form() {
   return $form;
 }
 
+function offline_signup_update_confirm(&$form_state, $account, $updated, $hash) {
+  // Validate timestamp hasn't expired.
+  // Time out, in seconds until confirm URL expires. Six weeks.
+  $timeout = 60*60*24*7*6;
+  $current = time();
+  if ($updated < $current && $account->status == 1) {
+    if ($current - $updated > $timeout) {
+      drupal_set_message(t('You have tried to use a link which has either been used or is no longer valid.'));
+      // drupal_goto();
+    }
+    else if ($account->uid && $hash == md5($account->pass . $updated)) {
+      $form['account'] = array('#type' => 'value', '#value' => $account);
+      $form['updated'] = array('#type' => 'value', '#value' => $updated);
+      $form['message'] = array('#value' => t('<p>You have used a link for %user_name and will expire on %expiration_date.</p><p>Click on the confirm button to apply the updates to your account or click on the cancel button to forgo the updates.</p>', array('%user_name' => $account->name, '%expiration_date' => format_date($updated + $timeout))));
+      $form['confirm'] = array('#type' => 'submit', '#value' => t('Confirm'), '#submit' => array('offline_signup_update_confirm_submit'));
+      $form['cancel'] = array('#type' => 'submit', '#value' => t('Cancel'), '#submit' => array('offline_signup_update_confirm_cancel'));
+      $form['#redirect'] = '';
+      return $form;
+    }
+    else {
+      drupal_set_message(t('You have tried to use a link which has either been used or is no longer valid.'));
+      // drupal_goto();
+    }
+  }
+  else {
+    // Deny access.
+    drupal_access_denied();
+  }
+
+  // Verify the user has a pending update.
+  if (!db_result(db_query("SELECT uid FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d AND request_sent = %d", $account->uid, $updated, 1))) {
+    drupal_not_found();
+    exit();
+  }
+}
+
+function offline_signup_update_confirm_submit($form, &$form_state) {
+  // TODO We need to apply the updates to the account.
+
+  drupal_set_message(t('The updates have been applied.'));
+  watchdog('offline_signup', 'User %name has applied their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
+}
+
+function offline_signup_update_confirm_cancel($form, &$form_state) {
+  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d",
+    $form_state['values']['account']->uid, $form_state['values']['updated']);
+  drupal_set_message(t('The updates have been canceled.'));
+  watchdog('offline_signup', 'User %name has canceled their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
+}
+
 /*******************************************************************************
  * Theme Functions
  ******************************************************************************/

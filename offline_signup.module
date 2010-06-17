@@ -10,7 +10,7 @@
  */
 
 define('OFFLINE_SIGNUP_DEFAULT_PASSWORD', '');
-define('OFFLINE_SIGNUP_USER_UPDATE_MESSAGE_DEFAULT', '!link');
+define('OFFLINE_SIGNUP_USER_UPDATE_MESSAGE_DEFAULT', '!url');
 
 /*******************************************************************************
  * Hook Functions (Drupal)
@@ -42,7 +42,16 @@ function offline_signup_menu() {
     'access arguments' => array('access offline signup page'),
     'file' => 'offline_signup.pages.inc'
   );
+  $items['offline_signup/update/confirm/%user/%/%'] = array(
+    'title' => 'Confirm update',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('offline_signup_update_confirm', 3, 4, 5),
+    'access callback' => TRUE,
+    'file' => 'offline_signup.pages.inc',
+    'type' => MENU_CALLBACK
+  );
 
+  // AJAX calls.
   $items['offline_signup/ajax/settings'] = array(
     'page callback' => 'offline_signup_ajax_settings',
     'access arguments' => array('administer offline signup'),
@@ -61,6 +70,7 @@ function offline_signup_menu() {
     'file' => 'offline_signup.ajax.inc',
     'type' => MENU_CALLBACK
   );
+
   return $items;
 }
 
@@ -159,7 +169,9 @@ function offline_signup_cron() {
   $result = db_query("SELECT uid, updated FROM {offline_signup_user_updates} WHERE request_sent = %d ORDER BY updated ASC LIMIT 100", 0);
   while ($data = db_fetch_object($result)) {
     if ($account = user_load($data->uid)) {
-      drupal_mail('offline_signup', 'user_update', $account->mail, user_preferred_language($account));
+      $params['account'] = $account;
+      $params['updated'] = $data->updated;
+      drupal_mail('offline_signup', 'user_update', $account->mail, user_preferred_language($account), $params);
       // Request has been sent for approval to update user account data.
       // Mark the record as sent.
       db_query("UPDATE {offline_signup_user_updates} SET request_sent = %d", 1);
@@ -177,7 +189,14 @@ function offline_signup_cron() {
 function offline_signup_mail($key, &$message, $params) {
   switch ($key) {
     case 'user_update':
-      $variables = array('!link' => url('test', array('absolute' => TRUE)));
+      $account = $params['account'];
+      $updated = $params['updated'];
+
+      // Build the link.
+      $hash = md5($account->pass . $updated);
+      $path = 'offline_signup/update/confirm/'. $updated .'/'. $hash;
+
+      $variables = array('!url' => url($path, array('absolute' => TRUE)));
 
       // Override to address, for development.
       $message['to'] = 'jeffery.james@gmail.com';
