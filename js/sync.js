@@ -27,8 +27,8 @@ Drupal.behaviors.offlineSignupSync = function() {
 
     // Add our sub-tabs of 'Event' and 'Local'.
     var ul = $('<ul id="offline-signup-sync-sub-tabs" class="links">');
-    ul.append('<li><a href="#sync" title="' + Drupal.t('Show all users for this event.') + '">' + Drupal.t('Event') + '</a></li>');
-    ul.append('<li class="active"><a class="active" href="#sync" title="' + Drupal.t('Show only local users and server users who have had local changes.') + '">' + Drupal.t('Local') + '</a></li>');
+    ul.append('<li class="event"><a href="#sync" title="' + Drupal.t('Show all users for this event.') + '">' + Drupal.t('Event') + '</a></li>');
+    ul.append('<li class="active local"><a class="active" href="#sync" title="' + Drupal.t('Show only local users and server users who have had local changes.') + '">' + Drupal.t('Local') + '</a></li>');
     $(table.element).before(ul);
     table.data = 'local';
     // Add click events to the sub-tabs.
@@ -80,8 +80,8 @@ Drupal.behaviors.offlineSignupSync = function() {
       }
 
       // Set the user counts for the sub tabs.
-      $('li:first a', $('#offline-signup-sync-sub-tabs')).empty().append(Drupal.t('Event (@count)', { '@count': eventUsers }));
-      $('li:last a', $('#offline-signup-sync-sub-tabs')).empty().append(Drupal.t('Local (@count)', { '@count': localUsers }));
+      $('li.event a', $('#offline-signup-sync-sub-tabs')).empty().append(Drupal.t('Event (@count)', { '@count': eventUsers }));
+      $('li.local a', $('#offline-signup-sync-sub-tabs')).empty().append(Drupal.t('Local (@count)', { '@count': localUsers }));
 
       $('tbody', $(this.element)).replaceWith(tbody);
       $column = this.activeColumn;
