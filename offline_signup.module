@@ -152,16 +152,35 @@ function offline_signup_user($op, &$edit, &$account, $category = NULL) {
 }
 
 /**
+ * Implementation of hook_cron().
+ */
+function offline_signup_cron() {
+  $result = db_query("SELECT uid, updated FROM {offline_signup_user_updates} WHERE request_sent = %d ORDER BY updated ASC LIMIT 100", 0);
+  while ($data = db_fetch_object($result)) {
+    if ($account = user_load($data->uid)) {
+      drupal_mail('offline_signup', 'user_update', $account->mail, user_preferred_language($account));
+      // Request has been sent for approval to update user account data.
+      // Mark the record as sent.
+      db_query("UPDATE {offline_signup_user_updates} SET request_sent = %d", 1);
+    }
+    else {
+      // The account could not be loaded so we remove the record from the table.
+      db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d", $data->uid, $data->updated);
+    }
+  }
+}
+
+/**
  * Implementation of hook_mail().
  */
 function offline_signup_mail($key, &$message, $params) {
   switch ($key) {
     case 'user_update':
-      dpm($message);
-      $message['header']['Content-Type'] = 'text/html';
+      $message['to'] = 'jeffery.james@gmail.com';
+      // $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
       $subject = 'this';
       $message['subject'] .= str_replace(array("\r", "\n"), '', $subject);
-      $message['body'][] = 'hello';
+      $message['body'][] = url('test', array('absolute' => TRUE));
       return $message;
   }
 }
