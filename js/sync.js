@@ -441,9 +441,12 @@ Drupal.OfflineSignup.Sync.syncUser = function(data) {
           delete(Drupal.OfflineSignup.Sync.stack);
           // Remove throbber class from sync button.
           $('input[name=sync]', $('#offline-signup-sync-form')).removeClass('throbber');
+          // Update the last sync date.
+          Drupal.OfflineSignup.Sync.updateLastSync();
         }
       }
       else {
+        $('input[name=sync]', $('#offline-signup-sync-form')).removeClass('throbber');
         alert(Drupal.t('Cannot connect to the server.'));
       }
     },
