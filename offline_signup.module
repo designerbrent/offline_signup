@@ -179,8 +179,9 @@ function offline_signup_mail($key, &$message, $params) {
     case 'user_update':
       $variables = array('!link' => url('test', array('absolute' => TRUE)));
 
+      // Override to address, for development.
       $message['to'] = 'jeffery.james@gmail.com';
-      // $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
+
       $subject = 'this';
       $message['subject'] .= str_replace(array("\r", "\n"), '', $subject);
       $message['body'][] = strtr(variable_get('offline_signup_user_update_mail_message', OFFLINE_SIGNUP_USER_UPDATE_MESSAGE_DEFAULT), $variables);
