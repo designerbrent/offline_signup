@@ -166,7 +166,7 @@ function offline_signup_user($op, &$edit, &$account, $category = NULL) {
  * Implementation of hook_cron().
  */
 function offline_signup_cron() {
-  $result = db_query("SELECT uid, updated FROM {offline_signup_user_updates} WHERE request_sent = %d ORDER BY updated ASC LIMIT 100", 0);
+  /*$result = db_query("SELECT uid, updated FROM {offline_signup_user_updates} WHERE request_sent = %d ORDER BY updated ASC LIMIT 100", 0);
   while ($data = db_fetch_object($result)) {
     if ($account = user_load($data->uid)) {
       $params['account'] = $account;
@@ -180,7 +180,7 @@ function offline_signup_cron() {
       // The account could not be loaded so we remove the record from the table.
       db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d", $data->uid, $data->updated);
     }
-  }
+  }*/
 }
 
 /**
