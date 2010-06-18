@@ -228,19 +228,22 @@ function offline_signup_update_confirm_submit($form, &$form_state) {
     offline_signup_update_simplenews($form, $form_state);
   }
 
+  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d",
+    $form_state['values']['account']->uid, $form_state['values']['updated']);
   drupal_set_message(t('The updates have been applied.'));
-  // watchdog('offline_signup', 'User %name has applied their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
+  watchdog('offline_signup', 'User %name has applied their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
 }
 
 function offline_signup_update_confirm_cancel($form, &$form_state) {
-  // db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d",
-    // $form_state['values']['account']->uid, $form_state['values']['updated']);
+  db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d",
+    $form_state['values']['account']->uid, $form_state['values']['updated']);
   drupal_set_message(t('The updates have been canceled.'));
   watchdog('offline_signup', 'User %name has canceled their updates made at time %updated.', array('%name' => $form_state['values']['account']->name, '%updated' => $form_state['values']['updated']));
 }
 
 function offline_signup_update_profile($form, &$form_state) {
-  
+  // Set register to TRUE since we only allow changes to fields that are available during register.
+  profile_save_profile($form_state['update_values'], $form_state['values']['account'], variable_get('offline_signup_profile_category', 'account'), TRUE);
 }
 
 function offline_signup_update_content_profile($form, &$form_state) {
@@ -268,7 +271,7 @@ function offline_signup_update_content_profile($form, &$form_state) {
 }
 
 function offline_signup_update_simplenews($form, &$form_state) {
-  
+  simplenews_register_user('update', $form_state['update_values'], $form_state['values']['account']);
 }
 
 /*******************************************************************************
