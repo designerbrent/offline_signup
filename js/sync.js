@@ -57,7 +57,7 @@ Drupal.behaviors.offlineSignupSync = function() {
         var user = Drupal.OfflineSignup.users[i];
 
         eventUsers++;
-        if (user.source == 'local') localUsers++;
+        if ((user.source == 'local' && user.status == 'new') || user.status == 'updated') localUsers++;
 
         // Skip this user if the table is set to show only local users or users
         // with status 'updated'.
