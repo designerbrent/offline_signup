@@ -21,6 +21,12 @@ Drupal.behaviors.offlineSignupSettings = function() {
       }
     }
 
+    if (Drupal.OfflineSignup.settings.random) {
+      // Add link when clicked will randomly populate the First name, Last name,
+      // and E-mail address fields.
+      $('#offline-signup-content-signup').prepend('<a href="#signup" onclick="Drupal.OfflineSignup.randomValues()">Random values</a>');
+    }
+
     $('input[name=save]', $settingsForm).click(function() {
       if ($('input[name=event]', $settingsForm).val()) {
         // No need to make AJAX call if event is not changing.
@@ -51,8 +57,9 @@ Drupal.behaviors.offlineSignupSettings = function() {
               }
 
               // Save changes to the number of drawings.
-              // Save settings.
               Drupal.OfflineSignup.settings.drawings = $('select[name=drawings]', $settingsForm).val();
+              Drupal.OfflineSignup.settings.random = $('input[name=random]', $settingsForm).is(':checked');
+              // Save settings.
               Drupal.OfflineSignup.setLocal('offlineSignupSettings', Drupal.OfflineSignup.settings);
 
               // Clear locally saved drawings so they can be refreshed on the
@@ -89,6 +96,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
 
     $('input[name=event]', $settingsForm).val(Drupal.OfflineSignup.settings.event);
     $('select[name=drawings]', $settingsForm).val(Drupal.OfflineSignup.settings.drawings);
+    $('input[name=random]', $settingsForm).attr('checked', Drupal.OfflineSignup.settings.random);
 
     $('#offline-signup-settings-form').addClass('offline-signup-settings-processed');
   }

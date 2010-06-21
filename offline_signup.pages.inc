@@ -67,6 +67,17 @@ function offline_signup_settings_form() {
     '#title' => t('Number of drawings'),
     '#options' => range(0, 5)
   );
+  $form['development'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Development'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE
+  );
+  $form['development']['random'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Random link'),
+    '#description' => t('When enabled, a link will be available on the sign-up tab for randomly generating values for the form.')
+  );
   $form['save'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
