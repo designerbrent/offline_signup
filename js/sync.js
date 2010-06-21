@@ -484,5 +484,6 @@ Drupal.OfflineSignup.resetLocals = function() {
     localStorage.removeItem('offlineSignupUsers');
     localStorage.removeItem('offlineSignupDrawings');
   }
+  window.location.reload();
   return false;
 }
