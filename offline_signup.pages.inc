@@ -159,7 +159,7 @@ function offline_signup_update_confirm(&$form_state, $account, $updated, $hash) 
     else if ($account->uid && $hash == md5($account->pass . $updated)) {
       $form['account'] = array('#type' => 'value', '#value' => $account);
       $form['updated'] = array('#type' => 'value', '#value' => $updated);
-      $form['message'] = array('#value' => t('<p>You have used a link for %user_name and will expire on %expiration_date.</p><p>Click on the confirm button to apply the updates to your account or click on the cancel button to forgo the updates.</p>', array('%user_name' => $account->name, '%expiration_date' => format_date($updated + $timeout))));
+      $form['message'] = array('#value' => t('<p>You have used a link for %user_name and will expire on %expiration_date.</p><p>Click on the confirm button to apply the updates to your account or click on the cancel button to forgo them.</p>', array('%user_name' => $account->name, '%expiration_date' => format_date($updated + $timeout))));
       $form['confirm'] = array('#type' => 'submit', '#value' => t('Confirm'), '#validate' => array('offline_signup_update_confirm_validate'), '#submit' => array('offline_signup_update_confirm_submit'));
       $form['cancel'] = array('#type' => 'submit', '#value' => t('Cancel'), '#submit' => array('offline_signup_update_confirm_cancel'));
       // $form['#redirect'] = '';
