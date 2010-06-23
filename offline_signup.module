@@ -47,7 +47,7 @@ function offline_signup_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('offline_signup_update_confirm', 3, 4, 5),
     'access callback' => TRUE,
-    'file' => 'offline_signup.pages.inc',
+    'file' => 'offline_signup.confirm.inc',
     'type' => MENU_CALLBACK
   );
 
