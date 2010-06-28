@@ -142,3 +142,72 @@ function offline_signup_update_content_profile($form, &$form_state) {
 function offline_signup_update_simplenews($form, &$form_state) {
   simplenews_register_user('update', $form_state['values']['update_values'], $form_state['values']['account']);
 }
+
+function offline_signup_get_changes($account, $update_values) {
+  $changes = array();
+  // Get any changes to the user account. This also handles any changes to
+  // core profile module.
+  $changes = array_merge($changes, _offline_signup_get_account_changes($account, $update_values));
+
+  if (module_exists('cp_plus')) {
+    // Get any changes to the users content profiles.
+    $changes = array_merge($changes, _offline_signup_get_content_profile_changes($account, $update_values));
+  }
+
+  if (module_exists('simplenews_register')) {
+    // Get any changes to the users simplenews subscriptions.
+    $changes = array_merge($changes, _offline_signup_get_simplenews_changes($account, $update_values));
+  }
+  return $changes;
+}
+
+function _offline_signup_get_account_changes($account, $update_values) {
+  $fields = array();
+  foreach (array_intersect_key((array)$account, $update_values) as $key => $value) {
+    if ($update_values[$key] != $value) {
+      $fields[$key] = $value;
+    }
+  }
+
+  $changes = array();
+  if (!empty($fields)) {
+    module_load_include('inc', 'offline_signup', 'offline_signup.pages');
+
+    $user_form = offline_signup_user_form();
+    foreach ($fields as $key => $value) {
+      if (isset($user_form[$key])) {
+        $changes[] = t('!title: @value', array('!title' => filter_xss_admin($user_form[$key]['#title']), '@value' => $value));
+      }
+      // Profile module stores their elements in a parent element of the
+      // selected category.
+      else if (isset($user_form[variable_get('offline_signup_profile_category', 'account')][$key])) {
+        $category = variable_get('offline_signup_profile_category', 'account');
+        $changes[] = t('!title: %value', array('!title' => filter_xss_admin($user_form[$category][$key]['#title']), '%value' => $value));
+      }
+    }
+  }
+  return $changes;
+}
+
+function _offline_signup_get_content_profile_changes($account, $update_values) {
+  return array();
+}
+
+function _offline_signup_get_simplenews_changes($account, $update_values) {
+  return array();
+}
+
+/*******************************************************************************
+ * Theme Functions
+ ******************************************************************************/
+
+function theme_offline_signup_update_confirm($form) {
+dpm($form['account']['#value']);
+dpm($form['update_values']['#value']);
+  $changes = offline_signup_get_changes($form['account']['#value'], $form['update_values']['#value']);
+
+  $output = drupal_render($form['message']);
+  $output .= theme('item_list', $changes);
+  $output .= drupal_render($form);
+  return $output;
+}

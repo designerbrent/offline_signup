@@ -133,6 +133,9 @@ function offline_signup_theme() {
     ),
     'offline_signup_menu_bar' => array(
       'arguments' => array()
+    ),
+    'offline_signup_update_confirm' => array(
+      'arguments' => array('form' => NULL)
     )
   );
 }
