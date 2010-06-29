@@ -189,12 +189,70 @@ function _offline_signup_get_account_changes($account, $update_values) {
   return $changes;
 }
 
+/**
+ * TODO
+ * CCK fields that allow multiple values need to render correctly. Currently
+ * the values are truncated into a single string. Preferably they should be
+ * made into children arrays.
+ */
 function _offline_signup_get_content_profile_changes($account, $update_values) {
-  return array();
+  $changes = array();
+  $fields = array();
+  $types = content_profile_get_types('names');
+  foreach ($types as $type => $name) {
+    if (isset($update_values[$type]) && $update_values[$type]) {
+      $profile = content_profile_load($type, $account->uid);
+      if (!$profile) {
+        // A profile does not exist. We create an empty stdClass, then every
+        // value will be interpretted as changed.
+        $changes[] = t('!title: %value', array('!title' => filter_xss_admin($name), '%value' => t('New profile')));
+        continue;
+      }
+
+      $fields[$type] = array();
+      foreach (array_intersect_key((array)$profile, $update_values) as $key => $value) {
+        if ($key == 'name' || _offline_signup_determine_value($value) == _offline_signup_determine_value($update_values[$key])) {
+          continue;
+        }
+
+        // TODO This should not be converted to string if an array.
+        $fields[$type][$key] = _offline_signup_determine_value($value);
+      }
+    }
+  }
+
+  if (!empty($fields)) {
+    // Render out each fields string output.
+    foreach ($fields as $type => $values) {
+      dpm($values);
+      $children = array();
+      foreach ($values as $k => $v) {
+        $children[] = t('!title: %value', array('!title' => filter_xss_admin($k), '%value' => $v));
+      }
+      $changes[] = array(
+        'data' => t('!title: Updated profile', array('!title' => filter_xss_admin($types[$type]))),
+        'children' => $children
+      );
+    }
+  }
+
+  return $changes;
 }
 
 function _offline_signup_get_simplenews_changes($account, $update_values) {
   return array();
+}
+
+function _offline_signup_determine_value($value, $string = '') {
+  if (is_array($value)) {
+    foreach ($value as $k => $v) {
+      $string .= _offline_signup_determine_value($v, $string);
+    }
+    return $string;
+  }
+
+  $string .= $value;
+  return $string;
 }
 
 /*******************************************************************************
@@ -202,7 +260,6 @@ function _offline_signup_get_simplenews_changes($account, $update_values) {
  ******************************************************************************/
 
 function theme_offline_signup_update_confirm($form) {
-dpm($form['account']['#value']);
 dpm($form['update_values']['#value']);
   $changes = offline_signup_get_changes($form['account']['#value'], $form['update_values']['#value']);
 
