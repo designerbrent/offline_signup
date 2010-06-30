@@ -224,7 +224,6 @@ function _offline_signup_get_content_profile_changes($account, $update_values) {
   if (!empty($fields)) {
     // Render out each fields string output.
     foreach ($fields as $type => $values) {
-      dpm($values);
       $children = array();
       foreach ($values as $k => $v) {
         $children[] = t('!title: %value', array('!title' => filter_xss_admin($k), '%value' => $v));
@@ -240,7 +239,13 @@ function _offline_signup_get_content_profile_changes($account, $update_values) {
 }
 
 function _offline_signup_get_simplenews_changes($account, $update_values) {
-  return array();
+  $changes = array();
+  foreach (taxonomy_get_tree(_simplenews_get_vid()) as $term) {
+    if (variable_get('simplenews_register_'. $term->tid .'_show', TRUE) && (isset($update_values['simplenews-'. $term->tid]) && $update_values['simplenews-'. $term->tid]) && !simplenews_user_is_subscribed($account->mail, $term->tid)) {
+      $changes[] = t('!name: Subscribe', array('!name' => $term->name));
+    }
+  }
+  return $changes;
 }
 
 function _offline_signup_determine_value($value, $string = '') {
@@ -260,7 +265,6 @@ function _offline_signup_determine_value($value, $string = '') {
  ******************************************************************************/
 
 function theme_offline_signup_update_confirm($form) {
-dpm($form['update_values']['#value']);
   $changes = offline_signup_get_changes($form['account']['#value'], $form['update_values']['#value']);
 
   $output = drupal_render($form['message']);
