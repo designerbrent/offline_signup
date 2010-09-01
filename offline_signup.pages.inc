@@ -173,14 +173,16 @@ function theme_offline_signup_page() {
   if ($event = variable_get('offline_signup_event', '')) {
     // Grab information for existing users based on the active event.
     $users = array();
-    $result = db_query("SELECT u.uid, u.name, u.pass FROM {users} AS u INNER JOIN {offline_signup_event_users} AS eu ON u.uid = eu.uid AND eu.event = '%s'", $event);
+    $result = db_query("SELECT u.uid, u.mail, u.name FROM {users} AS u INNER JOIN {offline_signup_event_users} AS eu ON u.uid = eu.uid AND eu.event = '%s'", $event);
     while ($data = db_fetch_object($result)) {
       if (variable_get('offline_signup_name_output', '') != '' && module_exists('profile')) {
         $account = new stdClass();
         $account->uid = $data->uid;
+        $account->mail = $data->mail;
+        $account->name = $data->name;
         profile_load_profile($account);
         unset($account->uid);
-        $user_array = (array($account));
+        $user_array = (array)$account;
       }
       else {
         $user_array = array('mail' => $data->mail, 'name' => $data->name);
