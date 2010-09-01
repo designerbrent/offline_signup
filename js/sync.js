@@ -497,5 +497,5 @@ Drupal.OfflineSignup.Sync.nameOutput = function(user) {
   for (var i in user) {
     nameOutput = nameOutput.replace('[' + i + ']', user[i]);
   }
-  return Drupal.checkPlain(nameOutput);
+  return Drupal.checkPlain(((nameOutput.search(/[[a-z0-9]]/i) <= 0) ? nameOutput : user.name));
 }

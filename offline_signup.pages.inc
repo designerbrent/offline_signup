@@ -173,11 +173,21 @@ function theme_offline_signup_page() {
   if ($event = variable_get('offline_signup_event', '')) {
     // Grab information for existing users based on the active event.
     $users = array();
-    $result = db_query("SELECT mail, name FROM {users} AS u INNER JOIN {offline_signup_event_users} AS eu ON u.uid = eu.uid AND eu.event = '%s'", $event);
+    $result = db_query("SELECT u.uid, u.name, u.pass FROM {users} AS u INNER JOIN {offline_signup_event_users} AS eu ON u.uid = eu.uid AND eu.event = '%s'", $event);
     while ($data = db_fetch_object($result)) {
-      $users[$data->mail] = array(
-        'mail' => $data->mail,
-        'name' => $data->name,
+      if (variable_get('offline_signup_name_output', '') != '') {
+        $account = user_load($data->uid);
+        $user_array = array();
+        foreach ($account as $key => $value) {
+          if (!in_array($key, array('uid', 'pass', 'mode', 'sort', 'threshold', 'theme', 'signature', 'signature_format', 'created', 'access', 'login', 'status', 'timezone', 'language', 'picture', 'init', 'data', 'form_build_id', 'roles'))) {
+            $user_array[$key] = $value;
+          }
+        }
+      }
+      else {
+        $user_array = array('mail' => $data->mail, 'name' => $data->name);
+      }
+      $users[$account->mail] = $user_array + array(
         'source' => 'server',
         'status' => '',
         'static' => TRUE
