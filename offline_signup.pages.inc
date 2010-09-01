@@ -306,6 +306,7 @@ function theme_offline_signup_drawings_form_fieldset($form) {
 
 function theme_offline_signup_content_sync() {
   drupal_add_js(drupal_get_path('module', 'offline_signup') .'/js/sync.js');
+  drupal_add_js(array('offlineSignup' => array('nameOutput' => variable_get('offline_signup_name_output', ''))), 'setting');
 
   $output = '<div id="offline-signup-content-sync">';
   $output .= drupal_get_form('offline_signup_sync_form');
