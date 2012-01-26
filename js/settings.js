@@ -24,7 +24,7 @@ Drupal.behaviors.offlineSignupSettings = function() {
     if (Drupal.OfflineSignup.settings.random) {
       // Add link when clicked will randomly populate the First name, Last name,
       // and E-mail address fields.
-      $('#offline-signup-content-signup').prepend('<a href="#signup" onclick="Drupal.OfflineSignup.randomValues()">Random values</a>');
+      $('div.col-main').prepend('<div class="random_values"><a href="#signup" onclick="Drupal.OfflineSignup.randomValues()">Random values</a></div>');
     }
 
     $('input[name=save]', $settingsForm).click(function() {
