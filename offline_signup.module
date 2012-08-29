@@ -47,7 +47,7 @@ function offline_signup_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('offline_signup_update_confirm', 3, 4, 5),
     'access callback' => TRUE,
-    'file' => 'offline_signup.pages.inc',
+    'file' => 'offline_signup.confirm.inc',
     'type' => MENU_CALLBACK
   );
 
@@ -133,6 +133,9 @@ function offline_signup_theme() {
     ),
     'offline_signup_menu_bar' => array(
       'arguments' => array()
+    ),
+    'offline_signup_update_confirm' => array(
+      'arguments' => array('form' => NULL)
     )
   );
 }
@@ -159,6 +162,7 @@ function offline_signup_user($op, &$edit, &$account, $category = NULL) {
   }
   if ($op == 'delete') {
     db_query("DELETE FROM {offline_signup_event_users} WHERE uid = %d", $account->uid);
+    db_query("DELETE FROM {offline_signup_user_updates} WHERE uid = %d AND updated = %d", $data->uid, $data->updated);
   }
 }
 

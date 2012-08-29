@@ -70,7 +70,7 @@ Drupal.behaviors.offlineSignupSync = function() {
           row.addClass('error');
         }
         row.append('<td class="ajax-status">');
-        row.append('<td class="name">' + Drupal.checkPlain(user.name) + '</td>');
+        row.append('<td class="name">' + Drupal.OfflineSignup.Sync.nameOutput(user) + '</td>');
         row.append('<td class="mail">' + Drupal.checkPlain(user.mail) + '</td>');
         row.append('<td class="profiles">' + Drupal.OfflineSignup.profiles.list(user) + '</td>');
         row.append('<td class="source">' + Drupal.checkPlain(user.source) + '</td>');
@@ -143,7 +143,7 @@ Drupal.behaviors.offlineSignupSync = function() {
           var row = $('<tr>');
           row.append('<td class="ajax-status">');
           row.append('<td class="drawing-id">' + Drupal.checkPlain(drawing.id) + '</td>');
-          row.append('<td class="name">' + Drupal.checkPlain(drawing.user.name) + '</td>');
+          row.append('<td class="name">' + Drupal.OfflineSignup.Sync.nameOutput(user) + '</td>');
           row.append('<td class="mail">' + Drupal.checkPlain(drawing.user.mail) + '</td>');
           row.append('<td class="date">' + Drupal.checkPlain(drawing.formatDate()) + '</td>');
           tbody.append(row);
@@ -486,4 +486,16 @@ Drupal.OfflineSignup.resetLocals = function() {
   }
   window.location.reload();
   return false;
+}
+
+Drupal.OfflineSignup.Sync.nameOutput = function(user) {
+  if (Drupal.settings.offlineSignup.nameOutput == '') {
+    return Drupal.checkPlain(user.name);
+  }
+
+  var nameOutput = Drupal.settings.offlineSignup.nameOutput;
+  for (var i in user) {
+    nameOutput = nameOutput.replace('[' + i + ']', user[i]);
+  }
+  return Drupal.checkPlain(((nameOutput.search(/[[a-z0-9]]/i) <= 0) ? nameOutput : user.name));
 }

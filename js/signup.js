@@ -2,10 +2,6 @@
 
 Drupal.behaviors.offlineSignupContent = function() {
   if ($('#offline-signup-content-signup:not(.offline-signup-content-processed)').size()) {
-    // Add link when clicked will randomly populate the First name, Last name,
-    // and E-mail address fields.
-    $('#offline-signup-content-signup').prepend('<a href="#signup" onclick="Drupal.OfflineSignup.randomValues()">Random values</a>');
-
     // User form.
     var $userForm = $('#offline-signup-user-form');
     $('input[name=mail]', $userForm).blur(function() {

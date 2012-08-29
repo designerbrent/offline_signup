@@ -142,7 +142,7 @@ Drupal.OfflineSignup.Tab.prototype.focus = function(animate) {
     Drupal.OfflineSignup.authenticated = true;
     Drupal.OfflineSignup.clearAuthTimeout();
   }
-  else {
+  else if (Drupal.settings.offlineSignup.password != '') {
     Drupal.OfflineSignup.setAuthTimeout();
   }
 }
